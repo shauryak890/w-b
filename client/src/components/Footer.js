@@ -141,7 +141,7 @@ function Footer() {
                   </Box>
                   <VStack align="start" spacing={0}>
                     <Text fontSize="sm" fontWeight="medium" color="gray.700">Visit Us</Text>
-                    <Text fontSize="sm" color="gray.600">123 Laundry Lane, Cleanville, ST 12345</Text>
+                    <Text fontSize="sm" color="gray.600">Locations to be revealed soon!</Text>
                   </VStack>
                 </Stack>
 
@@ -156,7 +156,7 @@ function Footer() {
                   </Box>
                   <VStack align="start" spacing={0}>
                     <Text fontSize="sm" fontWeight="medium" color="gray.700">Call Us</Text>
-                    <Text fontSize="sm" color="gray.600">(555) 123-4567</Text>
+                    <Text fontSize="sm" color="gray.600">+91 81027 33336</Text>
                   </VStack>
                 </Stack>
 
@@ -216,6 +216,8 @@ function Footer() {
             <FooterLink to="/policies/terms-of-service">Terms</FooterLink>
             <Text>•</Text>
             <FooterLink to="/policies/privacy-policy">Privacy</FooterLink>
+            <Text>•</Text>
+            <FooterLink to="/franchise">Franchise</FooterLink>
             <Text>•</Text>
             <FooterLink to="/contact">Contact</FooterLink>
           </Stack>

@@ -87,10 +87,10 @@ export default function About() {
   return (
     <Box pt={20}>
       {/* Hero Section */}
-      <Box 
-        py={20} 
+      <Box
+        py={20}
         position="relative"
-        bgGradient="linear(to-r, brand.50, accent.50)" 
+        bgGradient="linear(to-r, brand.50, accent.50)"
       >
         <Container maxW="7xl">
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} position="relative" zIndex={1}>
@@ -127,8 +127,8 @@ export default function About() {
                 </Text>
               </Stack>
             </MotionBox>
-            <MotionFlex 
-              justify="center" 
+            <MotionFlex
+              justify="center"
               align="center"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -153,9 +153,9 @@ export default function About() {
       </Box>
 
       {/* Our Values Section */}
-      <Box 
-        py={20} 
-        bg="white" 
+      <Box
+        py={20}
+        bg="white"
         position="relative"
         borderTop="1px"
         borderColor="gray.200"
@@ -251,9 +251,9 @@ export default function About() {
       </Box>
 
       {/* What Sets Us Apart Section */}
-      <Box 
-        py={20} 
-        bgGradient="linear(to-b, white, accent.50)" 
+      <Box
+        py={20}
+        bgGradient="linear(to-b, white, accent.50)"
         position="relative"
         overflow="hidden"
         _before={{
@@ -398,40 +398,6 @@ export default function About() {
                   </VStack>
                 </VStack>
               </Box>
-            </SimpleGrid>
-          </VStack>
-          
-          {/* Team Section */}
-          <VStack spacing={8} position="relative" textAlign="center">
-            <Heading
-              fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}
-              bgGradient="linear(to-r, brand.600, accent.500)"
-              bgClip="text"
-              letterSpacing="tight"
-              mb={6}
-            >
-              Meet Our Team
-            </Heading>
-            
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-              <TeamMember
-                name="Sarah Johnson"
-                role="Founder & CEO"
-                image="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
-                bio="With over 15 years in the textile and hospitality industries, Sarah brings a wealth of knowledge and vision to Whites & Brights."
-              />
-              <TeamMember
-                name="David Chen"
-                role="Operations Director"
-                image="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
-                bio="David oversees our day-to-day operations, ensuring efficiency and quality at every stage of our service delivery."
-              />
-              <TeamMember
-                name="Emily Rodriguez"
-                role="Sustainability Manager"
-                image="https://images.unsplash.com/photo-1580894732444-8ecded7900cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
-                bio="Emily leads our eco-friendly initiatives, constantly researching and implementing more sustainable practices."
-              />
             </SimpleGrid>
           </VStack>
         </Container>

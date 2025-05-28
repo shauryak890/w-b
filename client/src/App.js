@@ -15,6 +15,7 @@ import FAQ from './pages/FAQ';
 import HelpCenter from './pages/HelpCenter';
 import TermsOfService from './pages/policies/TermsOfService';
 import PrivacyPolicy from './pages/policies/PrivacyPolicy';
+import Franchise from './pages/Franchise';
 
 const theme = extendTheme({
   styles: {
@@ -96,6 +97,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
             <Route path="/about" element={<About />} />
+            <Route path="/franchise" element={<Franchise />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/help-center" element={<HelpCenter />} />

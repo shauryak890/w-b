@@ -220,11 +220,11 @@ export default function PrivacyPolicy() {
               For privacy-related inquiries or to exercise your rights, contact our Privacy Officer:
             </Text>
             <Text color="brand.500" fontWeight="bold">
-              Email: privacy@whitesandbrights.com
+              Email: info@whitesandbrights.com
               <br />
-              Phone: (555) 123-4567
+              Phone: +91 81027 33336
               <br />
-              Address: 123 Laundry Lane, Cleanville, ST 12345
+              Address: To be revealed soon!
             </Text>
           </VStack>
         </VStack>

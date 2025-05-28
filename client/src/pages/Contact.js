@@ -84,8 +84,8 @@ export default function Contact() {
   return (
     <Box pt={20}>
       {/* Hero Section */}
-      <Box 
-        bg={'brand.500'} 
+      <Box
+        bg={'brand.500'}
         color="white"
         py={16}
       >
@@ -138,13 +138,12 @@ export default function Contact() {
                   </ContactInfo>
 
                   <ContactInfo icon={FaPhone} title="Phone">
-                    Customer Service: (555) 123-4567<br />
-                    Business Inquiries: (555) 765-4321
+                    Customer Service: +91 81027 33336<br />
+                    Business Inquiries: +91 81027 33336
                   </ContactInfo>
 
                   <ContactInfo icon={FaEnvelope} title="Email">
-                    info@whitesandbrights.com<br />
-                    business@whitesandbrights.com
+                    info@whitesandbrights.com
                   </ContactInfo>
                 </Stack>
               </Box>
@@ -168,13 +167,13 @@ export default function Contact() {
                   <Text color="gray.600" mb={4}>
                     Fill out the form below and we'll get back to you as soon as possible.
                   </Text>
-                  
+
                   {formStatus.success && (
                     <Box p={4} mb={4} bg="green.100" color="green.800" borderRadius="md">
                       {formStatus.message}
                     </Box>
                   )}
-                  
+
                   {formStatus.error && (
                     <Box p={4} mb={4} bg="red.100" color="red.800" borderRadius="md">
                       {formStatus.message}
@@ -183,8 +182,8 @@ export default function Contact() {
 
                   <Box mb={4}>
                     <Text fontWeight="bold" mb={2}>Your Name</Text>
-                    <Box as="input" 
-                      type="text" 
+                    <Box as="input"
+                      type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="John Doe"
@@ -198,8 +197,8 @@ export default function Contact() {
 
                   <Box mb={4}>
                     <Text fontWeight="bold" mb={2}>Email Address</Text>
-                    <Box as="input" 
-                      type="email" 
+                    <Box as="input"
+                      type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="john@example.com"
@@ -213,7 +212,7 @@ export default function Contact() {
 
                   <Box mb={4}>
                     <Text fontWeight="bold" mb={2}>Message</Text>
-                    <Box as="textarea" 
+                    <Box as="textarea"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="I'm interested in learning more about your services..."
@@ -226,7 +225,7 @@ export default function Contact() {
                     />
                   </Box>
 
-                  <Box 
+                  <Box
                     as="button"
                     type="submit"
                     bg="brand.500"
@@ -241,7 +240,7 @@ export default function Contact() {
                   >
                     {isSubmitting ? 'Submitting...' : 'Send Message'}
                   </Box>
-              </Box>
+                </Box>
               </form>
             </MotionBox>
           </SimpleGrid>

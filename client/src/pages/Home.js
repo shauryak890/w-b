@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Button,
@@ -13,9 +13,38 @@ import {
   Flex,
   keyframes,
   IconButton,
+  Badge,
+  VStack,
+  HStack,
+  useBreakpointValue,
+  Circle,
+  Divider,
+  Center,
 } from '@chakra-ui/react';
-import { FaWater, FaTshirt, FaSoap, FaClock, FaArrowUp } from 'react-icons/fa';
-import { motion, useAnimation } from 'framer-motion';
+import { 
+  FaWater, 
+  FaTshirt, 
+  FaSoap, 
+  FaClock, 
+  FaArrowUp, 
+  FaLeaf, 
+  FaMoneyBillWave, 
+  FaSmile, 
+  FaSnowflake, 
+  FaHome,
+  FaChevronLeft,
+  FaChevronRight,
+  FaCheck,
+  FaTruck,
+  FaShieldAlt,
+  FaShirt,
+  FaHandsWash
+} from 'react-icons/fa';
+import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Slider from 'react-slick';
+import { Link as RouterLink } from 'react-router-dom';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -65,114 +94,293 @@ const Feature = ({ title, text, icon }) => {
 };
 
 export default function Home() {
-  const controls = useAnimation();
+  const control = useAnimation();
+  const sliderRef = useRef(null);
 
   useEffect(() => {
-    controls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
+    control.start({ opacity: 1, y: 0 });
+  }, [control]);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
     });
-  }, [controls]);
+  };
+
+  // Carousel settings
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
+    arrows: false,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false,
+          dots: true
+        }
+      }
+    ]
+  };
+
+  // Next/Prev methods for carousel
+  const gotoNext = () => {
+    sliderRef.current.slickNext();
+  };
+
+  const gotoPrev = () => {
+    sliderRef.current.slickPrev();
+  };
+
+  // Carousel slide data
+  const carouselSlides = [
+    {
+      id: 1,
+      title: "Premium Laundry Service",
+      subtitle: "Experience The Perfect Clean",
+      description: "Using eco-friendly products and cutting-edge technology for your finest garments.",
+      buttonText: "Our Services",
+      buttonLink: "/services",
+      image: "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      highlights: ["Professional Care", "100% Satisfaction", "Free Pickup & Delivery"],
+    },
+    {
+      id: 2,
+      title: "Eco-Friendly Cleaning",
+      subtitle: "Care For Your Clothes & The Planet",
+      description: "Our sustainable approach ensures your clothes stay bright while protecting the environment.",
+      buttonText: "Learn More",
+      buttonLink: "/about",
+      image: "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      highlights: ["Biodegradable Products", "Water Conservation", "Energy Efficient"],
+    },
+    {
+      id: 3,
+      title: "On-Demand Service",
+      subtitle: "Convenience At Your Doorstep",
+      description: "Schedule pickups and deliveries that fit your busy lifestyle, with real-time tracking.",
+      buttonText: "Book Now",
+      buttonLink: "/contact",
+      image: "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
+      highlights: ["24-Hour Turnaround", "Online Scheduling", "SMS Notifications"],
+    }
+  ];
 
   return (
     <Box>
-      {/* Hero Section */}
+      {/* Hero Carousel Section */}
       <Box
-        bgGradient="linear(to-r, brand.500, accent.500)"
-        color="white"
-        py={{ base: 24, md: 32 }}
+        as="section"
+        pt={{ base: 0, md: 0 }}
+        pb={{ base: 16, md: 20 }}
         position="relative"
         overflow="hidden"
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          bg: 'url(https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80)',
-          bgSize: 'cover',
-          bgPosition: 'center',
-          opacity: 0.1,
-          filter: 'blur(2px)',
-        }}
+        bg="white"
       >
-        <Container maxW="1200px">
-          <MotionFlex
-            initial={{ opacity: 0, y: 20 }}
-            animate={controls}
-            direction={{ base: 'column', lg: 'row' }}
-            align="center"
-            justify="space-between"
-            gap={10}
+        {/* Abstract Background Elements */}
+        <Box
+          position="absolute"
+          top="-10%"
+          right="-5%"
+          width="500px"
+          height="500px"
+          borderRadius="full"
+          bg="brand.50"
+          filter="blur(60px)"
+          opacity="0.6"
+          zIndex="0"
+        />
+        <Box
+          position="absolute"
+          bottom="-15%"
+          left="-10%"
+          width="600px"
+          height="600px"
+          borderRadius="full"
+          bg="accent.50"
+          filter="blur(90px)"
+          opacity="0.4"
+          zIndex="0"
+        />
+
+        <Box position="relative" height={{ base: "auto", md: "700px" }} width="100%" zIndex="1">
+          <Box 
+            position="absolute" 
+            top="50%" 
+            left="20px" 
+            zIndex="2" 
+            transform="translateY(-50%)"
+            display={{ base: 'none', md: 'block' }}
           >
-            <Stack spacing={6} maxW="lg">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={controls}
-              >
-                <Heading
-                  as="h1"
-                  fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
-                  fontWeight="bold"
-                  lineHeight="1.2"
-                  bgGradient="linear(to-r, white, highlight.200)"
-                  bgClip="text"
-                >
-                  Premium Laundry Service for Your Finest Garments
-                </Heading>
-              </MotionBox>
-              <MotionText
-                initial={{ opacity: 0, y: 20 }}
-                animate={controls}
-                fontSize="xl"
-                opacity={0.9}
-                maxW="xl"
-              >
-                Experience the difference with our expert care and attention to detail.
-                Your clothes deserve the best treatment.
-              </MotionText>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={controls}
-              >
-                <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
-              <Button
-                size="lg"
-                colorScheme="accent"
-                _hover={{ bg: 'accent.600' }}
-              >
-                Get Started
-              </Button>
-              <Button
-                size="lg"
-                bg="whiteAlpha.300"
-                _hover={{ bg: 'whiteAlpha.400' }}
-              >
-                Learn More
-              </Button>
-                </Stack>
-              </MotionBox>
-            </Stack>
-            <MotionBox
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={controls}
-              flex={1}
-              display={{ base: 'none', lg: 'block' }}
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80"
-                alt="Modern Laundry Service"
-                borderRadius="2xl"
-                boxShadow="2xl"
-                objectFit="cover"
-                w="full"
-                h="400px"
-              />
-            </MotionBox>
-          </MotionFlex>
-        </Container>
+            <IconButton
+              aria-label="Previous slide"
+              icon={<FaChevronLeft />}
+              onClick={gotoPrev}
+              colorScheme="brand"
+              variant="solid"
+              rounded="full"
+              opacity="0.8"
+              _hover={{ opacity: 1 }}
+            />
+          </Box>
+          
+          <Box 
+            position="absolute" 
+            top="50%" 
+            right="20px" 
+            zIndex="2" 
+            transform="translateY(-50%)"
+            display={{ base: 'none', md: 'block' }}
+          >
+            <IconButton
+              aria-label="Next slide"
+              icon={<FaChevronRight />}
+              onClick={gotoNext}
+              colorScheme="brand"
+              variant="solid"
+              rounded="full"
+              opacity="0.8"
+              _hover={{ opacity: 1 }}
+            />
+          </Box>
+          
+          <Slider ref={sliderRef} {...carouselSettings}>
+            {carouselSlides.map((slide) => (
+              <Box key={slide.id} height={{ base: "auto", md: "700px" }} position="relative">
+                <Box
+                  position="absolute"
+                  inset="0"
+                  bgImage={`url(${slide.image})`}
+                  bgSize="cover"
+                  bgPosition="center"
+                  _after={{
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    bg: 'blackAlpha.600',
+                    zIndex: 0
+                  }}
+                />
+                
+                <Container maxW="1200px" height="100%" position="relative" zIndex="1">
+                  <Flex 
+                    height="100%"
+                    direction={{ base: 'column', lg: 'row' }}
+                    align="center"
+                    justify="space-between"
+                    pt={{ base: 20, md: 0 }}
+                  >
+                    <Stack spacing={{ base: 6, md: 8 }} maxW="lg" color="white">
+                      <MotionBox
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <Badge 
+                          colorScheme="brand" 
+                          fontSize={{ base: "sm", md: "md" }} 
+                          px={3} 
+                          py={1} 
+                          borderRadius="full"
+                          textTransform="none"
+                          fontWeight="medium"
+                          mb={2}
+                        >
+                          {slide.subtitle}
+                        </Badge>
+                      </MotionBox>
+
+                      <MotionBox
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                      >
+                        <Heading
+                          as="h1"
+                          fontSize={{ base: '3xl', md: '5xl', lg: '6xl' }}
+                          fontWeight="bold"
+                          lineHeight="1.1"
+                          letterSpacing="tight"
+                        >
+                          {slide.title}
+                        </Heading>
+                      </MotionBox>
+
+                      <MotionBox
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                      >
+                        <Text
+                          fontSize={{ base: 'md', md: 'xl' }}
+                          lineHeight="tall"
+                        >
+                          {slide.description}
+                        </Text>
+                      </MotionBox>
+
+                      <MotionBox
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                      >
+                        <Stack spacing={4} direction={{ base: 'column', sm: 'row' }}>
+                          <Button
+                            as={RouterLink}
+                            to={slide.buttonLink}
+                            size={{ base: "md", md: "lg" }}
+                            colorScheme="brand"
+                            fontWeight="medium"
+                            px={6}
+                            _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                            transition="all 0.3s"
+                          >
+                            {slide.buttonText}
+                          </Button>
+                          <Button
+                            as={RouterLink}
+                            to="/contact"
+                            size={{ base: "md", md: "lg" }}
+                            variant="outline"
+                            colorScheme="whiteAlpha"
+                            fontWeight="medium"
+                            px={6}
+                            _hover={{ bg: 'whiteAlpha.200' }}
+                            transition="all 0.3s"
+                          >
+                            Contact Us
+                          </Button>
+                        </Stack>
+                      </MotionBox>
+
+                      <Stack direction="row" spacing={4} pt={4}>
+                        {slide.highlights.map((highlight, index) => (
+                          <HStack key={index} spacing={1}>
+                            <Icon as={FaCheck} color="brand.400" />
+                            <Text fontWeight="medium" fontSize={{ base: "xs", md: "sm" }}>
+                              {highlight}
+                            </Text>
+                          </HStack>
+                        ))}
+                      </Stack>
+                    </Stack>
+
+                    {/* Right side space for potential additional content */}
+                  </Flex>
+                </Container>
+              </Box>
+            ))}
+          </Slider>
+        </Box>
+
+        {/* Container intentionally left empty - stats section removed */}
       </Box>
 
       {/* Features Section */}
@@ -180,31 +388,61 @@ export default function Home() {
         py={24} 
         bg="gray.50"
         position="relative"
-        _before={{
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '1px',
-          bgGradient: 'linear(to-r, transparent, brand.200, transparent)',
-        }}
+        overflow="hidden"
       >
-        <Container maxW="1200px">
-          <Stack spacing={12}>
-            <Stack spacing={4} textAlign="center">
+        {/* Decorative Elements */}
+        <Box
+          position="absolute"
+          top="5%"
+          left="-10%"
+          width="300px"
+          height="300px"
+          borderRadius="full"
+          bg="brand.50"
+          filter="blur(70px)"
+          opacity="0.4"
+          zIndex="0"
+        />
+        <Box
+          position="absolute"
+          bottom="10%"
+          right="-5%"
+          width="250px"
+          height="250px"
+          borderRadius="full"
+          bg="accent.50"
+          filter="blur(60px)"
+          opacity="0.3"
+          zIndex="0"
+        />
+
+        <Container maxW="1200px" position="relative" zIndex="1">
+          <Stack spacing={16} direction="column">
+            {/* Section Header */}
+            <Stack spacing={5} align="center" textAlign="center">
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
+                <Text
+                  color="brand.500"
+                  fontWeight="600"
+                  fontSize="lg"
+                  textTransform="uppercase"
+                  letterSpacing="wide"
+                  mb={2}
+                >
+                  Our Best Services
+                </Text>
                 <Heading 
                   fontSize={{ base: '3xl', md: '4xl' }}
-                  bgGradient="linear(to-r, brand.500, accent.500)"
-                  bgClip="text"
+                  color={useColorModeValue('gray.800', 'white')}
+                  letterSpacing="tight"
+                  mb={4}
                 >
-                  Why Choose Whites & Brights?
+                  Premium Laundry Solutions <Text as="span" color="brand.500">For You</Text>
                 </Heading>
               </MotionBox>
               <MotionText
@@ -217,35 +455,177 @@ export default function Home() {
                 mx="auto"
                 fontSize="lg"
               >
-                We combine expertise with cutting-edge technology to deliver exceptional laundry services.
+                We combine expertise with cutting-edge technology to deliver exceptional laundry services 
+                that respect both your garments and the environment.
               </MotionText>
             </Stack>
 
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={10}>
-              <Feature
-                icon={FaWater}
-                title="Expert Care"
-                text="Specialized treatment for each fabric type"
-              />
-              <Feature
-                icon={FaTshirt}
-                title="Perfect Finish"
-                text="Crisp, clean, and professionally pressed"
-              />
-              <Feature
-                icon={FaSoap}
-                title="Eco-Friendly"
-                text="Using environmentally safe products"
-              />
-              <Feature
-                icon={FaClock}
-                title="Quick Service"
-                text="24-hour turnaround available"
-              />
+            {/* Services Grid */}
+            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={8}>
+              {/* Service Card 1 */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <Flex 
+                  direction="column"
+                  align="center"
+                  bg={useColorModeValue('white', 'gray.800')}
+                  rounded="xl"
+                  borderWidth="1px"
+                  borderColor={useColorModeValue('gray.100', 'gray.700')}
+                  p={6}
+                  textAlign="center"
+                  boxShadow="lg"
+                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                  transition="all 0.3s ease"
+                  height="100%"
+                >
+                  <Circle 
+                    size={20} 
+                    bg="brand.50" 
+                    color="brand.500"
+                    mb={5}
+                  >
+                    <Icon as={FaTshirt} fontSize="2xl" />
+                  </Circle>
+                  <Heading size="md" mb={3}>Dry Cleaning</Heading>
+                  <Text color={useColorModeValue('gray.600', 'gray.400')}>
+                    Professional cleaning for your delicate fabrics and specialty garments
+                  </Text>
+                </Flex>
+              </MotionBox>
+
+              {/* Service Card 2 */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <Flex 
+                  direction="column"
+                  align="center"
+                  bg={useColorModeValue('white', 'gray.800')}
+                  rounded="xl"
+                  borderWidth="1px"
+                  borderColor={useColorModeValue('gray.100', 'gray.700')}
+                  p={6}
+                  textAlign="center"
+                  boxShadow="lg"
+                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                  transition="all 0.3s ease"
+                  height="100%"
+                >
+                  <Circle 
+                    size={20} 
+                    bg="accent.50" 
+                    color="accent.500"
+                    mb={5}
+                  >
+                    <Icon as={FaHandsWash} fontSize="2xl" />
+                  </Circle>
+                  <Heading size="md" mb={3}>Wash & Iron</Heading>
+                  <Text color={useColorModeValue('gray.600', 'gray.400')}>
+                    Complete laundry service with premium detergents and expert ironing
+                  </Text>
+                </Flex>
+              </MotionBox>
+
+              {/* Service Card 3 */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                <Flex 
+                  direction="column"
+                  align="center"
+                  bg={useColorModeValue('white', 'gray.800')}
+                  rounded="xl"
+                  borderWidth="1px"
+                  borderColor={useColorModeValue('gray.100', 'gray.700')}
+                  p={6}
+                  textAlign="center"
+                  boxShadow="lg"
+                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                  transition="all 0.3s ease"
+                  height="100%"
+                >
+                  <Circle 
+                    size={20} 
+                    bg="green.50" 
+                    color="green.500"
+                    mb={5}
+                  >
+                    <Icon as={FaLeaf} fontSize="2xl" />
+                  </Circle>
+                  <Heading size="md" mb={3}>Eco Laundry</Heading>
+                  <Text color={useColorModeValue('gray.600', 'gray.400')}>
+                    Environmentally friendly cleaning with water-saving technology
+                  </Text>
+                </Flex>
+              </MotionBox>
+
+              {/* Service Card 4 */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+              >
+                <Flex 
+                  direction="column"
+                  align="center"
+                  bg={useColorModeValue('white', 'gray.800')}
+                  rounded="xl"
+                  borderWidth="1px"
+                  borderColor={useColorModeValue('gray.100', 'gray.700')}
+                  p={6}
+                  textAlign="center"
+                  boxShadow="lg"
+                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                  transition="all 0.3s ease"
+                  height="100%"
+                >
+                  <Circle 
+                    size={20} 
+                    bg="purple.50" 
+                    color="purple.500"
+                    mb={5}
+                  >
+                    <Icon as={FaTruck} fontSize="2xl" />
+                  </Circle>
+                  <Heading size="md" mb={3}>Pickup & Delivery</Heading>
+                  <Text color={useColorModeValue('gray.600', 'gray.400')}>
+                    Convenient doorstep service with scheduled pickups and deliveries
+                  </Text>
+                </Flex>
+              </MotionBox>
             </SimpleGrid>
+
+            {/* View All Services Button */}
+            <Box textAlign="center" mt={8}>
+              <Button
+                as={RouterLink}
+                to="/services"
+                size="lg"
+                colorScheme="brand"
+                rightIcon={<Icon as={FaArrowUp} transform="rotate(45deg)" />}
+                _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}
+                transition="all 0.3s"
+              >
+                View All Services
+              </Button>
+            </Box>
           </Stack>
         </Container>
       </Box>
+
+      {/* Our Services Section removed as requested */}
 
       {/* Scroll to Top Button */}
       <IconButton

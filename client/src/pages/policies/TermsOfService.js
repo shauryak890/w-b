@@ -175,8 +175,8 @@ export default function TermsOfService() {
               If you have any questions about these Terms of Service, please contact us:
             </Text>
             <UnorderedList spacing={2} pl={4}>
-              <ListItem>Email: legal@whitesandbrights.com</ListItem>
-              <ListItem>Phone: (555) 123-4567</ListItem>
+              <ListItem>Email: info@whitesandbrights.com</ListItem>
+              <ListItem>Phone: +91 81027 33336</ListItem>
               <ListItem>Address: Coming to your city soon!</ListItem>
             </UnorderedList>
           </MotionBox>
