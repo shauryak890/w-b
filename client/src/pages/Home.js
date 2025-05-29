@@ -170,6 +170,16 @@ export default function Home() {
       buttonLink: "/contact",
       image: "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
       highlights: ["24-Hour Turnaround", "Online Scheduling", "SMS Notifications"],
+    },
+    {
+      id: 4,
+      title: "OPENING SOON!",
+      subtitle: "Be The First To Experience Our VIP Treatment",
+      description: "Get ready for our exclusive membership program launching next month! Enjoy VIP perks, priority scheduling, and amazing discounts on all services.",
+      buttonText: "Get Early Access",
+      buttonLink: "/contact",
+      image: "https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      highlights: ["50% Off First Month", "No Waiting Time", "Exclusive Member Benefits"],
     }
   ];
 
@@ -628,23 +638,7 @@ export default function Home() {
       {/* Our Services Section removed as requested */}
 
       {/* Scroll to Top Button */}
-      <IconButton
-        aria-label="Scroll to top"
-        icon={<FaArrowUp />}
-        size="lg"
-        colorScheme="brand"
-        position="fixed"
-        bottom="4"
-        right="4"
-        borderRadius="full"
-        boxShadow="lg"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        _hover={{
-          transform: 'translateY(-2px)',
-          boxShadow: 'xl',
-        }}
-        transition="all 0.2s"
-      />
+      {/* Scroll to top button removed to avoid conflict with WhatsApp button */}
     </Box>
   );
 }

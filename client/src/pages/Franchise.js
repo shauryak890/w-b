@@ -168,7 +168,7 @@ const Franchise = () => {
                 _hover={{ transform: 'translateY(-2px)', boxShadow: 'xl' }}
                 transition="all 0.3s"
                 as="a"
-                href="#contact-form"
+                href="#franchise-application"
               >
                 Apply For Franchise
               </Button>
@@ -201,7 +201,7 @@ const Franchise = () => {
                   maxW="3xl"
                   mx="auto"
                 >
-                  The laundry and dry cleaning industry offers a stable, high-margin business opportunity with growing demand and minimal competition.
+                  The Indian laundry and dry cleaning industry is rapidly growing with increasing urbanization, rising disposable incomes, and changing lifestyles creating exceptional business opportunities.
                 </Text>
               </MotionBox>
             </Stack>
@@ -223,9 +223,9 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaChartLine} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>$14.6B</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>₹20,000Cr</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Market Size</StatLabel>
-                  <StatHelpText>Growing at 4.5% annually</StatHelpText>
+                  <StatHelpText>Growing at 8.7% annually</StatHelpText>
                 </Stat>
               </MotionBox>
 
@@ -244,9 +244,9 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaMoneyBillWave} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>35%</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>40-50%</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Profit Margin</StatLabel>
-                  <StatHelpText>Higher than retail average</StatHelpText>
+                  <StatHelpText>In premium urban markets</StatHelpText>
                 </Stat>
               </MotionBox>
 
@@ -265,7 +265,7 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaStore} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>24</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>18-24</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Months</StatLabel>
                   <StatHelpText>Average ROI timeline</StatHelpText>
                 </Stat>
@@ -286,9 +286,9 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaUsers} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>85%</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>80%</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Customer Retention</StatLabel>
-                  <StatHelpText>Recurring revenue model</StatHelpText>
+                  <StatHelpText>With subscription models</StatHelpText>
                 </Stat>
               </MotionBox>
             </SimpleGrid>
@@ -449,20 +449,20 @@ const Franchise = () => {
                     
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Franchise Fee</Text>
+                        <Text fontWeight="medium">Working Capital</Text>
                         <Text fontWeight="bold" color={accentColor}>₹5,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Equipment & Setup</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹4,00,000 - ₹6,00,000</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,00,000 - ₹2,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Interior & Branding</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹2,00,000 - ₹3,00,000</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹2,50,000 - ₹3,50,000</Text>
                       </HStack>
                       <Divider />
                       
@@ -473,14 +473,14 @@ const Franchise = () => {
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Working Capital</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,00,000 - ₹2,00,000</Text>
+                        <Text fontWeight="medium">Franchise Fee</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹7,00,000-₹8,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹12,50,000 - ₹17,00,000</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹16,00,000 - ₹19,50,000</Text>
                       </HStack>
                     </VStack>
                   </Box>
@@ -524,7 +524,7 @@ const Franchise = () => {
                       
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Royalty Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>7% of Gross Sales</Text>
+                        <Text fontWeight="bold" color={accentColor}>6% of Gross Sales</Text>
                       </HStack>
                       <Divider />
                       
@@ -1031,7 +1031,7 @@ const Franchise = () => {
                     </AccordionButton>
                   </h2>
                   <AccordionPanel py={4} px={6} bg={cardBg}>
-                    Franchisees pay a royalty fee of 7% of gross sales, which covers ongoing support, technology updates, and brand development. There is also a marketing contribution of 2% that goes toward national marketing campaigns that benefit all locations. There are no hidden fees beyond these standard industry charges.
+                    Franchisees pay a royalty fee of 6% of gross sales, which covers ongoing support, technology updates, and brand development. There is also a marketing contribution of 2% that goes toward national marketing campaigns that benefit all locations. There are no hidden fees beyond these standard industry charges.
                   </AccordionPanel>
                 </AccordionItem>
               </MotionBox>
@@ -1266,7 +1266,7 @@ const Franchise = () => {
             </SimpleGrid>
 
             {/* CTA */}
-            <Box textAlign="center" mt={10}>
+            <Box textAlign="center" mt={10} id="franchise-application">
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1282,6 +1282,8 @@ const Franchise = () => {
                   fontWeight="bold"
                   _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
                   transition="all 0.3s"
+                  as={RouterLink}
+                  to="/contact"
                 >
                   Apply Now
                 </Button>
@@ -1334,8 +1336,10 @@ const Franchise = () => {
                   colorScheme="whiteAlpha" 
                   fontWeight="bold"
                   _hover={{ bg: 'white', color: 'brand.600' }}
+                  as={RouterLink}
+                  to="/contact"
                 >
-                  Download Brochure
+                  Apply Now
                 </Button>
                 <Button 
                   size="lg" 
@@ -1343,8 +1347,10 @@ const Franchise = () => {
                   colorScheme="whiteAlpha"
                   fontWeight="bold"
                   _hover={{ bg: 'whiteAlpha.200' }}
+                  as="a"
+                  href="#franchise-application"
                 >
-                  Schedule a Call
+                  Learn More
                 </Button>
               </HStack>
             </MotionBox>

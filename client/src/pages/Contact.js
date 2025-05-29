@@ -8,10 +8,10 @@ import {
   Icon,
   Stack,
   Flex,
+  useToast,
 } from '@chakra-ui/react';
-import { FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 
 const MotionBox = motion.div;
 const MotionHeading = motion.h2;
@@ -48,33 +48,70 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState({ success: false, error: false, message: '' });
 
+  const toast = useToast();
+
+  // Replace this URL with your own Google Script Web App URL after deployment
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznzutbyKR3NRcKW342ExNju-kZLWx050ls_5aXV7hCYz1zO1EeODeH8K1OOnU-trLodg/exec';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/contact', {
-        name,
-        email,
-        message
+      // Create form data for submission
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', message);
+      formData.append('timestamp', new Date().toISOString());
+
+      // Send data to Google Sheets
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' // This is important for CORS issues
       });
 
-      if (response.data.success) {
-        setFormStatus({
-          success: true,
-          error: false,
-          message: response.data.message || 'Thank you for your submission!'
-        });
-        // Clear form
-        setName('');
-        setEmail('');
-        setMessage('');
-      }
+      // Since mode is no-cors, we can't actually read the response
+      // So we'll just assume success if no error is thrown
+      setFormStatus({
+        success: true,
+        error: false,
+        message: 'Thank you for your message! We will get back to you soon.'
+      });
+
+      // Show success toast
+      toast({
+        title: 'Message sent!',
+        description: 'We have received your message and will contact you soon.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+        icon: <Icon as={FaCheckCircle} />
+      });
+
+      // Clear form
+      setName('');
+      setEmail('');
+      setMessage('');
     } catch (error) {
+      console.error('Form submission error:', error);
+      
       setFormStatus({
         success: false,
         error: true,
-        message: error.response?.data?.message || 'Something went wrong. Please try again later.'
+        message: 'Something went wrong. Please try again later.'
+      });
+
+      // Show error toast
+      toast({
+        title: 'Error sending message',
+        description: 'Please try again or contact us directly.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top'
       });
     } finally {
       setIsSubmitting(false);

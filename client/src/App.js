@@ -5,6 +5,7 @@ import './App.css';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import WhatsappButton from './components/WhatsappButton';
 
 // Pages
 import Home from './pages/Home';
@@ -105,6 +106,7 @@ function App() {
             <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
           <Footer />
+          <WhatsappButton />
         </div>
       </Router>
     </ChakraProvider>

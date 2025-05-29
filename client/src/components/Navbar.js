@@ -22,42 +22,59 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FaTshirt, FaSnowflake, FaHome, FaBolt, FaCalendarAlt } from 'react-icons/fa';
 
-const NavLink = ({ children, to }) => (
-  <RouterLink to={to}>
-    <Button 
-      variant="ghost" 
-      p={2} 
-      position="relative"
-      overflow="hidden"
-      _hover={{
-        color: 'brand.500',
-        bg: 'brand.50',
-        _after: {
-          transform: 'scaleX(1)',
-          transformOrigin: 'bottom left',
-        }
-      }}
-      _after={{
-        content: '""',
-        position: 'absolute',
-        width: '100%',
-        transform: 'scaleX(0)',
-        height: '2px',
-        bottom: '0',
-        left: '0',
-        bg: 'brand.500',
-        transformOrigin: 'bottom right',
-        transition: 'transform 0.3s ease-out'
-      }}
-    >
-      {children}
-    </Button>
-  </RouterLink>
-);
+const NavLink = ({ children, to, onClick }) => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+    if (onClick) onClick(); // For mobile menu closing
+  };
+  
+  return (
+    <RouterLink to={to} onClick={scrollToTop}>
+      <Button 
+        variant="ghost" 
+        p={2} 
+        position="relative"
+        overflow="hidden"
+        _hover={{
+          color: 'brand.500',
+          bg: 'brand.50',
+          _after: {
+            transform: 'scaleX(1)',
+            transformOrigin: 'bottom left',
+          }
+        }}
+        _after={{
+          content: '""',
+          position: 'absolute',
+          width: '100%',
+          transform: 'scaleX(0)',
+          height: '2px',
+          bottom: '0',
+          left: '0',
+          bg: 'brand.500',
+          transformOrigin: 'bottom right',
+          transition: 'transform 0.3s ease-out'
+        }}
+      >
+        {children}
+      </Button>
+    </RouterLink>
+  );
+};
 
 const ServiceMenuItem = ({ icon, title, description, to }) => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+  
   return (
-    <RouterLink to={to}>
+    <RouterLink to={to} onClick={scrollToTop}>
       <MenuItem py={3} px={4} _hover={{ bg: 'brand.50' }} transition="all 0.2s">
         <Flex align="center">
           <Icon as={icon} boxSize={5} color="brand.500" mr={3} />
@@ -110,15 +127,18 @@ export default function Navbar() {
                 <Flex
                   align="center"
                   justify="center"
-                  bg="brand.500"
+                  bgGradient="linear(to-r, brand.500, brand.600)"
                   color="white"
                   fontWeight="bold"
-                  fontSize="20px"
-                  h="40px"
-                  w="40px"
+                  fontSize={{ base: "18px", md: "20px" }}
+                  h={{ base: "36px", md: "44px" }}
+                  w={{ base: "36px", md: "44px" }}
                   borderRadius="md"
                   mr="2"
                   px={2}
+                  boxShadow="sm"
+                  _hover={{ transform: 'scale(1.05)' }}
+                  transition="all 0.2s"
                 >
                   W&B
                 </Flex>
@@ -162,35 +182,35 @@ export default function Navbar() {
                     icon={FaTshirt} 
                     title="Laundry by KG" 
                     description="Pay only for what you need cleaned" 
-                    to="/services/laundry-by-kg" 
+                    to="/services?tab=1" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
                     icon={FaSnowflake} 
                     title="Dry Cleaning" 
                     description="Professional care for delicate fabrics" 
-                    to="/services/dry-cleaning" 
+                    to="/services?tab=2" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
                     icon={FaHome} 
                     title="Household Items" 
                     description="From curtains to comforters" 
-                    to="/services/household" 
+                    to="/services?tab=3" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
                     icon={FaBolt} 
                     title="Express Delivery" 
                     description="Quick turnaround when you need it most" 
-                    to="/services/express" 
+                    to="/services?tab=4" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
                     icon={FaCalendarAlt} 
                     title="Subscription Plans" 
                     description="Regular service at discounted rates" 
-                    to="/services/subscription" 
+                    to="/services" 
                   />
                 </MenuList>
               </Menu>
@@ -206,6 +226,8 @@ export default function Navbar() {
             colorScheme="brand"
             _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}
             transition="all 0.2s"
+            as={RouterLink}
+            to="/contact"
           >
             Book Now
           </Button>
@@ -214,24 +236,26 @@ export default function Navbar() {
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as="nav" spacing={4}>
-              <NavLink to="/">Home</NavLink>
-              <NavLink to="/franchise">Franchise</NavLink>
-              <NavLink to="/services">Services</NavLink>
+              <NavLink to="/" onClick={onClose}>Home</NavLink>
+              <NavLink to="/franchise" onClick={onClose}>Franchise</NavLink>
+              <NavLink to="/services" onClick={onClose}>Services</NavLink>
               <Stack pl={4} spacing={2} mt={1} mb={1}>
-                <NavLink to="/services/laundry-by-kg">Laundry by KG</NavLink>
-                <NavLink to="/services/dry-cleaning">Dry Cleaning</NavLink>
-                <NavLink to="/services/household">Household Items</NavLink>
-                <NavLink to="/services/express">Express Delivery</NavLink>
-                <NavLink to="/services/subscription">Subscription Plans</NavLink>
+                <NavLink to="/services?tab=1" onClick={onClose}>Laundry by KG</NavLink>
+                <NavLink to="/services?tab=2" onClick={onClose}>Dry Cleaning</NavLink>
+                <NavLink to="/services?tab=3" onClick={onClose}>Household Items</NavLink>
+                <NavLink to="/services?tab=4" onClick={onClose}>Express Delivery</NavLink>
+                <NavLink to="/services" onClick={onClose}>Subscription Plans</NavLink>
               </Stack>
-              <NavLink to="/about">About</NavLink>
-              <NavLink to="/contact">Contact</NavLink>
+              <NavLink to="/about" onClick={onClose}>About</NavLink>
+              <NavLink to="/contact" onClick={onClose}>Contact</NavLink>
               <Button 
                 size="sm" 
                 colorScheme="brand" 
                 w="full"
                 _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}
                 transition="all 0.2s"
+                as={RouterLink}
+                to="/contact"
               >
                 Book Now
               </Button>

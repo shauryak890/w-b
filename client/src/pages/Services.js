@@ -541,14 +541,27 @@ export default function Services() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <Heading size="lg" mb={6}>Pricing</Heading>
+                <Box 
+                  bg="green.50" 
+                  p={4} 
+                  borderRadius="md" 
+                  mb={4} 
+                  borderLeft="4px" 
+                  borderColor="green.500"
+                >
+                  <Flex align="center">
+                    <Icon as={FaTags} color="green.500" mr={2} />
+                    <Text fontWeight="bold" color="green.700">Inaugural Discount: 10% OFF on all services!</Text>
+                  </Flex>
+                </Box>
                 <PricingTable 
                   category="Laundry by KG"
                   items={[
-                    { name: "Basic Laundry (≤ 5kg)", price: "₹80/kg", time: "48 hours" },
-                    { name: "Basic Laundry (> 5kg)", price: "₹70/kg", time: "48 hours" },
-                    { name: "Express Laundry", price: "₹100/kg", time: "24 hours" },
-                    { name: "Same Day Service", price: "₹120/kg", time: "Same day" },
-                    { name: "Subscription (Weekly)", price: "₹60/kg", time: "As scheduled" }
+                    { name: "Basic Laundry (≤ 5kg)", price: <Text><Text as="s" color="gray.500" mr={2}>₹80/kg</Text> ₹72/kg</Text>, time: "48 hours" },
+                    { name: "Basic Laundry (> 5kg)", price: <Text><Text as="s" color="gray.500" mr={2}>₹70/kg</Text> ₹63/kg</Text>, time: "48 hours" },
+                    { name: "Express Laundry", price: <Text><Text as="s" color="gray.500" mr={2}>₹100/kg</Text> ₹90/kg</Text>, time: "24 hours" },
+                    { name: "Same Day Service", price: <Text><Text as="s" color="gray.500" mr={2}>₹120/kg</Text> ₹108/kg</Text>, time: "Same day" },
+                    { name: "Subscription (Weekly)", price: <Text><Text as="s" color="gray.500" mr={2}>₹60/kg</Text> ₹54/kg</Text>, time: "As scheduled" }
                   ]}
                 />
               </MotionBox>
@@ -635,15 +648,28 @@ export default function Services() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <Heading size="lg" mb={6}>Pricing</Heading>
+                <Box 
+                  bg="green.50" 
+                  p={4} 
+                  borderRadius="md" 
+                  mb={4} 
+                  borderLeft="4px" 
+                  borderColor="green.500"
+                >
+                  <Flex align="center">
+                    <Icon as={FaTags} color="green.500" mr={2} />
+                    <Text fontWeight="bold" color="green.700">Inaugural Discount: 10% OFF on all services!</Text>
+                  </Flex>
+                </Box>
                 <PricingTable 
                   category="Dry Cleaning Services"
                   items={[
-                    { name: "Shirts/Blouses", price: "₹120", time: "48 hours" },
-                    { name: "Pants/Trousers", price: "₹150", time: "48 hours" },
-                    { name: "Suits (2 piece)", price: "₹550", time: "72 hours" },
-                    { name: "Dresses", price: "₹350-550", time: "72 hours" },
-                    { name: "Coats/Jackets", price: "₹450-650", time: "72 hours" },
-                    { name: "Sarees", price: "₹300-500", time: "72 hours" }
+                    { name: "Shirts/Blouses", price: <Text><Text as="s" color="gray.500" mr={2}>₹120</Text> ₹108</Text>, time: "48 hours" },
+                    { name: "Pants/Trousers", price: <Text><Text as="s" color="gray.500" mr={2}>₹150</Text> ₹135</Text>, time: "48 hours" },
+                    { name: "Suits (2 piece)", price: <Text><Text as="s" color="gray.500" mr={2}>₹550</Text> ₹495</Text>, time: "72 hours" },
+                    { name: "Dresses", price: <Text><Text as="s" color="gray.500" mr={2}>₹350-550</Text> ₹315-495</Text>, time: "72 hours" },
+                    { name: "Coats/Jackets", price: <Text><Text as="s" color="gray.500" mr={2}>₹450-650</Text> ₹405-585</Text>, time: "72 hours" },
+                    { name: "Sarees", price: <Text><Text as="s" color="gray.500" mr={2}>₹300-500</Text> ₹270-450</Text>, time: "72 hours" }
                   ]}
                 />
               </MotionBox>

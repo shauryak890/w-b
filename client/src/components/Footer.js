@@ -26,20 +26,30 @@ import {
   FaEnvelope 
 } from 'react-icons/fa';
 
-const FooterLink = ({ to, children }) => (
-  <ChakraLink
-    as={RouterLink}
-    to={to}
-    fontSize="sm"
-    color="gray.600"
-    _hover={{
-      color: 'brand.500',
-      textDecoration: 'none',
-    }}
-  >
-    {children}
-  </ChakraLink>
-);
+const FooterLink = ({ to, children }) => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+  
+  return (
+    <ChakraLink
+      as={RouterLink}
+      to={to}
+      fontSize="sm"
+      color="gray.600"
+      onClick={scrollToTop}
+      _hover={{
+        color: 'brand.500',
+        textDecoration: 'none',
+      }}
+    >
+      {children}
+    </ChakraLink>
+  );
+};
 
 const FooterSection = ({ title, children, isMobile }) => {
   const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: !isMobile });
