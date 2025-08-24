@@ -30,17 +30,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0088ff;
+  background: #00B4C5;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #006ecc;
+  background: #02495A;
 }
 
 /* Common Utilities */
 .text-gradient {
-  background: linear-gradient(90deg, #0088ff, #62b6ff);
+  background: linear-gradient(90deg, #00B4C5, #02495A);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -44,14 +44,15 @@ const ContactInfo = ({ icon, title, children }) => {
 export default function Contact() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [enquiry, setEnquiry] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formStatus, setFormStatus] = useState({ success: false, error: false, message: '' });
 
   const toast = useToast();
 
-  // Replace this URL with your own Google Script Web App URL after deployment
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznzutbyKR3NRcKW342ExNju-kZLWx050ls_5aXV7hCYz1zO1EeODeH8K1OOnU-trLodg/exec';
+  // Google Apps Script Web App URL for Contact form submissions
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwr9Gv2EfU5D3w1qHRZUid2wrQcGlbxfZM7SbC_z5JNgO9erDLhlkH5y91tnVtN_Sk49Q/exec';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,6 +63,7 @@ export default function Contact() {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('email', email);
+      formData.append('enquiry', enquiry);
       formData.append('message', message);
       formData.append('timestamp', new Date().toISOString());
 
@@ -94,6 +96,7 @@ export default function Contact() {
       // Clear form
       setName('');
       setEmail('');
+      setEnquiry('');
       setMessage('');
     } catch (error) {
       console.error('Form submission error:', error);
@@ -245,6 +248,25 @@ export default function Contact() {
                       width="full"
                       required
                     />
+                  </Box>
+
+                  <Box mb={4}>
+                    <Text fontWeight="bold" mb={2}>Enquiry Type</Text>
+                    <Box
+                      as="select"
+                      value={enquiry}
+                      onChange={(e) => setEnquiry(e.target.value)}
+                      p={2}
+                      borderWidth="1px"
+                      borderRadius="md"
+                      width="full"
+                      required
+                    >
+                      <option value="" disabled>Select an option</option>
+                      <option value="career">Career/Jobs</option>
+                      <option value="franchise">Franchise</option>
+                      <option value="services">Services</option>
+                    </Box>
                   </Box>
 
                   <Box mb={4}>

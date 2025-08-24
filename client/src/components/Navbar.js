@@ -124,18 +124,18 @@ export default function Navbar() {
                 _hover={{ color: 'brand.600' }}
                 transition="color 0.2s ease"
               >
+                {/* Logo as Text with New Brand Colors */}
                 <Flex
                   align="center"
                   justify="center"
-                  bgGradient="linear(to-r, brand.500, brand.600)"
+                  bg="brand.500" /* Using the new #00B4C5 color */
                   color="white"
                   fontWeight="bold"
                   fontSize={{ base: "18px", md: "20px" }}
-                  h={{ base: "36px", md: "44px" }}
-                  w={{ base: "36px", md: "44px" }}
+                  h={{ base: "40px", md: "48px" }}
+                  w={{ base: "40px", md: "48px" }}
                   borderRadius="md"
                   mr="2"
-                  px={2}
                   boxShadow="sm"
                   _hover={{ transform: 'scale(1.05)' }}
                   transition="all 0.2s"
@@ -193,17 +193,24 @@ export default function Navbar() {
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
+                    icon={FaTshirt} 
+                    title="Steam Ironing" 
+                    description="Professional pressing for all garments" 
+                    to="/services?tab=3" 
+                  />
+                  <Divider my={2} />
+                  <ServiceMenuItem 
                     icon={FaHome} 
                     title="Household Items" 
                     description="From curtains to comforters" 
-                    to="/services?tab=3" 
+                    to="/services?tab=4" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
                     icon={FaBolt} 
                     title="Express Delivery" 
                     description="Quick turnaround when you need it most" 
-                    to="/services?tab=4" 
+                    to="/services?tab=5" 
                   />
                   <Divider my={2} />
                   <ServiceMenuItem 
@@ -216,6 +223,8 @@ export default function Navbar() {
               </Menu>
               
               <NavLink to="/about">About</NavLink>
+              <NavLink to="/csr">CSR</NavLink>
+              <NavLink to="/associate">Associate</NavLink>
               <NavLink to="/contact">Contact</NavLink>
             </HStack>
           </HStack>
@@ -242,11 +251,14 @@ export default function Navbar() {
               <Stack pl={4} spacing={2} mt={1} mb={1}>
                 <NavLink to="/services?tab=1" onClick={onClose}>Laundry by KG</NavLink>
                 <NavLink to="/services?tab=2" onClick={onClose}>Dry Cleaning</NavLink>
-                <NavLink to="/services?tab=3" onClick={onClose}>Household Items</NavLink>
-                <NavLink to="/services?tab=4" onClick={onClose}>Express Delivery</NavLink>
+                <NavLink to="/services?tab=3" onClick={onClose}>Steam Ironing</NavLink>
+                <NavLink to="/services?tab=4" onClick={onClose}>Household Items</NavLink>
+                <NavLink to="/services?tab=5" onClick={onClose}>Express Delivery</NavLink>
                 <NavLink to="/services" onClick={onClose}>Subscription Plans</NavLink>
               </Stack>
               <NavLink to="/about" onClick={onClose}>About</NavLink>
+              <NavLink to="/csr" onClick={onClose}>CSR</NavLink>
+              <NavLink to="/associate" onClick={onClose}>Associate</NavLink>
               <NavLink to="/contact" onClick={onClose}>Contact</NavLink>
               <Button 
                 size="sm" 

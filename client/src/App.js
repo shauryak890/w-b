@@ -17,6 +17,8 @@ import HelpCenter from './pages/HelpCenter';
 import TermsOfService from './pages/policies/TermsOfService';
 import PrivacyPolicy from './pages/policies/PrivacyPolicy';
 import Franchise from './pages/Franchise';
+import Associate from './pages/Associate';
+import CSR from './pages/CSR';
 
 const theme = extendTheme({
   styles: {
@@ -31,16 +33,16 @@ const theme = extendTheme({
   },
   colors: {
     brand: {
-      50: '#E0F7FF',
-      100: '#B8EBFF',
-      200: '#8BDFFF',
-      300: '#5ED3FF',
-      400: '#31C7FF',
-      500: '#04BBFF',  // Primary brand color
-      600: '#0095CC',
-      700: '#007099',
-      800: '#004B66',
-      900: '#002533',
+      50: '#E0F7FA',
+      100: '#B2EBF2',
+      200: '#80DEEA',
+      300: '#4DD0E1',
+      400: '#26C6DA',
+      500: '#00B4C5',  // Primary brand color
+      600: '#00ACC1',
+      700: '#0097A7',
+      800: '#00838F',
+      900: '#02495A',  // Darker brand color
     },
     accent: {
       50: '#F0F4FF',
@@ -98,7 +100,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
             <Route path="/about" element={<About />} />
+            <Route path="/csr" element={<CSR />} />
             <Route path="/franchise" element={<Franchise />} />
+            <Route path="/associate" element={<Associate />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/help-center" element={<HelpCenter />} />

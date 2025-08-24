@@ -263,13 +263,16 @@ export default function Home() {
           
           <Slider ref={sliderRef} {...carouselSettings}>
             {carouselSlides.map((slide) => (
-              <Box key={slide.id} height={{ base: "auto", md: "700px" }} position="relative">
+              <Box key={slide.id} height={{ base: "500px", md: "700px" }} position="relative">
                 <Box
                   position="absolute"
                   inset="0"
                   bgImage={`url(${slide.image})`}
                   bgSize="cover"
-                  bgPosition="center"
+                  bgPosition="center center"
+                  bgRepeat="no-repeat"
+                  width="100%"
+                  height="100%"
                   _after={{
                     content: '""',
                     position: 'absolute',
@@ -372,9 +375,20 @@ export default function Home() {
 
                       <Stack direction="row" spacing={4} pt={4}>
                         {slide.highlights.map((highlight, index) => (
-                          <HStack key={index} spacing={1}>
-                            <Icon as={FaCheck} color="brand.400" />
-                            <Text fontWeight="medium" fontSize={{ base: "xs", md: "sm" }}>
+                          <HStack key={index} spacing={2}>
+                            <Flex
+                              align="center"
+                              justify="center"
+                              borderRadius="full"
+                              bg="brand.50"
+                              color="brand.500"
+                              w={6}
+                              h={6}
+                              boxShadow="sm"
+                            >
+                              <Icon as={FaCheck} fontSize="xs" />
+                            </Flex>
+                            <Text fontWeight="medium" fontSize={{ base: "sm", md: "md" }}>
                               {highlight}
                             </Text>
                           </HStack>
@@ -494,12 +508,15 @@ export default function Home() {
                   height="100%"
                 >
                   <Circle 
-                    size={20} 
+                    size={24} 
                     bg="brand.50" 
                     color="brand.500"
                     mb={5}
+                    boxShadow="md"
+                    transition="all 0.3s ease"
+                    _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
                   >
-                    <Icon as={FaTshirt} fontSize="2xl" />
+                    <Icon as={FaTshirt} fontSize="3xl" />
                   </Circle>
                   <Heading size="md" mb={3}>Dry Cleaning</Heading>
                   <Text color={useColorModeValue('gray.600', 'gray.400')}>
@@ -530,12 +547,15 @@ export default function Home() {
                   height="100%"
                 >
                   <Circle 
-                    size={20} 
+                    size={24} 
                     bg="accent.50" 
                     color="accent.500"
                     mb={5}
+                    boxShadow="md"
+                    transition="all 0.3s ease"
+                    _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
                   >
-                    <Icon as={FaHandsWash} fontSize="2xl" />
+                    <Icon as={FaHandsWash} fontSize="3xl" />
                   </Circle>
                   <Heading size="md" mb={3}>Wash & Iron</Heading>
                   <Text color={useColorModeValue('gray.600', 'gray.400')}>
@@ -566,12 +586,15 @@ export default function Home() {
                   height="100%"
                 >
                   <Circle 
-                    size={20} 
+                    size={24} 
                     bg="green.50" 
                     color="green.500"
                     mb={5}
+                    boxShadow="md"
+                    transition="all 0.3s ease"
+                    _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
                   >
-                    <Icon as={FaLeaf} fontSize="2xl" />
+                    <Icon as={FaLeaf} fontSize="3xl" />
                   </Circle>
                   <Heading size="md" mb={3}>Eco Laundry</Heading>
                   <Text color={useColorModeValue('gray.600', 'gray.400')}>
@@ -602,12 +625,15 @@ export default function Home() {
                   height="100%"
                 >
                   <Circle 
-                    size={20} 
+                    size={24} 
                     bg="purple.50" 
                     color="purple.500"
                     mb={5}
+                    boxShadow="md"
+                    transition="all 0.3s ease"
+                    _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
                   >
-                    <Icon as={FaTruck} fontSize="2xl" />
+                    <Icon as={FaTruck} fontSize="3xl" />
                   </Circle>
                   <Heading size="md" mb={3}>Pickup & Delivery</Heading>
                   <Text color={useColorModeValue('gray.600', 'gray.400')}>

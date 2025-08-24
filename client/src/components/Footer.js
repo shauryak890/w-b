@@ -111,14 +111,10 @@ function Footer() {
             </Text>
             <Stack direction="row" spacing={4} pt={4}>
               <IconButton
-                aria-label="Twitter"
-                icon={<FaTwitter />}
-                size="sm"
-                color="brand.500"
-                variant="ghost"
-                _hover={{ bg: 'brand.50', color: 'brand.600' }}
-              />
-              <IconButton
+                as="a"
+                href="https://www.facebook.com/share/19RzE26f5Q/"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 icon={<FaFacebook />}
                 size="sm"
@@ -127,6 +123,10 @@ function Footer() {
                 _hover={{ bg: 'brand.50', color: 'brand.600' }}
               />
               <IconButton
+                as="a"
+                href="https://www.instagram.com/whitesandbrights.in/"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 icon={<FaInstagram />}
                 size="sm"
@@ -135,6 +135,14 @@ function Footer() {
                 _hover={{ bg: 'brand.50', color: 'brand.600' }}
               />
             </Stack>
+            <VStack align="flex-start" spacing={1} pt={2}>
+              <Text fontSize="sm" fontWeight="bold" color="brand.500">
+                CIN: U96010BR2025PTC077191
+              </Text>
+              <Text fontSize="sm" fontWeight="bold" color="brand.500">
+                WNB Cleantech Pvt Ltd
+              </Text>
+            </VStack>
           </VStack>
 
           <FooterSection title="Contact Us" isMobile={false}>
@@ -166,7 +174,7 @@ function Footer() {
                   </Box>
                   <VStack align="start" spacing={0}>
                     <Text fontSize="sm" fontWeight="medium" color="gray.700">Call Us</Text>
-                    <Text fontSize="sm" color="gray.600">+91 81027 33336</Text>
+                    <Text fontSize="sm" color="gray.600">+91 87093 19450</Text>
                   </VStack>
                 </Stack>
 
@@ -214,7 +222,7 @@ function Footer() {
           textAlign={{ base: 'center', md: 'left' }}
         >
           <Text fontSize="sm" color="gray.600">
-            &copy; {new Date().getFullYear()} Whites & Brights. All rights reserved
+            &copy; {new Date().getFullYear()} WNB Cleantech Pvt Ltd. All rights reserved
           </Text>
           <Stack
             direction="row"

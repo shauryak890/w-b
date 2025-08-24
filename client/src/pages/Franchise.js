@@ -416,7 +416,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  BUSINESS MODEL BREAKDOWN
+                  FRANCHISE BUSINESS MODELS
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -424,13 +424,14 @@ const Franchise = () => {
                   maxW="3xl"
                   mx="auto"
                 >
-                  A transparent look at the investment requirements, costs, and potential returns of your Whites & Brights franchise.
+                  Choose between our Silver and Gold business models designed to fit your investment capabilities and business goals.
                 </Text>
               </MotionBox>
             </Stack>
 
-            {/* Investment Requirements */}
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={10}>
+            {/* Franchise Models */}
+            <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={10} alignItems="stretch">
+              {/* Silver Model */}
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -443,50 +444,71 @@ const Franchise = () => {
                   overflow="hidden"
                   boxShadow="lg"
                   height="100%"
+                  position="relative"
                 >
-                  <Box p={8}>
-                    <Heading size="lg" mb={6} color={headingColor}>Investment Requirements</Heading>
+                  <Box
+                    position="absolute"
+                    top="0"
+                    right="0"
+                    bg="gray.400"
+                    color="white"
+                    px={4}
+                    py={2}
+                    borderBottomLeftRadius="md"
+                    fontWeight="bold"
+                    zIndex="1"
+                  >
+                    W&B SILVER MODEL
+                  </Box>
+                  <Box p={8} pt={16}>
+                    <Heading size="lg" mb={2} color={headingColor}>Collection Center</Heading>
+                    <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
+                      FOFO Model (Franchise Owned Franchise Operated)
+                    </Text>
+                    <Text mb={8} color={textColor} fontStyle="italic">
+                      Perfect for entrepreneurs looking to start with a manageable investment
+                    </Text>
                     
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Working Capital</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹5,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Equipment & Setup</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,00,000 - ₹2,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Interior & Branding</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹2,50,000 - ₹3,50,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Initial Inventory</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹50,000 - ₹1,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
                         <Text fontWeight="medium">Franchise Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹7,00,000-₹8,00,000</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                      </HStack>
+                      <Text fontSize="sm" color="gray.500" ml={2} mt={-5}>One-time payment</Text>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Interior Cost</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                      </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Accessories</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                      </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Space Required</Text>
+                        <Text fontWeight="bold" color={accentColor}>150-200 sq.ft</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹16,00,000 - ₹19,50,000</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹9,00,000</Text>
                       </HStack>
+                      
+                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
+                        18% GST inclusive on all costs as per Indian Govt. standards
+                      </Text>
                     </VStack>
                   </Box>
                 </Box>
               </MotionBox>
 
+              {/* Gold Model */}
               <MotionBox
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -499,45 +521,165 @@ const Franchise = () => {
                   overflow="hidden"
                   boxShadow="lg"
                   height="100%"
+                  position="relative"
                 >
-                  <Box p={8}>
-                    <Heading size="lg" mb={6} color={headingColor}>Projected Returns</Heading>
+                  <Box
+                    position="absolute"
+                    top="0"
+                    right="0"
+                    bg="yellow.500"
+                    color="white"
+                    px={4}
+                    py={2}
+                    borderBottomLeftRadius="md"
+                    fontWeight="bold"
+                    zIndex="1"
+                  >
+                    W&B GOLD MODEL
+                  </Box>
+                  <Box p={8} pt={16}>
+                    <Heading size="lg" mb={2} color={headingColor}>Full Franchise + 2 Collection Centers</Heading>
+                    <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
+                      FOFO Model (Franchise Owned Franchise Operated)
+                    </Text>
+                    <Text mb={8} color={textColor} fontStyle="italic">
+                      Complete business solution with processing unit and multiple collection points
+                    </Text>
                     
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Average Monthly Revenue</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,50,000 - ₹4,50,000</Text>
+                        <Text fontWeight="medium">Franchise Fee</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹5,00,000</Text>
+                      </HStack>
+                      <Text fontSize="sm" color="gray.500" ml={2} mt={-5}>One-time payment</Text>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Washer Extractor HM (14 Kg)</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹4,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Monthly Operating Expenses</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,50,000 - ₹2,00,000</Text>
+                        <Text fontWeight="medium">Stack Dryer-Dryer Gas (15Kg)</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹5,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Monthly Profit (Before Tax)</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,50,000 - ₹2,50,000</Text>
+                        <Text fontWeight="medium">Stabilizer for Gas Machine</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Royalty Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>6% of Gross Sales</Text>
+                        <Text fontWeight="medium">Boiler & Utility Tables</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Estimated Break-even</Text>
-                        <Text fontWeight="bold" color={accentColor}>18-24 Months</Text>
+                        <Text fontWeight="medium">Billing Setup & Chemicals</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹2,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="bold" fontSize="lg">ROI</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>25-35% Annually</Text>
+                        <Text fontWeight="medium">Collection Center Setup (2)</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹2,00,000</Text>
                       </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹21,00,000</Text>
+                      </HStack>
+                      
+                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
+                        18% GST inclusive on all costs as per Indian Govt. standards
+                      </Text>
+                    </VStack>
+                  </Box>
+                </Box>
+              </MotionBox>
+
+              {/* Platinum Model */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Box
+                  bg={cardBg}
+                  borderRadius="lg"
+                  overflow="hidden"
+                  boxShadow="lg"
+                  height="100%"
+                  position="relative"
+                >
+                  <Box
+                    position="absolute"
+                    top="0"
+                    right="0"
+                    bg="purple.600"
+                    color="white"
+                    px={4}
+                    py={2}
+                    borderBottomLeftRadius="md"
+                    fontWeight="bold"
+                    zIndex="1"
+                  >
+                    W&B PLATINUM MODEL
+                  </Box>
+                  <Box p={8} pt={16}>
+                    <Heading size="lg" mb={2} color={headingColor}>Premium Laundry Hub + 10 Silver Centers</Heading>
+                    <Text fontSize="md" bg="purple.100" color="purple.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
+                      FOCO Model (Franchise Owned Company Operated)
+                    </Text>
+                    <Text mb={8} color={textColor} fontStyle="italic">
+                      Comprehensive enterprise solution with company-managed operations and multiple revenue streams
+                    </Text>
+                    
+                    <VStack spacing={6} align="stretch">
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Space Required</Text>
+                        <Text fontWeight="bold" color={accentColor}>1200-1500 sq.ft</Text>
+                      </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Includes</Text>
+                        <Text fontWeight="bold" color={accentColor}>10 Silver W&B Models</Text>
+                      </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Business Model</Text>
+                        <Text fontWeight="bold" color={accentColor}>FOCO</Text>
+                      </HStack>
+                      <Divider />
+                      
+                      <HStack justify="space-between">
+                        <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹1.00 - 1.21 Cr</Text>
+                      </HStack>
+                      
+                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right" mb={4}>
+                        18% GST inclusive on all costs as per Indian Govt. standards
+                      </Text>
+
+                      <Button
+                        as={RouterLink}
+                        to="/contact"
+                        colorScheme="purple"
+                        size="lg"
+                        w="full"
+                        _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                        _active={{ transform: 'translateY(0)' }}
+                      >
+                        Contact Us For Details
+                      </Button>
                     </VStack>
                   </Box>
                 </Box>
@@ -561,7 +703,7 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>Collection Center</Heading>
+                  <Heading size="md" mb={2} color={headingColor}>W&B Silver Model</Heading>
                   <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>150-200 sq.ft</Text>
                   <Text color={textColor}>Ideal for high-traffic locations with processing done at central facility</Text>
                 </Box>
@@ -582,7 +724,7 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>Mini Store</Heading>
+                  <Heading size="md" mb={2} color={headingColor}>W&B Gold Model</Heading>
                   <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>300-500 sq.ft</Text>
                   <Text color={textColor}>Combined collection and limited processing capabilities</Text>
                 </Box>
@@ -603,8 +745,8 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>Full-Service Store</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>800-1200 sq.ft</Text>
+                  <Heading size="md" mb={2} color={headingColor}>W&B Platinum Model</Heading>
+                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>1200-1500 sq.ft</Text>
                   <Text color={textColor}>Complete processing facility with all services available on-site</Text>
                 </Box>
               </MotionBox>
