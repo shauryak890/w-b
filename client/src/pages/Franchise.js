@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Container,
@@ -26,11 +26,6 @@ import {
   ListIcon,
   Divider,
   useColorModeValue,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Select,
   Badge,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -43,21 +38,120 @@ import {
   FaCheckCircle,
   FaStore,
   FaUserTie,
-  FaLaptop,
   FaTruck,
   FaUsers,
   FaArrowRight,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaQuestion
 } from 'react-icons/fa';
 import { Link as RouterLink } from 'react-router-dom';
+import { GradientText, Counter } from '../components/ui';
 
 // Motion components
 const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
-const MotionText = motion(Text);
+
+// Franchise testimonials
+const testimonials = [
+  {
+    quote:
+      "Starting my journey with Whites & Brights has been fantastic. Even though we just opened recently, the support team guided me through every step of the setup and training process. The response from customers has been overwhelming already!",
+    name: 'Poonam Singh',
+    role: 'Franchise Owner since July 2025',
+    initials: 'PS',
+  },
+  {
+    quote:
+      "Partnering with Whites & Brights has genuinely changed my life. What started as a side venture quickly grew into a steady, reliable source of income that gave my family real financial freedom. The proven systems, marketing support and hands-on guidance meant I was never figuring things out alone — today I'm proud to run a profitable business I can call my own.",
+    name: 'Mukesh',
+    role: 'Franchise Owner since January 2026',
+    initials: 'MK',
+  },
+];
+
+// Self-contained fade carousel for testimonials (no external slider lib)
+const TestimonialCarousel = ({ items, cardBg, textColor }) => {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const goTo = useCallback((i) => setIndex(((i % items.length) + items.length) % items.length), [items.length]);
+
+  useEffect(() => {
+    if (paused) return undefined;
+    const id = setInterval(() => setIndex((prev) => (prev + 1) % items.length), 5000);
+    return () => clearInterval(id);
+  }, [paused, items.length]);
+
+  return (
+    <Box maxW="800px" mx="auto" w="full">
+      <Box
+        position="relative"
+        minH={{ base: '340px', md: '300px' }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {items.map((t, i) => (
+          <MotionBox
+            key={t.name}
+            position="absolute"
+            inset={0}
+            animate={{ opacity: i === index ? 1 : 0 }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            pointerEvents={i === index ? 'auto' : 'none'}
+          >
+            <Flex
+              direction="column"
+              h="full"
+              bg={cardBg}
+              borderRadius="xl"
+              boxShadow="lg"
+              p={{ base: 6, md: 8 }}
+            >
+              <Text fontSize={{ base: 'md', md: 'lg' }} fontStyle="italic" mb={6} flex="1">
+                &ldquo;{t.quote}&rdquo;
+              </Text>
+              <HStack>
+                <Flex
+                  w={12}
+                  h={12}
+                  borderRadius="full"
+                  bgGradient="linear(135deg, brand.500, accent.500)"
+                  color="white"
+                  fontWeight="bold"
+                  align="center"
+                  justify="center"
+                  mr={3}
+                  flexShrink={0}
+                >
+                  {t.initials}
+                </Flex>
+                <Box>
+                  <Text fontWeight="bold">{t.name}</Text>
+                  <Text fontSize="sm" color={textColor}>{t.role}</Text>
+                </Box>
+              </HStack>
+            </Flex>
+          </MotionBox>
+        ))}
+      </Box>
+
+      {/* Dots */}
+      <HStack justify="center" spacing={3} mt={8}>
+        {items.map((t, i) => (
+          <Box
+            key={t.name}
+            as="button"
+            aria-label={`Show testimonial ${i + 1}`}
+            onClick={() => goTo(i)}
+            w={i === index ? 8 : 2.5}
+            h={2.5}
+            borderRadius="full"
+            bg={i === index ? 'brand.500' : 'gray.300'}
+            transition="all 0.3s ease"
+            _hover={{ bg: i === index ? 'brand.500' : 'gray.400' }}
+          />
+        ))}
+      </HStack>
+    </Box>
+  );
+};
 
 const Franchise = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
@@ -92,7 +186,7 @@ const Franchise = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            bg: 'blackAlpha.700',
+            bgGradient: 'linear(to-r, rgba(2,73,90,0.95), rgba(2,73,90,0.62))',
             zIndex: 0
           }}
         />
@@ -110,15 +204,21 @@ const Franchise = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge 
-                colorScheme="brand" 
-                fontSize={{ base: "sm", md: "md" }} 
-                px={3} 
-                py={1} 
-                borderRadius="full"
-                textTransform="uppercase"
+              <Badge
+                display="inline-flex"
+                alignItems="center"
+                gap={2}
+                bg="whiteAlpha.200"
+                color="white"
+                backdropFilter="blur(8px)"
+                border="1px solid"
+                borderColor="whiteAlpha.400"
+                fontSize={{ base: "sm", md: "md" }}
+                px={4}
+                py={2}
                 mb={4}
               >
+                <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" />
                 Business Opportunity
               </Badge>
             </MotionBox>
@@ -132,10 +232,11 @@ const Franchise = () => {
                 as="h1"
                 fontSize={{ base: '3xl', md: '5xl', lg: '6xl' }}
                 fontWeight="bold"
-                lineHeight="1.1"
+                lineHeight="1.05"
+                letterSpacing="-0.03em"
                 mb={6}
               >
-                JOIN THE FASTEST GROWING LAUNDRY FRANCHISE
+                Join the Fastest-Growing <GradientText from="brand.300" to="accent.200">Laundry Franchise</GradientText>
               </Heading>
             </MotionBox>
             
@@ -160,13 +261,12 @@ const Franchise = () => {
             >
               <Button
                 size="lg"
-                colorScheme="brand"
+                variant="gradient"
                 px={8}
                 py={7}
                 fontSize="md"
                 fontWeight="bold"
-                _hover={{ transform: 'translateY(-2px)', boxShadow: 'xl' }}
-                transition="all 0.3s"
+                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
                 as="a"
                 href="#franchise-application"
               >
@@ -193,7 +293,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  WHY INVEST IN THE LAUNDRY INDUSTRY?
+                  Why Invest in the <GradientText>Laundry Industry?</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -223,7 +323,7 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaChartLine} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>₹20,000Cr</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}><Counter to={25000} prefix="₹" suffix="Cr" /></StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Market Size</StatLabel>
                   <StatHelpText>Growing at 8.7% annually</StatHelpText>
                 </Stat>
@@ -244,7 +344,7 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaMoneyBillWave} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>40-50%</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>50-60%</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Profit Margin</StatLabel>
                   <StatHelpText>In premium urban markets</StatHelpText>
                 </Stat>
@@ -265,7 +365,7 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaStore} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>18-24</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>16-18</StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Months</StatLabel>
                   <StatHelpText>Average ROI timeline</StatHelpText>
                 </Stat>
@@ -286,7 +386,7 @@ const Franchise = () => {
                   textAlign="center"
                 >
                   <Icon as={FaUsers} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>80%</StatNumber>
+                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}><Counter to={80} suffix="%" /></StatNumber>
                   <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Customer Retention</StatLabel>
                   <StatHelpText>With subscription models</StatHelpText>
                 </Stat>
@@ -416,7 +516,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  FRANCHISE BUSINESS MODELS
+                  Franchise <GradientText>Business Models</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -440,11 +540,13 @@ const Franchise = () => {
               >
                 <Box
                   bg={cardBg}
-                  borderRadius="lg"
+                  borderRadius="2xl"
                   overflow="hidden"
-                  boxShadow="lg"
+                  boxShadow="card"
                   height="100%"
                   position="relative"
+                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
+                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
                 >
                   <Box
                     position="absolute"
@@ -458,10 +560,10 @@ const Franchise = () => {
                     fontWeight="bold"
                     zIndex="1"
                   >
-                    W&B SILVER MODEL
+                    SMART LAUNDRY POINT
                   </Box>
                   <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Collection Center</Heading>
+                    <Heading size="lg" mb={2} color={headingColor}>Smart Point</Heading>
                     <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
                       FOFO Model (Franchise Owned Franchise Operated)
                     </Text>
@@ -471,33 +573,33 @@ const Franchise = () => {
                     
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Franchise Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                        <Text fontWeight="medium">Store setup and Premium interior</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,50,000</Text>
                       </HStack>
                       <Text fontSize="sm" color="gray.500" ml={2} mt={-5}>One-time payment</Text>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Interior Cost</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                        <Text fontWeight="medium">Commercial machine package</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹7,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Accessories</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
+                        <Text fontWeight="medium">POS+Software+Application Integration</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,00,000</Text>
                       </HStack>
                       <Divider />
-                      
+
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Space Required</Text>
-                        <Text fontWeight="bold" color={accentColor}>150-200 sq.ft</Text>
+                        <Text fontWeight="medium">Delivery, Marketing, Chemical support kit</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹9,00,000</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹15,00,000</Text>
                       </HStack>
                       
                       <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
@@ -517,11 +619,13 @@ const Franchise = () => {
               >
                 <Box
                   bg={cardBg}
-                  borderRadius="lg"
+                  borderRadius="2xl"
                   overflow="hidden"
-                  boxShadow="lg"
+                  boxShadow="card"
                   height="100%"
                   position="relative"
+                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
+                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
                 >
                   <Box
                     position="absolute"
@@ -535,64 +639,75 @@ const Franchise = () => {
                     fontWeight="bold"
                     zIndex="1"
                   >
-                    W&B GOLD MODEL
+                    W&B PRIME FRANCHISE
                   </Box>
                   <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Full Franchise + 2 Collection Centers</Heading>
+                    <Heading size="lg" mb={2} color={headingColor}>Prime Franchise</Heading>
                     <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
                       FOFO Model (Franchise Owned Franchise Operated)
                     </Text>
                     <Text mb={8} color={textColor} fontStyle="italic">
-                      Complete business solution with processing unit and multiple collection points
+                      Complete business solution with advanced equipment and full support
                     </Text>
                     
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Franchise Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹5,00,000</Text>
-                      </HStack>
-                      <Text fontSize="sm" color="gray.500" ml={2} mt={-5}>One-time payment</Text>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Washer Extractor HM (14 Kg)</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹4,50,000</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹2,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Stack Dryer-Dryer Gas (15Kg)</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹5,50,000</Text>
+                        <Text fontWeight="medium">Store setup and Premium interior</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹4,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Stabilizer for Gas Machine</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹50,000</Text>
+                        <Text fontWeight="medium">Commercial machine package</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹9,60,000</Text>
                       </HStack>
                       <Divider />
-                      
+
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Boiler & Utility Tables</Text>
+                        <Text fontWeight="medium">Vacuum steam iron press table set (2)</Text>
                         <Text fontWeight="bold" color={accentColor}>₹1,50,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Billing Setup & Chemicals</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹2,00,000</Text>
+                        <Text fontWeight="medium">Shoe washer with sterilization 1x</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,20,000</Text>
                       </HStack>
                       <Divider />
-                      
+
                       <HStack justify="space-between">
-                        <Text fontWeight="medium">Collection Center Setup (2)</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹2,00,000</Text>
+                        <Text fontWeight="medium">Shoe dryer 20 pair</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,10,000</Text>
+                      </HStack>
+                      <Divider />
+
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Spotting machine, 2 gun with boiler</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,20,000</Text>
+                      </HStack>
+                      <Divider />
+
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">POS+Software+Application Integration</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹1,00,000</Text>
+                      </HStack>
+                      <Divider />
+
+                      <HStack justify="space-between">
+                        <Text fontWeight="medium">Delivery, Marketing, Chemical support kit</Text>
+                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹21,00,000</Text>
+                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹25,10,000</Text>
                       </HStack>
                       
                       <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
@@ -612,11 +727,13 @@ const Franchise = () => {
               >
                 <Box
                   bg={cardBg}
-                  borderRadius="lg"
+                  borderRadius="2xl"
                   overflow="hidden"
-                  boxShadow="lg"
+                  boxShadow="card"
                   height="100%"
                   position="relative"
+                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
+                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
                 >
                   <Box
                     position="absolute"
@@ -630,10 +747,10 @@ const Franchise = () => {
                     fontWeight="bold"
                     zIndex="1"
                   >
-                    W&B PLATINUM MODEL
+                    W&B SIGNATURE ENTERPRISE
                   </Box>
                   <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Premium Laundry Hub + 10 Silver Centers</Heading>
+                    <Heading size="lg" mb={2} color={headingColor}>Premium Laundry Hub + 10 CC</Heading>
                     <Text fontSize="md" bg="purple.100" color="purple.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
                       FOCO Model (Franchise Owned Company Operated)
                     </Text>
@@ -644,13 +761,13 @@ const Franchise = () => {
                     <VStack spacing={6} align="stretch">
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Space Required</Text>
-                        <Text fontWeight="bold" color={accentColor}>1200-1500 sq.ft</Text>
+                        <Text fontWeight="bold" color={accentColor}>1500-2000 sq.ft</Text>
                       </HStack>
                       <Divider />
                       
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Includes</Text>
-                        <Text fontWeight="bold" color={accentColor}>10 Silver W&B Models</Text>
+                        <Text fontWeight="bold" color={accentColor}>10 Collection Centers</Text>
                       </HStack>
                       <Divider />
                       
@@ -703,8 +820,8 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>W&B Silver Model</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>150-200 sq.ft</Text>
+                  <Heading size="md" mb={2} color={headingColor}>Smart Laundry Point</Heading>
+                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>300-350 sq.ft</Text>
                   <Text color={textColor}>Ideal for high-traffic locations with processing done at central facility</Text>
                 </Box>
               </MotionBox>
@@ -724,8 +841,8 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>W&B Gold Model</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>300-500 sq.ft</Text>
+                  <Heading size="md" mb={2} color={headingColor}>W&B Prime Franchise</Heading>
+                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>400-500 sq.ft</Text>
                   <Text color={textColor}>Combined collection and limited processing capabilities</Text>
                 </Box>
               </MotionBox>
@@ -745,8 +862,8 @@ const Franchise = () => {
                   p={6}
                   textAlign="center"
                 >
-                  <Heading size="md" mb={2} color={headingColor}>W&B Platinum Model</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>1200-1500 sq.ft</Text>
+                  <Heading size="md" mb={2} color={headingColor}>W&B Signature Enterprise</Heading>
+                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>1500-2000 sq.ft</Text>
                   <Text color={textColor}>Complete processing facility with all services available on-site</Text>
                 </Box>
               </MotionBox>
@@ -771,7 +888,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  OUR COMPREHENSIVE SUPPORT SYSTEM
+                  Our Comprehensive <GradientText>Support System</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -1003,7 +1120,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  SUCCESS STORIES
+                  Success <GradientText>Stories</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -1016,71 +1133,7 @@ const Franchise = () => {
               </MotionBox>
             </Stack>
 
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={10}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="lg"
-                  p={8}
-                >
-                  <Text fontSize="lg" fontStyle="italic" mb={6}>
-                    "I had no prior experience in the laundry business, but the comprehensive training and ongoing support from Whites & Brights made the transition seamless. Within 18 months, we achieved break-even and now operate two successful locations."
-                  </Text>
-                  <HStack>
-                    <Box
-                      w={12}
-                      h={12}
-                      borderRadius="full"
-                      bg="gray.300"
-                      mr={3}
-                    />
-                    <Box>
-                      <Text fontWeight="bold">Rajesh Sharma</Text>
-                      <Text fontSize="sm" color={textColor}>Franchise Owner since 2021</Text>
-                    </Box>
-                  </HStack>
-                </Box>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="lg"
-                  p={8}
-                >
-                  <Text fontSize="lg" fontStyle="italic" mb={6}>
-                    "The business model is solid and the support system is exceptional. What impressed me most was the technology platform that streamlined operations and helped us scale quickly. We're now planning to open our third location."
-                  </Text>
-                  <HStack>
-                    <Box
-                      w={12}
-                      h={12}
-                      borderRadius="full"
-                      bg="gray.300"
-                      mr={3}
-                    />
-                    <Box>
-                      <Text fontWeight="bold">Priya Patel</Text>
-                      <Text fontSize="sm" color={textColor}>Franchise Owner since 2020</Text>
-                    </Box>
-                  </HStack>
-                </Box>
-              </MotionBox>
-            </SimpleGrid>
+            <TestimonialCarousel items={testimonials} cardBg={cardBg} textColor={textColor} />
           </Stack>
         </Container>
       </Box>
@@ -1101,7 +1154,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  FREQUENTLY ASKED QUESTIONS
+                  Frequently Asked <GradientText>Questions</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}
@@ -1258,7 +1311,7 @@ const Franchise = () => {
                   mb={2}
                   color={headingColor}
                 >
-                  APPLICATION PROCESS
+                  Application <GradientText>Process</GradientText>
                 </Heading>
                 <Text
                   fontSize={{ base: 'md', md: 'lg' }}

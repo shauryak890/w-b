@@ -17,7 +17,8 @@ import {
   SimpleGrid,
   Button,
 } from '@chakra-ui/react';
-import { FaSearch, FaClock, FaTshirt, FaMoneyBillWave, FaShieldAlt } from 'react-icons/fa';
+import { FaSearch, FaClock, FaTshirt, FaMoneyBillWave, FaShieldAlt, FaArrowRight } from 'react-icons/fa';
+import { Link as RouterLink } from 'react-router-dom';
 
 const FAQCategory = ({ title, icon, questions }) => {
   return (
@@ -57,7 +58,7 @@ export default function FAQ() {
       questions: [
         {
           question: 'What are your operating hours?',
-          answer: 'We operate Monday through Saturday from 7:00 AM to 8:00 PM. Drop-offs are accepted until 6:00 PM.',
+          answer: 'We operate Monday through Saturday from 9:00 AM to 9:00 PM. Drop-offs are accepted until 8:00 PM.',
         },
         {
           question: 'How long does the service take?',
@@ -184,9 +185,13 @@ export default function FAQ() {
                 Our support team is here to help you with any specific questions or concerns.
               </Text>
               <Button
-                colorScheme="brand"
+                as={RouterLink}
+                to="/contact"
+                variant="gradient"
                 size="lg"
-                rightIcon={<Icon as={FaSearch} />}
+                h={14}
+                px={8}
+                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
               >
                 Contact Support
               </Button>

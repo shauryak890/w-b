@@ -224,7 +224,7 @@ export default function PrivacyPolicy() {
               <br />
               Phone: +91 81027 33336
               <br />
-              Address: To be revealed soon!
+              Address: Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105
             </Text>
           </VStack>
         </VStack>

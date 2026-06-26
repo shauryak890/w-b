@@ -11,7 +11,6 @@ import {
   Button,
   HStack,
   useToast,
-  SlideFade,
   ScaleFade,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -177,7 +176,7 @@ export default function TermsOfService() {
             <UnorderedList spacing={2} pl={4}>
               <ListItem>Email: info@whitesandbrights.com</ListItem>
               <ListItem>Phone: +91 81027 33336</ListItem>
-              <ListItem>Address: Coming to your city soon!</ListItem>
+              <ListItem>Address: Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105</ListItem>
             </UnorderedList>
           </MotionBox>
         </MotionVStack>

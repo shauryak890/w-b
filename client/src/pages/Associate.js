@@ -6,17 +6,35 @@ import {
   Text,
   SimpleGrid,
   Stack,
+  VStack,
   useToast,
   List,
   ListItem,
   ListIcon,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  Button,
+  Icon,
 } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { FaCheckCircle, FaArrowRight, FaHandshake } from 'react-icons/fa';
+import {
+  MotionBox,
+  Reveal,
+  StaggerGroup,
+  GradientText,
+  SectionBadge,
+  fadeUp,
+  fromLeft,
+  fromRight,
+} from '../components/ui';
 
-const MotionBox = motion.div;
-const MotionHeading = motion.h2;
-const MotionText = motion.p;
+const benefits = [
+  'Trusted brand with professional service standards',
+  'Training and operational guidance',
+  'Marketing support and lead generation',
+];
 
 export default function Associate() {
   const [name, setName] = useState('');
@@ -83,164 +101,98 @@ export default function Associate() {
     }
   };
 
+  const inputStyles = {
+    bg: 'gray.50',
+    border: '1px solid',
+    borderColor: 'gray.200',
+    borderRadius: 'xl',
+    _hover: { borderColor: 'gray.300' },
+    _focus: { borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)', bg: 'white' },
+  };
+
   return (
-    <Box pt={20}>
-      {/* Hero Section */}
-      <Box bg={'brand.500'} color="white" py={16}>
-        <Container maxW="7xl">
-          <MotionHeading
-            fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}
-            textAlign="center"
-            mb={4}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            Become an Associate
-          </MotionHeading>
-          <MotionText
-            fontSize="xl"
-            textAlign="center"
-            maxW="3xl"
-            mx="auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-          >
-            Partner with WNB Cleantech Pvt Ltd to bring premium laundry services to your area. Fill out the form and we'll reach out soon.
-          </MotionText>
+    <Box overflow="hidden">
+      {/* Hero */}
+      <Box position="relative" bgGradient="linear(130deg, brand.900 0%, brand.700 60%, brand.500 100%)" color="white" pt={{ base: 28, md: 36 }} pb={{ base: 16, md: 24 }} overflow="hidden">
+        <Box position="absolute" top="-20%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
+        <Box position="absolute" bottom="-30%" left="0%" w="360px" h="360px" borderRadius="full" bg="whiteAlpha.100" />
+        <Container maxW="1000px" position="relative">
+          <StaggerGroup>
+            <VStack spacing={5} textAlign="center">
+              <MotionBox variants={fadeUp}>
+                <SectionBadge bg="whiteAlpha.200" color="white" borderColor="whiteAlpha.400">
+                  <Icon as={FaHandshake} boxSize={3.5} />
+                  Partnership
+                </SectionBadge>
+              </MotionBox>
+              <MotionBox variants={fadeUp}>
+                <Heading fontSize={{ base: '36px', md: '56px' }} lineHeight="1.05" letterSpacing="-0.03em">
+                  Become an <GradientText from="white" to="brand.200">Associate</GradientText>
+                </Heading>
+              </MotionBox>
+              <MotionBox variants={fadeUp}>
+                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl">
+                  Partner with WNB Cleantech Pvt Ltd to bring premium laundry services to your area. Fill out the form and we'll reach out soon.
+                </Text>
+              </MotionBox>
+            </VStack>
+          </StaggerGroup>
         </Container>
       </Box>
 
-      {/* Form Section */}
-      <Box py={16} bg="gray.50">
-        <Container maxW="7xl">
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
-            <MotionBox
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7 }}
-              viewport={{ once: true }}
-            >
-              <Stack spacing={5}>
-                <Heading size="lg" color="gray.800">Why Join Us?</Heading>
+      {/* Form */}
+      <Box py={{ base: 16, md: 24 }} bg="gray.50">
+        <Container maxW="1200px">
+          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 10, lg: 14 }} alignItems="start">
+            <Reveal variant={fromLeft}>
+              <Stack spacing={6}>
+                <SectionBadge>Why Join Us</SectionBadge>
+                <Heading size="xl" color="gray.900">
+                  Grow with a brand that <GradientText>backs you</GradientText>
+                </Heading>
                 <Text fontSize="lg" color="gray.600">
-                  Join our growing network and benefit from strong brand support, streamlined operations, and marketing assistance. We're committed to building long-term, successful partnerships.
+                  Join our growing network and benefit from strong brand support, streamlined operations and marketing assistance. We're committed to building long-term, successful partnerships.
                 </Text>
-                <List spacing={3} color="gray.700">
-                  <ListItem display="flex" alignItems="center">
-                    <ListIcon as={FaCheckCircle} color="brand.500" />
-                    Trusted brand with professional service standards
-                  </ListItem>
-                  <ListItem display="flex" alignItems="center">
-                    <ListIcon as={FaCheckCircle} color="brand.500" />
-                    Training and operational guidance
-                  </ListItem>
-                  <ListItem display="flex" alignItems="center">
-                    <ListIcon as={FaCheckCircle} color="brand.500" />
-                    Marketing support and lead generation
-                  </ListItem>
+                <List spacing={4} color="gray.700">
+                  {benefits.map((b, i) => (
+                    <ListItem key={i} display="flex" alignItems="center" fontWeight={500}>
+                      <ListIcon as={FaCheckCircle} color="brand.500" boxSize={5} />
+                      {b}
+                    </ListItem>
+                  ))}
                 </List>
               </Stack>
-            </MotionBox>
+            </Reveal>
 
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7 }}
-              viewport={{ once: true }}
-              bg="white"
-              borderRadius="xl"
-              boxShadow="xl"
-              p={8}
-            >
-              <form onSubmit={handleSubmit}>
-                  <Box>
-                    <Heading size="lg" mb={2}>
-                      Associate Application
-                    </Heading>
-                    <Text color="gray.600" mb={4}>
-                      Please provide your details and we'll get in touch.
-                    </Text>
-
-                    <Box mb={4}>
-                      <Text fontWeight="bold" mb={2}>Full Name</Text>
-                      <Box as="input"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="John Doe"
-                        p={2}
-                        borderWidth="1px"
-                        borderRadius="md"
-                        width="full"
-                        required
-                      />
-                    </Box>
-
-                    <Box mb={4}>
-                      <Text fontWeight="bold" mb={2}>Address</Text>
-                      <Box as="textarea"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="Street, City, State, PIN"
-                        p={2}
-                        borderWidth="1px"
-                        borderRadius="md"
-                        width="full"
-                        height="100px"
-                        required
-                      />
-                    </Box>
-
-                    <Box mb={4}>
-                      <Text fontWeight="bold" mb={2}>Phone</Text>
-                      <Box as="input"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+91 98765 43210"
-                        p={2}
-                        borderWidth="1px"
-                        borderRadius="md"
-                        width="full"
-                        required
-                      />
-                    </Box>
-
-                    <Box mb={6}>
-                      <Text fontWeight="bold" mb={2}>Email</Text>
-                      <Box as="input"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="john@example.com"
-                        p={2}
-                        borderWidth="1px"
-                        borderRadius="md"
-                        width="full"
-                        required
-                      />
-                    </Box>
-
-                    <Box
-                      as="button"
-                      type="submit"
-                      bg="brand.500"
-                      color="white"
-                      py={3}
-                      px={6}
-                      borderRadius="md"
-                      width="full"
-                      fontWeight="bold"
-                      _hover={{ bg: 'brand.600' }}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? 'Submitting...' : 'Apply Now'}
-                    </Box>
-                  </Box>
+            <Reveal variant={fromRight}>
+              <Box bg="white" borderRadius="3xl" boxShadow="card" border="1px solid" borderColor="gray.100" p={{ base: 6, md: 9 }}>
+                <Heading size="lg" mb={2} color="gray.900">Associate Application</Heading>
+                <Text color="gray.600" mb={6}>Please provide your details and we'll get in touch.</Text>
+                <form onSubmit={handleSubmit}>
+                  <Stack spacing={5}>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight={600} color="gray.700">Full Name</FormLabel>
+                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" size="lg" sx={inputStyles} />
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight={600} color="gray.700">Address</FormLabel>
+                      <Textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, City, State, PIN" rows={3} sx={inputStyles} />
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight={600} color="gray.700">Phone</FormLabel>
+                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" size="lg" sx={inputStyles} />
+                    </FormControl>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight={600} color="gray.700">Email</FormLabel>
+                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" size="lg" sx={inputStyles} />
+                    </FormControl>
+                    <Button type="submit" size="lg" h={14} variant="gradient" isLoading={isSubmitting} loadingText="Submitting..." rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />} w="full">
+                      Apply Now
+                    </Button>
+                  </Stack>
                 </form>
-            </MotionBox>
+              </Box>
+            </Reveal>
           </SimpleGrid>
         </Container>
       </Box>

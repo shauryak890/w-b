@@ -24,7 +24,9 @@ import {
   FaUserShield,
   FaTruck,
   FaPhoneAlt,
+  FaArrowRight,
 } from 'react-icons/fa';
+import { Link as RouterLink } from 'react-router-dom';
 
 const HelpCard = ({ title, description, icon, links }) => {
   return (
@@ -212,26 +214,33 @@ export default function HelpCenter() {
           {/* Emergency Support */}
           <Box
             w="full"
-            bg="brand.500"
+            position="relative"
+            overflow="hidden"
+            bgGradient="linear(130deg, brand.900, brand.600)"
             color="white"
-            p={8}
-            borderRadius="xl"
+            p={{ base: 8, md: 12 }}
+            borderRadius="3xl"
+            boxShadow="floating"
             textAlign="center"
           >
-            <VStack spacing={4}>
-              <Heading size="lg">Need Immediate Assistance?</Heading>
-              <Text fontSize="lg" maxW="2xl">
-                Our support team is available 24/7 for urgent inquiries.
+            <Box position="absolute" top="-30%" right="-5%" w="320px" h="320px" borderRadius="full" bg="whiteAlpha.100" />
+            <VStack spacing={5} position="relative">
+              <Heading size="lg">Need Assistance?</Heading>
+              <Text fontSize="lg" maxW="2xl" color="whiteAlpha.900">
+                Our support team is ready to help with your inquiries — reach out and we'll get back to you quickly.
               </Text>
               <Button
+                as={RouterLink}
+                to="/contact"
                 size="lg"
-                colorScheme="white"
-                variant="outline"
-                _hover={{
-                  bg: 'whiteAlpha.200',
-                }}
+                h={14}
+                px={8}
+                bg="white"
+                color="brand.700"
+                _hover={{ bg: 'gray.100', transform: 'translateY(-2px)' }}
+                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
               >
-                Contact Emergency Support
+                Contact Support
               </Button>
             </VStack>
           </Box>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -22,8 +22,7 @@ import {
   Tab,
   TabPanels,
   TabPanel,
-  useColorModeValue,
-  useBreakpointValue
+  useColorModeValue
 } from '@chakra-ui/react';
 import { 
   FaCheck, 
@@ -32,18 +31,16 @@ import {
   FaHome, 
   FaBolt, 
   FaCalendarAlt,
-  FaTags, 
+  FaTags,
   FaShoppingBasket,
   FaArrowRight,
-  FaStar,
-  FaClock
+  FaLeaf
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { GradientText } from '../components/ui';
 
 const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
-const MotionText = motion(Text);
 
 // Pricing Table Component
 const PricingTable = ({ category, items }) => {
@@ -52,8 +49,6 @@ const PricingTable = ({ category, items }) => {
   const tableBorder = useColorModeValue('gray.200', 'gray.600');
   const tableHeaderBg = useColorModeValue('gray.50', 'gray.800');
   const tableHeaderColor = useColorModeValue('gray.900', 'white');
-  const tableTextColor = useColorModeValue('gray.600', 'gray.300');
-  const tableBorderColor = useColorModeValue('gray.100', 'gray.700');
 
   return (
     <Box
@@ -141,8 +136,15 @@ const Td = ({ children, isNumeric, ...props }) => (
   </Box>
 );
 
-const Service = ({ title, description, image, features, icon, color = "brand" }) => {
+const Service = ({ title, description, image, features, icon, color = "brand", tabLink, onTabClick }) => {
   const featureTextColor = useColorModeValue('gray.700', 'gray.300');
+  
+  const handleClick = () => {
+    if (onTabClick) {
+      onTabClick();
+    }
+  };
+  
   return (
     <MotionBox
       initial={{ opacity: 0, y: 20 }}
@@ -244,12 +246,14 @@ const Service = ({ title, description, image, features, icon, color = "brand" })
         </VStack>
 
         <Button
+          onClick={handleClick}
           mt={6}
           size="sm"
           variant="ghost"
           colorScheme={color}
           rightIcon={<FaArrowRight size={12} />}
           _hover={{ bg: `${color}.50` }}
+          cursor={onTabClick ? "pointer" : "default"}
         >
           Learn more
         </Button>
@@ -259,7 +263,16 @@ const Service = ({ title, description, image, features, icon, color = "brand" })
 };
 
 export default function Services() {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(0);
+  
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab) {
+      setActiveTab(parseInt(tab));
+    }
+  }, [location]);
   
   return (
     <Box pt={20} bg={useColorModeValue('gray.50', 'gray.900')}>
@@ -293,16 +306,18 @@ export default function Services() {
               transition={{ duration: 0.5 }}
             >
               <VStack spacing={6} align="flex-start" textAlign="left">
-                <Badge colorScheme="brand" fontSize="md" px={3} py={1} borderRadius="full">
+                <Badge display="inline-flex" alignItems="center" gap={2} colorScheme="brand" fontSize="sm" px={4} py={1.5} borderRadius="full">
+                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.500" />
                   Premium Care
                 </Badge>
                 <Heading
-                  fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}
-                  lineHeight="shorter"
-                  fontWeight="bold"
+                  fontSize={{ base: '40px', md: '52px', lg: '60px' }}
+                  lineHeight="1.05"
+                  letterSpacing="-0.03em"
+                  fontWeight={800}
                   color={useColorModeValue('gray.900', 'white')}
                 >
-                  Expert Laundry <Text as="span" color="brand.500">Services</Text>
+                  Expert Laundry <GradientText>Services</GradientText>
                 </Heading>
                 <Text
                   fontSize="xl"
@@ -320,9 +335,8 @@ export default function Services() {
                   px={8}
                   fontSize="md"
                   fontWeight="600"
-                  colorScheme="brand"
-                  _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                  transition="all 0.3s"
+                  variant="gradient"
+                  rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
                   as={RouterLink}
                   to="/contact"
                 >
@@ -357,7 +371,7 @@ export default function Services() {
             variant="soft-rounded" 
             colorScheme="brand"
             onChange={(index) => setActiveTab(index)}
-            defaultIndex={activeTab}
+            index={activeTab}
           >
             <TabList 
               overflowX="auto" 
@@ -378,6 +392,7 @@ export default function Services() {
               <Tab mx={1} whiteSpace="nowrap">Steam Ironing</Tab>
               <Tab mx={1} whiteSpace="nowrap">Household Items</Tab>
               <Tab mx={1} whiteSpace="nowrap">Express Services</Tab>
+              <Tab mx={1} whiteSpace="nowrap">Subscription Plans</Tab>
             </TabList>
             
             <TabPanels mt={8} p={4}>
@@ -390,6 +405,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
                 icon={FaTshirt}
                 color="brand"
+                onTabClick={() => setActiveTab(1)}
                 features={[
                   "Sorted by color and fabric type",
                   "Premium detergents & fabric softeners",
@@ -405,6 +421,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80"
                 icon={FaSnowflake}
                 color="accent"
+                onTabClick={() => setActiveTab(2)}
                 features={[
                   "Expert handling of delicate fabrics",
                   "Stain treatment specialists",
@@ -420,6 +437,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
                 icon={FaHome}
                 color="highlight"
+                onTabClick={() => setActiveTab(4)}
                 features={[
                   "All bedding sizes accommodated",
                   "Duvet covers & inserts",
@@ -435,6 +453,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
                 icon={FaBolt}
                 color="accent"
+                onTabClick={() => setActiveTab(5)}
                 features={[
                   "Same-day service available",
                   "Priority processing",
@@ -450,6 +469,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=715&q=80"
                 icon={FaCalendarAlt}
                 color="brand"
+                onTabClick={() => setActiveTab(6)}
                 features={[
                   "Regular scheduled service",
                   "Up to 20% discount on regular prices",
@@ -465,6 +485,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
                 icon={FaTshirt}
                 color="highlight"
+                onTabClick={() => setActiveTab(3)}
                 features={[
                   "Professional pressing for all garment types",
                   "Specialized handling for different fabrics",
@@ -480,6 +501,7 @@ export default function Services() {
                 image="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
                 icon={FaShoppingBasket}
                 color="highlight"
+                onTabClick={() => window.location.href = '/contact'}
                 features={[
                   "Restaurants & hospitality",
                   "Salons & spas",
@@ -582,15 +604,15 @@ export default function Services() {
                 >
                   <Flex align="center">
                     <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Inaugural Discount: 10% OFF on all services!</Text>
+                    <Text fontWeight="bold" color="green.700">Inaugural Offer: For 1st time customer 25% OFF</Text>
                   </Flex>
                 </Box>
                 <PricingTable 
                   category="Laundry by KG"
                   items={[
-                    { name: "Wash & Iron Per KG", price: "₹99/kg", time: "48 hours" },
-                    { name: "Wash & Fold Per KG", price: "₹89/kg", time: "48 hours" },
-                    { name: "Premium Laundry Per KG", price: "₹179/kg", time: "48 hours" },
+                    { name: "Wash & Iron Per KG", price: "₹80/kg", time: "48 hours" },
+                    { name: "Wash & Fold Per KG", price: "₹70/kg", time: "48 hours" },
+                    { name: "Premium Laundry Per KG", price: "₹160/kg", time: "48 hours" },
                     { name: "Woolen Laundry Per KG", price: "₹179/kg", time: "72 hours" }
                   ]}
                 />
@@ -688,7 +710,7 @@ export default function Services() {
                 >
                   <Flex align="center">
                     <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Inaugural Discount: 10% OFF on all services!</Text>
+                    <Text fontWeight="bold" color="green.700">Inaugural Offer: For 1st time customer 25% OFF</Text>
                   </Flex>
                 </Box>
                 {/* Women's Wear Dry Cleaning */}
@@ -1071,37 +1093,294 @@ export default function Services() {
           </TabPanel>
           
           <TabPanel px={0}>
-            <Service
-              title="Subscription Plans"
-              description="Regular service at discounted rates - sign up for weekly, biweekly, or monthly pickup and delivery."
-              image="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=715&q=80"
-              icon={FaCalendarAlt}
-              color="brand"
-              features={[
-                "Regular scheduled service",
-                "Up to 20% discount on regular prices",
-                "Free pickup and delivery",
-                "Personalized preferences saved",
-                "Cancel or pause anytime"
-              ]}
-            />
+            <Stack spacing={8}>
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                bg={useColorModeValue('white', 'gray.800')}
+                borderRadius="xl"
+                overflow="hidden"
+                boxShadow="xl"
+                p={8}
+              >
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
+                  <VStack align="start" spacing={4}>
+                    <Flex
+                      w={16}
+                      h={16}
+                      align="center"
+                      justify="center"
+                      color="brand.500"
+                      rounded="full"
+                      bg="brand.50"
+                      mb={2}
+                    >
+                      <Icon as={FaCalendarAlt} w={8} h={8} />
+                    </Flex>
+                    
+                    <Heading size="xl" color="gray.800">Monthly Subscription Plans</Heading>
+                    
+                    <Text color="gray.600" fontSize="lg">
+                      Save more with our convenient monthly subscription packs! Enjoy hassle-free laundry service with free pickup & delivery, priority processing, and exclusive benefits.
+                    </Text>
+                    
+                    <List spacing={3} mt={4}>
+                      <ListItem>
+                        <HStack>
+                          <ListIcon as={FaCheck} color="green.500" />
+                          <Text>Free pickup and delivery</Text>
+                        </HStack>
+                      </ListItem>
+                      <ListItem>
+                        <HStack>
+                          <ListIcon as={FaCheck} color="green.500" />
+                          <Text>Priority processing and delivery</Text>
+                        </HStack>
+                      </ListItem>
+                      <ListItem>
+                        <HStack>
+                          <ListIcon as={FaCheck} color="green.500" />
+                          <Text>Personalized service preferences</Text>
+                        </HStack>
+                      </ListItem>
+                      <ListItem>
+                        <HStack>
+                          <ListIcon as={FaCheck} color="green.500" />
+                          <Text>Flexible plans - pause or cancel anytime</Text>
+                        </HStack>
+                      </ListItem>
+                    </List>
+                  </VStack>
+                  
+                  <Image 
+                    src="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=715&q=80"
+                    borderRadius="lg"
+                    shadow="lg"
+                    objectFit="cover"
+                    height="100%"
+                    maxHeight="300px"
+                  />
+                </SimpleGrid>
+              </MotionBox>
+              
+              {/* Subscription Plans Pricing */}
+              <MotionBox
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Heading size="lg" mb={6}>Monthly Subscription Packs</Heading>
+                
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+                  {/* Silver Plan */}
+                  <Box
+                    bg="white"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    boxShadow="lg"
+                    borderWidth="2px"
+                    borderColor="gray.200"
+                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                    transition="all 0.3s"
+                  >
+                    <Box bg="gray.100" py={4} textAlign="center">
+                      <Heading size="md" color="gray.700">Silver</Heading>
+                    </Box>
+                    <VStack spacing={4} p={6} align="stretch">
+                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹650</Text>
+                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
+                      <Divider />
+                      <VStack align="start" spacing={3}>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Weight Limit: 10 kg</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Wash & Fold Service</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Free Pickup & Delivery</Text>
+                        </HStack>
+                      </VStack>
+                    </VStack>
+                  </Box>
+
+                  {/* Gold Plan */}
+                  <Box
+                    bg="white"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    boxShadow="lg"
+                    borderWidth="2px"
+                    borderColor="yellow.400"
+                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                    transition="all 0.3s"
+                  >
+                    <Box bg="yellow.400" py={4} textAlign="center">
+                      <Heading size="md" color="white">Gold</Heading>
+                    </Box>
+                    <VStack spacing={4} p={6} align="stretch">
+                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹1,100</Text>
+                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
+                      <Divider />
+                      <VStack align="start" spacing={3}>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Weight Limit: 15 kg</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Wash & Iron Service</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Priority Delivery</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">+ ₹50 Voucher</Text>
+                        </HStack>
+                      </VStack>
+                    </VStack>
+                  </Box>
+
+                  {/* Platinum Plan */}
+                  <Box
+                    bg="white"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    boxShadow="lg"
+                    borderWidth="2px"
+                    borderColor="purple.400"
+                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                    transition="all 0.3s"
+                  >
+                    <Box bg="purple.400" py={4} textAlign="center">
+                      <Heading size="md" color="white">Platinum</Heading>
+                    </Box>
+                    <VStack spacing={4} p={6} align="stretch">
+                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹1,999</Text>
+                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
+                      <Divider />
+                      <VStack align="start" spacing={3}>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Weight Limit: 25 kg</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Premium Laundry</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Free Saree Polish/Blanket</Text>
+                        </HStack>
+                      </VStack>
+                    </VStack>
+                  </Box>
+
+                  {/* Elite Family Pack */}
+                  <Box
+                    bg="white"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    boxShadow="lg"
+                    borderWidth="2px"
+                    borderColor="brand.500"
+                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                    transition="all 0.3s"
+                  >
+                    <Box bg="brand.500" py={4} textAlign="center">
+                      <Heading size="md" color="white">Elite Family Pack</Heading>
+                    </Box>
+                    <VStack spacing={4} p={6} align="stretch">
+                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹2,999</Text>
+                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
+                      <Divider />
+                      <VStack align="start" spacing={3}>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Weight Limit: 40 kg</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">Mix Services</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">5% Extra Wash</Text>
+                        </HStack>
+                        <HStack>
+                          <Icon as={FaCheck} color="green.500" />
+                          <Text fontSize="sm">1 Steam Iron Free</Text>
+                        </HStack>
+                      </VStack>
+                    </VStack>
+                  </Box>
+                </SimpleGrid>
+
+                <Box mt={8} p={6} bg="blue.50" borderRadius="lg" borderLeft="4px" borderColor="blue.500">
+                  <Heading size="md" mb={3} color="blue.700">
+                    Why Choose Our Subscription Plans?
+                  </Heading>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                    <HStack>
+                      <Icon as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">Save up to 20% compared to regular pricing</Text>
+                    </HStack>
+                    <HStack>
+                      <Icon as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">Free pickup and delivery every time</Text>
+                    </HStack>
+                    <HStack>
+                      <Icon as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">Priority service with faster turnaround</Text>
+                    </HStack>
+                    <HStack>
+                      <Icon as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">Flexible - pause or cancel anytime</Text>
+                    </HStack>
+                  </SimpleGrid>
+                </Box>
+              </MotionBox>
+            </Stack>
           </TabPanel>
             </TabPanels>
           </Tabs>
         </Container>
       </Box>
       
-      <Box
-        bg="brand.500"
-        py={12}
-      >
-        <Container maxW={'7xl'}>
-          <Heading color="white" textAlign="center" mb={4}>
-            Eco-Friendly Commitment
-          </Heading>
-          <Text color="white" textAlign="center" fontSize="lg" maxW="3xl" mx="auto">
-            Whites & Brights is committed to environmentally sustainable practices. We use biodegradable detergents, energy-efficient machines, and water-saving technologies to minimize our environmental footprint while delivering exceptional cleaning results.
-          </Text>
+      <Box py={{ base: 12, md: 16 }}>
+        <Container maxW="7xl">
+          <Box
+            position="relative"
+            overflow="hidden"
+            borderRadius="4xl"
+            bgGradient="linear(130deg, brand.900 0%, brand.700 55%, brand.500 100%)"
+            boxShadow="floating"
+            px={{ base: 8, md: 16 }}
+            py={{ base: 12, md: 16 }}
+          >
+            <Box position="absolute" top="-30%" right="-5%" w="380px" h="380px" borderRadius="full" bg="whiteAlpha.100" />
+            <Box position="absolute" bottom="-40%" left="10%" w="320px" h="320px" borderRadius="full" bg="whiteAlpha.100" />
+            <VStack spacing={5} position="relative" textAlign="center">
+              <Flex align="center" justify="center" w={16} h={16} borderRadius="2xl" bg="whiteAlpha.200" backdropFilter="blur(8px)" color="white">
+                <Icon as={FaLeaf} boxSize={7} />
+              </Flex>
+              <Heading color="white" fontSize={{ base: '2xl', md: '4xl' }}>
+                Eco-Friendly Commitment
+              </Heading>
+              <Text color="whiteAlpha.900" textAlign="center" fontSize="lg" maxW="3xl" mx="auto">
+                Whites & Brights is committed to environmentally sustainable practices. We use biodegradable detergents, energy-efficient machines, and water-saving technologies to minimize our environmental footprint while delivering exceptional cleaning results.
+              </Text>
+              <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} mt={2} bg="white" color="brand.700" _hover={{ bg: 'gray.100', transform: 'translateY(-2px)' }} rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
+                Book a Pickup
+              </Button>
+            </VStack>
+          </Box>
         </Container>
       </Box>
 
