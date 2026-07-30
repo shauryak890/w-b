@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   Box,
   Button,
@@ -9,7 +9,6 @@ import {
   SimpleGrid,
   Icon,
   Flex,
-  IconButton,
   Badge,
   VStack,
   HStack,
@@ -22,8 +21,6 @@ import {
   FaTruck,
   FaCheck,
   FaHandsWash,
-  FaChevronLeft,
-  FaChevronRight,
   FaArrowRight,
   FaClock,
   FaShieldAlt,
@@ -33,9 +30,7 @@ import {
   FaSmile,
   FaStar,
 } from 'react-icons/fa';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import Slider from 'react-slick';
+import { useReducedMotion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   MotionBox,
@@ -48,54 +43,14 @@ import {
   FloatingCard,
   Counter,
   Marquee,
-  fadeUp,
+  unfold,
   scaleIn,
   fromLeft,
 } from '../components/ui';
 import AppPromo from '../components/AppPromo';
 
-const carouselSlides = [
-  {
-    id: 1,
-    title: 'Experience The Perfect Clean',
-    subtitle: 'Premium Laundry Service',
-    description: 'Eco-friendly products and cutting-edge technology, caring for your finest garments like they are our own.',
-    buttonText: 'Explore Services',
-    buttonLink: '/services',
-    image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
-    highlights: ['Professional Care', '100% Satisfaction', 'Free Pickup & Delivery'],
-  },
-  {
-    id: 2,
-    title: 'Care For Your Clothes & The Planet',
-    subtitle: 'Eco-Friendly Cleaning',
-    description: 'Our sustainable approach keeps your clothes bright while protecting the environment, every single wash.',
-    buttonText: 'Learn More',
-    buttonLink: '/about',
-    image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
-    highlights: ['Biodegradable Products', 'Water Conservation', 'Energy Efficient'],
-  },
-  {
-    id: 3,
-    title: 'Convenience At Your Doorstep',
-    subtitle: 'On-Demand Service',
-    description: 'Schedule pickups and deliveries that fit your busy lifestyle, with real-time updates every step of the way.',
-    buttonText: 'Book Now',
-    buttonLink: '/contact',
-    image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
-    highlights: ['24-Hour Turnaround', 'Easy Scheduling', 'Instant Notifications'],
-  },
-  {
-    id: 4,
-    title: "We're Now Open in R.K. Puram!",
-    subtitle: 'Now Open · Visit Us Today',
-    description: 'Whites & Brights is now open at Kalawati Complex, Ward-2, R.K. Puram, near Dream Jwal Apartment Mandir, Khagaul Road, Danapur - 801503. Drop by for premium laundry and VIP garment care.',
-    buttonText: 'Visit Us Today',
-    buttonLink: '/contact',
-    image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80',
-    highlights: ['Premium Service', 'Expert Care', 'Convenient Location'],
-  },
-];
+// Signature 3D soap-bubble hero — lazy so three.js stays out of the main bundle
+const HeroScene = lazy(() => import('../components/three/HeroScene'));
 
 const services = [
   {
@@ -153,182 +108,169 @@ const marqueeItems = [
   'Express Service',
 ];
 
-function CarouselArrows({ onPrev, onNext }) {
-  return (
-    <HStack position="absolute" bottom={{ base: 5, md: 8 }} right={{ base: 5, md: 10 }} spacing={3} zIndex={4} display={{ base: 'none', md: 'flex' }}>
-      <IconButton
-        aria-label="Previous slide"
-        icon={<FaChevronLeft />}
-        onClick={onPrev}
-        rounded="full"
-        size="lg"
-        bg="whiteAlpha.300"
-        color="white"
-        backdropFilter="blur(10px)"
-        border="1px solid"
-        borderColor="whiteAlpha.500"
-        _hover={{ bg: 'whiteAlpha.500' }}
-      />
-      <IconButton
-        aria-label="Next slide"
-        icon={<FaChevronRight />}
-        onClick={onNext}
-        rounded="full"
-        size="lg"
-        bg="whiteAlpha.300"
-        color="white"
-        backdropFilter="blur(10px)"
-        border="1px solid"
-        borderColor="whiteAlpha.500"
-        _hover={{ bg: 'whiteAlpha.500' }}
-      />
-    </HStack>
-  );
-}
-
 export default function Home() {
-  const sliderRef = useRef(null);
-
-  const carouselSettings = {
-    dots: true,
-    infinite: true,
-    speed: 700,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5500,
-    pauseOnHover: true,
-    arrows: false,
-    fade: true,
-    cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  };
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <Box overflow="hidden">
       {/* ============================== HERO ============================== */}
-      <Box as="section" position="relative" bg="brand.900">
-        <Box position="relative" height={{ base: 'auto', md: '760px' }} minH={{ base: '600px', md: '760px' }} width="100%">
-          <Slider ref={sliderRef} {...carouselSettings}>
-            {carouselSlides.map((slide) => (
-              <Box key={slide.id} height={{ base: '600px', md: '760px' }} position="relative">
-                {/* Background image + gradient overlay */}
-                <Box
-                  position="absolute"
-                  inset={0}
-                  bgImage={`url(${slide.image})`}
-                  bgSize="cover"
-                  bgPosition="center"
-                  bgRepeat="no-repeat"
-                />
-                <Box
-                  position="absolute"
-                  inset={0}
-                  bgGradient="linear(to-r, rgba(2,73,90,0.92) 0%, rgba(2,73,90,0.7) 45%, rgba(0,180,197,0.25) 100%)"
-                />
+      <Box as="section" position="relative" bg="brand.900" overflow="hidden">
+        {/* Gradient stage behind the cloth */}
+        <Box
+          position="absolute"
+          inset={0}
+          bgGradient="linear(130deg, brand.900 0%, #035E73 40%, brand.700 74%, brand.500 112%)"
+        />
+        <Box
+          position="absolute"
+          top="-24%"
+          right="-12%"
+          w="640px"
+          h="640px"
+          borderRadius="full"
+          bg="brand.400"
+          opacity={0.22}
+          filter="blur(130px)"
+        />
 
-                <Container maxW="1200px" height="100%" position="relative" zIndex={2}>
-                  <Flex height="100%" align="center" pt={{ base: 24, md: 0 }} pb={{ base: 16, md: 0 }}>
-                    <Stack spacing={6} maxW={{ base: '100%', lg: '620px' }} color="white">
-                      <MotionBox initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <Badge
-                          display="inline-flex"
-                          alignItems="center"
-                          gap={2}
-                          bg="whiteAlpha.200"
-                          color="white"
-                          backdropFilter="blur(8px)"
-                          border="1px solid"
-                          borderColor="whiteAlpha.400"
-                          px={4}
-                          py={2}
-                          fontSize={{ base: 'xs', md: 'sm' }}
-                        >
-                          <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" boxShadow="0 0 0 4px rgba(77,208,225,0.3)" />
-                          {slide.subtitle}
-                        </Badge>
-                      </MotionBox>
+        {/* Signature 3D bubbles — gradient stage shows until the chunk loads */}
+        <Suspense fallback={null}>
+          <HeroScene reducedMotion={!!prefersReducedMotion} />
+        </Suspense>
 
-                      <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-                        <Heading
-                          as="h1"
-                          fontSize={{ base: '40px', md: '64px', lg: '72px' }}
-                          fontWeight={800}
-                          lineHeight="1.02"
-                          letterSpacing="-0.03em"
-                        >
-                          {slide.title}
-                        </Heading>
-                      </MotionBox>
+        {/* Left scrim keeps copy legible over the scene */}
+        <Box
+          position="absolute"
+          inset={0}
+          bgGradient="linear(to-r, rgba(2,44,56,0.86) 0%, rgba(2,44,56,0.55) 42%, transparent 74%)"
+          pointerEvents="none"
+        />
 
-                      <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
-                        <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl" lineHeight="1.7">
-                          {slide.description}
-                        </Text>
-                      </MotionBox>
+        <Container maxW="1200px" position="relative" zIndex={2}>
+          <Flex minH={{ base: '640px', md: '760px' }} align="center" pt={{ base: 28, md: 20 }} pb={{ base: 16, md: 20 }}>
+            <Stack spacing={6} maxW={{ base: '100%', lg: '600px' }} color="white">
+              <MotionBox initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <HStack
+                  as={RouterLink}
+                  to="/contact"
+                  display="inline-flex"
+                  spacing={2.5}
+                  bg="whiteAlpha.200"
+                  border="1px solid"
+                  borderColor="whiteAlpha.300"
+                  backdropFilter="blur(8px)"
+                  borderRadius="full"
+                  pl={1.5}
+                  pr={4}
+                  py={1.5}
+                  transition="background 0.2s ease"
+                  _hover={{ bg: 'whiteAlpha.300' }}
+                >
+                  <Badge bg="brand.400" color="brand.900" borderRadius="full" px={2.5} py={0.5} fontSize="2xs">
+                    Coming soon
+                  </Badge>
+                  <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight={600}>
+                    Anandmai Colony, beside Canara Bank, Phulwari Sharif, Patna
+                  </Text>
+                  <Icon as={FaArrowRight} boxSize={3} />
+                </HStack>
+              </MotionBox>
 
-                      <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-                        <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
-                          <Button as={RouterLink} to={slide.buttonLink} size="lg" h={14} px={8} variant="gradient" rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-                            {slide.buttonText}
-                          </Button>
-                          <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} variant="glass">
-                            Contact Us
-                          </Button>
-                        </Stack>
-                      </MotionBox>
+              <MotionBox initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+                <Badge
+                  display="inline-flex"
+                  alignItems="center"
+                  gap={2}
+                  bg="whiteAlpha.200"
+                  color="white"
+                  backdropFilter="blur(8px)"
+                  border="1px solid"
+                  borderColor="whiteAlpha.400"
+                  px={4}
+                  py={2}
+                  fontSize={{ base: 'xs', md: 'sm' }}
+                >
+                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" boxShadow="0 0 0 4px rgba(77,208,225,0.3)" />
+                  Premium Laundry Service
+                </Badge>
+              </MotionBox>
 
-                      <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }}>
-                        <HStack spacing={{ base: 4, md: 6 }} pt={2} flexWrap="wrap">
-                          {slide.highlights.map((h, i) => (
-                            <HStack key={i} spacing={2}>
-                              <Circle size={5} bg="brand.400" color="white">
-                                <Icon as={FaCheck} fontSize="9px" />
-                              </Circle>
-                              <Text fontWeight={500} fontSize={{ base: 'xs', md: 'sm' }} color="whiteAlpha.900">
-                                {h}
-                              </Text>
-                            </HStack>
-                          ))}
-                        </HStack>
-                      </MotionBox>
-                    </Stack>
-                  </Flex>
-                </Container>
+              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
+                <Heading
+                  as="h1"
+                  fontSize={{ base: '40px', md: '64px', lg: '72px' }}
+                  fontWeight={800}
+                  lineHeight="1.02"
+                  letterSpacing="-0.03em"
+                >
+                  Experience The{' '}
+                  <GradientText from="brand.200" to="white">Perfect Clean</GradientText>
+                </Heading>
+              </MotionBox>
+
+              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
+                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl" lineHeight="1.7">
+                  Eco-friendly products and cutting-edge technology, caring for your finest garments like they are our own.
+                </Text>
+              </MotionBox>
+
+              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
+                <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
+                  <Button as={RouterLink} to="/services" size="lg" h={14} px={8} variant="gradient" rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
+                    Explore Services
+                  </Button>
+                  <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} variant="glass">
+                    Contact Us
+                  </Button>
+                </Stack>
+              </MotionBox>
+
+              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}>
+                <HStack spacing={{ base: 4, md: 6 }} pt={2} flexWrap="wrap">
+                  {['Professional Care', '100% Satisfaction', 'Free Pickup & Delivery'].map((h) => (
+                    <HStack key={h} spacing={2}>
+                      <Circle size={5} bg="brand.400" color="white">
+                        <Icon as={FaCheck} fontSize="9px" />
+                      </Circle>
+                      <Text fontWeight={500} fontSize={{ base: 'xs', md: 'sm' }} color="whiteAlpha.900">
+                        {h}
+                      </Text>
+                    </HStack>
+                  ))}
+                </HStack>
+              </MotionBox>
+            </Stack>
+          </Flex>
+        </Container>
+
+        {/* Floating glass info cards over the cloth */}
+        <FloatingCard position="absolute" top="22%" right="6%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={6}>
+          <GlassCard p={5} maxW="230px" bg="rgba(255,255,255,0.92)">
+            <HStack spacing={3}>
+              <Circle size={11} bgGradient="linear(135deg, brand.400, accent.500)" color="white">
+                <Icon as={FaClock} boxSize={5} />
+              </Circle>
+              <Box>
+                <Text fontWeight={800} fontSize="lg" color="gray.900">24h</Text>
+                <Text fontSize="xs" color="gray.500">Express turnaround</Text>
               </Box>
-            ))}
-          </Slider>
+            </HStack>
+          </GlassCard>
+        </FloatingCard>
 
-          {/* Floating glass info cards (persist across slides) */}
-          <FloatingCard position="absolute" top="22%" right="6%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={6}>
-            <GlassCard p={5} maxW="230px" bg="rgba(255,255,255,0.92)">
-              <HStack spacing={3}>
-                <Circle size={11} bgGradient="linear(135deg, brand.400, accent.500)" color="white">
-                  <Icon as={FaClock} boxSize={5} />
-                </Circle>
-                <Box>
-                  <Text fontWeight={800} fontSize="lg" color="gray.900">24h</Text>
-                  <Text fontSize="xs" color="gray.500">Express turnaround</Text>
-                </Box>
-              </HStack>
-            </GlassCard>
-          </FloatingCard>
-
-          <FloatingCard position="absolute" bottom="24%" right="11%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={7} delay={0.8}>
-            <GlassCard p={5} maxW="250px" bg="rgba(255,255,255,0.92)">
-              <HStack spacing={3}>
-                <Circle size={11} bg="green.50" color="green.500">
-                  <Icon as={FaLeaf} boxSize={5} />
-                </Circle>
-                <Box>
-                  <Text fontWeight={800} fontSize="md" color="gray.900">Eco-Friendly</Text>
-                  <Text fontSize="xs" color="gray.500">Biodegradable & gentle</Text>
-                </Box>
-              </HStack>
-            </GlassCard>
-          </FloatingCard>
-
-          <CarouselArrows onPrev={() => sliderRef.current?.slickPrev()} onNext={() => sliderRef.current?.slickNext()} />
-        </Box>
+        <FloatingCard position="absolute" bottom="24%" right="11%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={7} delay={0.8}>
+          <GlassCard p={5} maxW="250px" bg="rgba(255,255,255,0.92)">
+            <HStack spacing={3}>
+              <Circle size={11} bg="green.50" color="green.500">
+                <Icon as={FaLeaf} boxSize={5} />
+              </Circle>
+              <Box>
+                <Text fontWeight={800} fontSize="md" color="gray.900">Eco-Friendly</Text>
+                <Text fontSize="xs" color="gray.500">Biodegradable & gentle</Text>
+              </Box>
+            </HStack>
+          </GlassCard>
+        </FloatingCard>
       </Box>
 
       {/* ============================== MARQUEE STRIP ============================== */}
@@ -355,7 +297,7 @@ export default function Home() {
           <StaggerGroup>
             <SimpleGrid columns={{ base: 2, md: 4 }} spacing={{ base: 6, md: 8 }}>
               {stats.map((stat, i) => (
-                <MotionBox key={i} variants={fadeUp}>
+                <MotionBox key={i} variants={unfold}>
                   <VStack
                     spacing={2}
                     p={{ base: 5, md: 7 }}
@@ -399,7 +341,7 @@ export default function Home() {
           <StaggerGroup mt={{ base: 12, md: 16 }}>
             <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6}>
               {services.map((s, i) => (
-                <MotionBox key={i} variants={fadeUp} as={RouterLink} to={s.to} display="block" height="100%">
+                <MotionBox key={i} variants={unfold} as={RouterLink} to={s.to} display="block" height="100%">
                   <VStack
                     spacing={4}
                     align="flex-start"
@@ -459,7 +401,7 @@ export default function Home() {
           <StaggerGroup mt={{ base: 12, md: 20 }}>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 12, md: 4 }}>
               {steps.map((step, i) => (
-                <MotionBox key={i} variants={fadeUp}>
+                <MotionBox key={i} variants={unfold}>
                   <VStack spacing={6} textAlign="center" px={{ base: 2, md: 6 }}>
                     {/* Icon badge + connector row.
                        The connector lives in this same flex row, pinned to the icon's
@@ -547,15 +489,15 @@ export default function Home() {
 
             <Box>
               <StaggerGroup>
-                <MotionBox variants={fadeUp}>
+                <MotionBox variants={unfold}>
                   <SectionBadge>Why Whites & Brights</SectionBadge>
                 </MotionBox>
-                <MotionBox variants={fadeUp} mt={5}>
+                <MotionBox variants={unfold} mt={5}>
                   <Heading fontSize={{ base: '3xl', md: '42px' }} color="gray.900" lineHeight="1.1">
                     Laundry care that feels <GradientText>genuinely premium</GradientText>
                   </Heading>
                 </MotionBox>
-                <MotionBox variants={fadeUp} mt={5}>
+                <MotionBox variants={unfold} mt={5}>
                   <Text color="gray.600" fontSize="lg">
                     Every order is handled with meticulous attention — from sorting and stain treatment to pressing and packaging. Here's what sets us apart.
                   </Text>
@@ -567,7 +509,7 @@ export default function Home() {
                     { icon: FaClock, title: 'Reliable turnaround', text: 'Standard 24–48h service with same-day express options when you need it fast.' },
                     { icon: FaMapMarkerAlt, title: 'Doorstep convenience', text: 'Free scheduled pickup and delivery, with friendly local service you can trust.' },
                   ].map((f, i) => (
-                    <MotionBox key={i} variants={fadeUp}>
+                    <MotionBox key={i} variants={unfold}>
                       <HStack spacing={4} align="flex-start">
                         <Circle size={12} bg="white" color="brand.500" boxShadow="soft" flexShrink={0}>
                           <Icon as={f.icon} boxSize={5} />
@@ -642,7 +584,7 @@ export default function Home() {
       {/* ============================== FINAL CTA ============================== */}
       <Box as="section" py={{ base: 16, md: 24 }} bg="gray.50">
         <Container maxW="1000px">
-          <Reveal variant={fadeUp}>
+          <Reveal variant={unfold}>
             <VStack spacing={7} textAlign="center">
               <SectionBadge>Ready when you are</SectionBadge>
               <Heading fontSize={{ base: '3xl', md: '48px' }} color="gray.900" lineHeight="1.1" maxW="3xl">

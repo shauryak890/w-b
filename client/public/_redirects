@@ -1,1 +1,5 @@
-/* /index.html 200 
+# Serve the app download(s) as real files — never rewrite them to index.html.
+/downloads/*  /downloads/:splat  200
+
+# SPA fallback: everything else renders the React app.
+/*  /index.html  200

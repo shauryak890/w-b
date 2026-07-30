@@ -48,24 +48,3 @@ html {
   }
 }
 
-/* Premium slick carousel dots */
-.slick-dots {
-  bottom: 80px;
-}
-.slick-dots li {
-  margin: 0 4px;
-}
-.slick-dots li button:before {
-  font-size: 9px;
-  color: #ffffff;
-  opacity: 0.55;
-  transition: all 0.3s ease;
-}
-.slick-dots li.slick-active button:before {
-  color: #ffffff;
-  opacity: 1;
-  transform: scale(1.5);
-}
-.slick-slide > div {
-  line-height: 0;
-}

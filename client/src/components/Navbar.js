@@ -32,8 +32,8 @@ import {
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
-// Direct APK download for the Whites & Brights Android app
-const APK_URL = 'https://expo.dev/artifacts/eas/jtCGCCG9waug_EtK7A97bdJORvN2lDZijkaAAB1HkiA.apk';
+// APK hosted directly on the site — file lives in client/public/downloads/
+const APK_URL = '/downloads/whites-and-brights.apk';
 
 const MotionBox = motion(Box);
 
@@ -242,6 +242,7 @@ export default function Navbar() {
             <Button
               as="a"
               href={APK_URL}
+              download="whites-and-brights.apk"
               rel="noopener"
               size="sm"
               h={10}
@@ -282,7 +283,7 @@ export default function Navbar() {
               <NavLink to="/associate" isActive={isActive('/associate')} onClick={onClose}>Associate</NavLink>
               <NavLink to="/careers" isActive={isActive('/careers')} onClick={onClose}>Careers</NavLink>
               <NavLink to="/contact" isActive={isActive('/contact')} onClick={onClose}>Contact</NavLink>
-              <Button mt={3} as="a" href={APK_URL} rel="noopener" colorScheme="brand" variant="solid" w="full" leftIcon={<Icon as={FaDownload} boxSize={3.5} />}>
+              <Button mt={3} as="a" href={APK_URL} download="whites-and-brights.apk" rel="noopener" colorScheme="brand" variant="solid" w="full" leftIcon={<Icon as={FaDownload} boxSize={3.5} />}>
                 Download App
               </Button>
               <Button mt={2} variant="gradient" w="full" as={RouterLink} to="/contact" onClick={onClose} rightIcon={<Icon as={FaArrowRight} boxSize={3} />}>

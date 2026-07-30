@@ -21,7 +21,6 @@ import {
   FaTshirt,
   FaHandsWash,
   FaSnowflake,
-  FaHome,
   FaCalendarCheck,
 } from 'react-icons/fa';
 import {
@@ -34,8 +33,8 @@ import {
   fromRight,
 } from './ui';
 
-// Direct APK download for the Whites & Brights Android app
-const APK_URL = 'https://expo.dev/artifacts/eas/jtCGCCG9waug_EtK7A97bdJORvN2lDZijkaAAB1HkiA.apk';
+// APK hosted directly on the site — file lives in client/public/downloads/
+const APK_URL = '/downloads/whites-and-brights.apk';
 
 const features = [
   { icon: FaTruck, title: 'Free doorstep pickup & delivery' },
@@ -225,6 +224,7 @@ export default function AppPromo() {
                 <Button
                   as="a"
                   href={APK_URL}
+                  download="whites-and-brights.apk"
                   rel="noopener"
                   size="lg"
                   h={14}

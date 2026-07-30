@@ -41,6 +41,91 @@ import {
   fromRight,
 } from '../components/ui';
 
+// Whites & Brights outlets — used by the "find your nearest outlet" locator
+const outlets = [
+  {
+    id: 'danapur',
+    name: 'Sona Market, Danapur',
+    address: 'Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105',
+    mapUrl: 'https://maps.app.goo.gl/Q2hPJ1jRe2eEW4D66',
+  },
+  {
+    id: 'rkpuram',
+    name: 'R.K. Puram, Danapur',
+    address: 'Kalawati Complex, Ward-2, R.K. Puram, near Dream Jwal Apartment Mandir, Khagaul Road, Danapur - 801503',
+    mapUrl: 'https://maps.app.goo.gl/1zTQ136dYz3fJzeLA',
+  },
+];
+
+const OutletLocator = () => {
+  const [selectedId, setSelectedId] = useState(outlets[0].id);
+  const outlet = outlets.find((o) => o.id === selectedId) || outlets[0];
+
+  return (
+    <Box
+      w="100%"
+      bg="white"
+      borderRadius="2xl"
+      boxShadow="card"
+      border="1px solid"
+      borderColor="gray.100"
+      p={{ base: 5, md: 6 }}
+      mt={2}
+    >
+      <HStack spacing={3} mb={4} align="center">
+        <Circle size={10} bg="brand.50" color="brand.500" flexShrink={0}>
+          <Icon as={FaMapMarkerAlt} boxSize={5} />
+        </Circle>
+        <Box>
+          <Heading size="sm" color="gray.900">Find your nearest outlet</Heading>
+          <Text fontSize="sm" color="gray.500">Choose a location to get directions</Text>
+        </Box>
+      </HStack>
+
+      <FormControl>
+        <FormLabel fontSize="sm" fontWeight={600} color="gray.700" mb={2}>
+          Select an outlet
+        </FormLabel>
+        <Select
+          value={selectedId}
+          onChange={(e) => setSelectedId(e.target.value)}
+          size="lg"
+          borderRadius="xl"
+          bg="gray.50"
+          borderColor="gray.200"
+          focusBorderColor="brand.500"
+          aria-label="Select a Whites & Brights outlet"
+        >
+          {outlets.map((o) => (
+            <option key={o.id} value={o.id}>{o.name}</option>
+          ))}
+        </Select>
+      </FormControl>
+
+      <HStack mt={4} align="flex-start" spacing={3}>
+        <Icon as={FaMapMarkerAlt} color="brand.500" boxSize={4} mt={1} flexShrink={0} />
+        <Text fontSize="sm" color="gray.600" lineHeight="1.6">{outlet.address}</Text>
+      </HStack>
+
+      <Button
+        as="a"
+        href={outlet.mapUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        mt={5}
+        w="100%"
+        size="lg"
+        variant="gradient"
+        rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
+        leftIcon={<Icon as={FaMapMarkerAlt} boxSize={4} />}
+        aria-label={`Get directions to the ${outlet.name} outlet on Google Maps`}
+      >
+        Get Directions
+      </Button>
+    </Box>
+  );
+};
+
 const ContactInfo = ({ icon, title, children }) => (
   <MotionBox variants={fadeUp}>
     <HStack
@@ -228,18 +313,8 @@ export default function Contact() {
                   </Stack>
                 </StaggerGroup>
 
-                {/* Map embed */}
-                <Box w="100%" borderRadius="2xl" overflow="hidden" boxShadow="card" border="1px solid" borderColor="gray.100" mt={2}>
-                  <Box
-                    as="iframe"
-                    title="Whites & Brights location"
-                    src="https://www.google.com/maps?q=Danapur%20Club%2C%20Cant%20Road%2C%20Danapur%2C%20Patna%20801105&output=embed"
-                    w="100%"
-                    h="240px"
-                    border="0"
-                    loading="lazy"
-                  />
-                </Box>
+                {/* Outlet locator — pick a branch and get directions */}
+                <OutletLocator />
               </VStack>
             </Reveal>
 
