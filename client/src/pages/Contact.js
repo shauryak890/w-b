@@ -55,6 +55,12 @@ const outlets = [
     address: 'Kalawati Complex, Ward-2, R.K. Puram, near Dream Jwal Apartment Mandir, Khagaul Road, Danapur - 801503',
     mapUrl: 'https://maps.app.goo.gl/1zTQ136dYz3fJzeLA',
   },
+  {
+    id: 'phulwari',
+    name: 'Anandmai Colony, Phulwari Sharif',
+    address: 'Anandmai Colony, beside Canara Bank, Phulwari Sharif, Patna',
+    mapUrl: 'https://maps.app.goo.gl/Bpq5nYxFDE7kg3Vy8',
+  },
 ];
 
 const OutletLocator = () => {

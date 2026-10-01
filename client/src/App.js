@@ -22,6 +22,7 @@ import Franchise from './pages/Franchise';
 import Associate from './pages/Associate';
 import CSR from './pages/CSR';
 import Careers from './pages/Careers';
+import DeleteAccount from './pages/DeleteAccount';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/policies/terms-of-service" element={<TermsOfService />} />
             <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/delete-account" element={<DeleteAccount />} />
           </Routes>
           <Footer />
           <WhatsappButton />

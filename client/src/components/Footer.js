@@ -176,6 +176,7 @@ function Footer() {
           <HStack spacing={5} fontSize="sm" flexWrap="wrap" justify="center">
             <FooterLink to="/policies/terms-of-service">Terms</FooterLink>
             <FooterLink to="/policies/privacy-policy">Privacy</FooterLink>
+            <FooterLink to="/delete-account">Delete Account</FooterLink>
             <FooterLink to="/help-center">Help Center</FooterLink>
             <FooterLink to="/faq">FAQ</FooterLink>
           </HStack>

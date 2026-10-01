@@ -167,7 +167,7 @@ export default function Home() {
                   _hover={{ bg: 'whiteAlpha.300' }}
                 >
                   <Badge bg="brand.400" color="brand.900" borderRadius="full" px={2.5} py={0.5} fontSize="2xs">
-                    Coming soon
+                    Open now
                   </Badge>
                   <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight={600}>
                     Anandmai Colony, beside Canara Bank, Phulwari Sharif, Patna
