@@ -23,6 +23,7 @@ import Associate from './pages/Associate';
 import CSR from './pages/CSR';
 import Careers from './pages/Careers';
 import DeleteAccount from './pages/DeleteAccount';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="/policies/terms-of-service" element={<TermsOfService />} />
             <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/delete-account" element={<DeleteAccount />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
           <WhatsappButton />

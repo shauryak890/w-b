@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useRef } from 'react';
 import {
   Box,
   Button,
@@ -6,134 +6,212 @@ import {
   Heading,
   Text,
   Stack,
-  SimpleGrid,
+  Grid,
+  GridItem,
   Icon,
   Flex,
-  Badge,
-  VStack,
   HStack,
-  Circle,
-  Image,
+  Link,
 } from '@chakra-ui/react';
 import {
-  FaTshirt,
-  FaLeaf,
-  FaTruck,
-  FaCheck,
-  FaHandsWash,
-  FaArrowRight,
-  FaClock,
-  FaShieldAlt,
-  FaMapMarkerAlt,
-  FaCalendarCheck,
-  FaSoap,
-  FaSmile,
-  FaStar,
-} from 'react-icons/fa';
-import { useReducedMotion } from 'framer-motion';
+  PiStarFill,
+  PiGoogleLogoFill,
+  PiWhatsappLogoFill,
+  PiArrowUpRight,
+  PiWashingMachineLight,
+  PiCoatHangerLight,
+  PiSneakerLight,
+  PiHouseLineLight,
+  PiLightningLight,
+  PiPhoneLight,
+  PiMapPinLight,
+  PiClockLight,
+  PiSealCheckFill,
+} from 'react-icons/pi';
+import { useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   MotionBox,
   Reveal,
   StaggerGroup,
-  GradientText,
-  SectionHeading,
-  SectionBadge,
-  GlassCard,
-  FloatingCard,
-  Counter,
-  Marquee,
-  unfold,
-  scaleIn,
-  fromLeft,
+  Accent,
+  Eyebrow,
+  ArrowButton,
+  Bezel,
+  fadeUp,
 } from '../components/ui';
 import AppPromo from '../components/AppPromo';
+import { SectionIntro } from '../components/PageHero';
+import { EASE } from '../theme';
+import {
+  outlets,
+  reviews,
+  AVG_RATING,
+  TOTAL_REVIEWS,
+  WHATSAPP_URL,
+  PHONE_TEL,
+  PHONE_DISPLAY,
+  GOOGLE_REVIEWS_URL,
+} from '../data/business';
 
+import usePageMeta from '../hooks/usePageMeta';
 // Signature 3D soap-bubble hero — lazy so three.js stays out of the main bundle
 const HeroScene = lazy(() => import('../components/three/HeroScene'));
 
-const services = [
-  {
-    icon: FaTshirt,
-    title: 'Dry Cleaning',
-    text: 'Professional cleaning for delicate fabrics and specialty garments.',
-    color: 'brand',
-    to: '/services?tab=2',
-  },
-  {
-    icon: FaHandsWash,
-    title: 'Wash & Iron',
-    text: 'Complete laundry with premium detergents and expert ironing.',
-    color: 'accent',
-    to: '/services?tab=1',
-    featured: true,
-  },
-  {
-    icon: FaLeaf,
-    title: 'Eco Laundry',
-    text: 'Environmentally friendly cleaning with water-saving technology.',
-    color: 'green',
-    to: '/services?tab=1',
-  },
-  {
-    icon: FaTruck,
-    title: 'Pickup & Delivery',
-    text: 'Convenient doorstep service with scheduled pickups and drop-offs.',
-    color: 'highlight',
-    to: '/services?tab=5',
-  },
-];
+const img = (id, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
-const stats = [
-  { value: 100, suffix: '%', label: 'Satisfaction Guarantee', icon: FaSmile },
-  { value: 24, suffix: 'h', label: 'Express Turnaround', icon: FaClock },
-  { value: 50, suffix: '+', label: 'Garment Categories', icon: FaTshirt },
-  { value: 25, suffix: '%', label: 'Inaugural Offer Off', icon: FaStar },
-];
+const IMAGES = {
+  folded: img('photo-1517677208171-0bc6725a3e60'),
+  machines: img('photo-1545173168-9f1947eebb7f'),
+  iron: img('photo-1489274495757-95c7c837b101'),
+  room: img('photo-1626806787461-102c1bfaaea1'),
+  home: img('photo-1582735689369-4fe89db7114c'),
+};
 
 const steps = [
-  { icon: FaCalendarCheck, title: 'Schedule a Pickup', text: 'Book online or message us on WhatsApp. Pick a slot that suits you.', color: 'brand' },
-  { icon: FaSoap, title: 'We Clean With Care', text: 'Your garments are sorted, treated and cleaned with premium, eco-friendly products.', color: 'accent' },
-  { icon: FaTruck, title: 'Doorstep Delivery', text: 'Fresh, crisp and perfectly folded clothes delivered back to your door.', color: 'green' },
+  {
+    title: 'Book in a minute',
+    text: 'Use the app, message us on WhatsApp or just call. Pick a pickup slot that suits you.',
+  },
+  {
+    title: 'We collect and clean',
+    text: 'Every garment is tagged, sorted by fabric and colour, stain-treated, then washed or dry cleaned.',
+  },
+  {
+    title: 'Back at your door',
+    text: 'Pressed, folded and packed — delivered free within 48 hours. Express same-day if you need it.',
+  },
 ];
 
-const marqueeItems = [
-  'Free Pickup & Delivery',
-  'Eco-Friendly Process',
-  '24-Hour Turnaround',
-  'Expert Stain Removal',
-  'Premium Detergents',
-  'Garment-Safe Cleaning',
-  'Subscription Plans',
-  'Express Service',
-];
+const Stars = ({ size = 4, color = 'brand.400' }) => (
+  <HStack spacing={0.5} color={color}>
+    {[0, 1, 2, 3, 4].map((i) => (
+      <Icon key={i} as={PiStarFill} boxSize={size} />
+    ))}
+  </HStack>
+);
+
+/* Inline photo pill used inside the statement paragraph */
+const InlineImage = ({ src, alt }) => (
+  <Box
+    as="span"
+    role="img"
+    aria-label={alt}
+    display="inline-block"
+    verticalAlign="middle"
+    w={{ base: '72px', md: '120px' }}
+    h={{ base: '36px', md: '58px' }}
+    mx={{ base: 1.5, md: 3 }}
+    mt="-0.15em"
+    borderRadius="full"
+    bgImage={`url(${src})`}
+    bgSize="cover"
+    bgPosition="center"
+    boxShadow="soft"
+  />
+);
+
+/* Bento tile — bezel shell, optional photo background */
+const ServiceTile = ({ to, icon, title, price, unit, text, image, dark, children, ...rest }) => (
+  <GridItem {...rest}>
+    <MotionBox variants={fadeUp} h="100%">
+      <Bezel
+        as={RouterLink}
+        to={to}
+        display="block"
+        h="100%"
+        role="group"
+        dark={dark || !!image}
+        inner={{ bg: image ? 'ink.900' : dark ? 'ink.900' : 'white', minH: { base: '240px', md: '100%' } }}
+      >
+        {image && (
+          <>
+            <Box
+              position="absolute"
+              inset={0}
+              bgImage={`url(${image})`}
+              bgSize="cover"
+              bgPosition="center"
+              transition={`transform 1.2s ${EASE}`}
+              _groupHover={{ transform: 'scale(1.05)' }}
+            />
+            <Box position="absolute" inset={0} bgGradient="linear(to-t, rgba(6,29,35,0.92) 8%, rgba(6,29,35,0.35) 55%, rgba(6,29,35,0.05))" />
+          </>
+        )}
+        <Flex direction="column" justify="space-between" h="100%" p={{ base: 6, md: 8 }} position="relative" gap={8} color={image || dark ? 'white' : 'ink.900'}>
+          <Flex justify="space-between" align="flex-start">
+            <Flex
+              align="center"
+              justify="center"
+              w={12}
+              h={12}
+              borderRadius="16px"
+              bg={image || dark ? 'whiteAlpha.200' : 'gray.50'}
+              border="1px solid"
+              borderColor={image || dark ? 'whiteAlpha.300' : 'gray.100'}
+              backdropFilter={image ? 'blur(8px)' : undefined}
+            >
+              <Icon as={icon} boxSize={6} />
+            </Flex>
+            <Flex
+              align="center"
+              justify="center"
+              w={10}
+              h={10}
+              borderRadius="full"
+              bg={image || dark ? 'white' : 'ink.900'}
+              color={image || dark ? 'ink.900' : 'white'}
+              transition={`transform 0.5s ${EASE}`}
+              _groupHover={{ transform: 'translate(2px,-2px) rotate(45deg)' }}
+            >
+              <Icon as={PiArrowUpRight} boxSize={4} />
+            </Flex>
+          </Flex>
+          {children}
+          <Box>
+            <Heading fontSize={{ base: '2xl', md: '28px' }} fontWeight={500} mb={2}>
+              {title}
+            </Heading>
+            <Text fontSize="sm" color={image || dark ? 'whiteAlpha.800' : 'gray.600'} maxW="sm" mb={price ? 5 : 0}>
+              {text}
+            </Text>
+            {price && (
+              <HStack align="baseline" spacing={1.5}>
+                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.14em" color={image || dark ? 'whiteAlpha.700' : 'gray.500'}>
+                  from
+                </Text>
+                <Text fontSize={{ base: '3xl', md: '40px' }} fontWeight={500} letterSpacing="-0.04em" lineHeight="1" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {price}
+                </Text>
+                <Text fontSize="sm" color={image || dark ? 'whiteAlpha.700' : 'gray.500'}>
+                  {unit}
+                </Text>
+              </HStack>
+            )}
+          </Box>
+        </Flex>
+      </Bezel>
+    </MotionBox>
+  </GridItem>
+);
 
 export default function Home() {
+  usePageMeta('Whites & Brights | Laundry & Dry Cleaning in Patna', 'Laundry, dry cleaning and shoe care in Patna with free doorstep pickup and 48-hour turnaround. Rated 4.9 on Google.', { full: true });
   const prefersReducedMotion = useReducedMotion();
+  const processRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: processRef, offset: ['start 70%', 'end 60%'] });
+  const lineProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
   return (
-    <Box overflow="hidden">
+    <Box as="main" overflow="hidden">
       {/* ============================== HERO ============================== */}
-      <Box as="section" position="relative" bg="brand.900" overflow="hidden">
-        {/* Gradient stage behind the cloth */}
+      <Box as="section" position="relative" bg="ink.900" overflow="hidden">
         <Box
           position="absolute"
           inset={0}
-          bgGradient="linear(130deg, brand.900 0%, #035E73 40%, brand.700 74%, brand.500 112%)"
-        />
-        <Box
-          position="absolute"
-          top="-24%"
-          right="-12%"
-          w="640px"
-          h="640px"
-          borderRadius="full"
-          bg="brand.400"
-          opacity={0.22}
-          filter="blur(130px)"
+          bg="radial-gradient(120% 90% at 85% 20%, #0B5C6A 0%, #073A44 38%, #061D23 75%)"
         />
 
-        {/* Signature 3D bubbles — gradient stage shows until the chunk loads */}
         <Suspense fallback={null}>
           <HeroScene reducedMotion={!!prefersReducedMotion} />
         </Suspense>
@@ -142,466 +220,447 @@ export default function Home() {
         <Box
           position="absolute"
           inset={0}
-          bgGradient="linear(to-r, rgba(2,44,56,0.86) 0%, rgba(2,44,56,0.55) 42%, transparent 74%)"
+          bgGradient="linear(to-r, rgba(6,29,35,0.92) 0%, rgba(6,29,35,0.6) 45%, transparent 80%)"
           pointerEvents="none"
         />
 
-        <Container maxW="1200px" position="relative" zIndex={2}>
-          <Flex minH={{ base: '640px', md: '760px' }} align="center" pt={{ base: 28, md: 20 }} pb={{ base: 16, md: 20 }}>
-            <Stack spacing={6} maxW={{ base: '100%', lg: '600px' }} color="white">
-              <MotionBox initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                <HStack
-                  as={RouterLink}
-                  to="/contact"
-                  display="inline-flex"
-                  spacing={2.5}
-                  bg="whiteAlpha.200"
-                  border="1px solid"
-                  borderColor="whiteAlpha.300"
-                  backdropFilter="blur(8px)"
-                  borderRadius="full"
-                  pl={1.5}
-                  pr={4}
-                  py={1.5}
-                  transition="background 0.2s ease"
-                  _hover={{ bg: 'whiteAlpha.300' }}
-                >
-                  <Badge bg="brand.400" color="brand.900" borderRadius="full" px={2.5} py={0.5} fontSize="2xs">
-                    Open now
-                  </Badge>
-                  <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight={600}>
-                    Anandmai Colony, beside Canara Bank, Phulwari Sharif, Patna
-                  </Text>
-                  <Icon as={FaArrowRight} boxSize={3} />
-                </HStack>
+        <Container position="relative" zIndex={2}>
+          <Flex direction="column" justify="flex-end" minH={{ base: '100dvh', md: '760px', xl: '820px' }} pt={{ base: 32, md: 40 }} pb={{ base: 10, md: 14 }}>
+            <StaggerGroup stagger={0.1} animate="show">
+              <MotionBox variants={fadeUp}>
+                <Eyebrow dark>Laundry &amp; dry cleaning · Patna</Eyebrow>
               </MotionBox>
 
-              <MotionBox initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-                <Badge
-                  display="inline-flex"
-                  alignItems="center"
-                  gap={2}
-                  bg="whiteAlpha.200"
-                  color="white"
-                  backdropFilter="blur(8px)"
-                  border="1px solid"
-                  borderColor="whiteAlpha.400"
-                  px={4}
-                  py={2}
-                  fontSize={{ base: 'xs', md: 'sm' }}
-                >
-                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" boxShadow="0 0 0 4px rgba(77,208,225,0.3)" />
-                  Premium Laundry Service
-                </Badge>
-              </MotionBox>
-
-              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
+              <MotionBox variants={fadeUp} mt={{ base: 6, md: 8 }}>
                 <Heading
                   as="h1"
-                  fontSize={{ base: '40px', md: '64px', lg: '72px' }}
-                  fontWeight={800}
-                  lineHeight="1.02"
-                  letterSpacing="-0.03em"
+                  color="white"
+                  fontSize={{ base: '50px', sm: '64px', md: '88px', xl: '104px' }}
+                  fontWeight={500}
+                  lineHeight="0.94"
+                  letterSpacing="-0.05em"
+                  maxW="900px"
                 >
-                  Experience The{' '}
-                  <GradientText from="brand.200" to="white">Perfect Clean</GradientText>
+                  Fresh clothes,
+                  <br />
+                  <Accent from="brand.200" letterSpacing="-0.03em">without</Accent> the chores.
                 </Heading>
               </MotionBox>
 
-              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl" lineHeight="1.7">
-                  Eco-friendly products and cutting-edge technology, caring for your finest garments like they are our own.
+              <MotionBox variants={fadeUp} mt={{ base: 6, md: 8 }}>
+                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.800" maxW="520px" lineHeight="1.6">
+                  Free doorstep pickup across Danapur and Phulwari Sharif. Washed, pressed and folded — back with you in 48 hours.
                 </Text>
               </MotionBox>
 
-              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
-                <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
-                  <Button as={RouterLink} to="/services" size="lg" h={14} px={8} variant="gradient" rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-                    Explore Services
-                  </Button>
-                  <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} variant="glass">
-                    Contact Us
+              <MotionBox variants={fadeUp} mt={{ base: 8, md: 10 }}>
+                <Stack direction={{ base: 'column', sm: 'row' }} spacing={3} align={{ base: 'stretch', sm: 'center' }}>
+                  <ArrowButton as={RouterLink} to="/contact" variant="light" justifyContent="space-between">
+                    Book a free pickup
+                  </ArrowButton>
+                  <Button
+                    as="a"
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="glass"
+                    h={{ base: 12, md: 14 }}
+                    px={6}
+                    leftIcon={<Icon as={PiWhatsappLogoFill} boxSize={5} color="#25D366" />}
+                  >
+                    WhatsApp us
                   </Button>
                 </Stack>
               </MotionBox>
 
-              <MotionBox initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}>
-                <HStack spacing={{ base: 4, md: 6 }} pt={2} flexWrap="wrap">
-                  {['Professional Care', '100% Satisfaction', 'Free Pickup & Delivery'].map((h) => (
-                    <HStack key={h} spacing={2}>
-                      <Circle size={5} bg="brand.400" color="white">
-                        <Icon as={FaCheck} fontSize="9px" />
-                      </Circle>
-                      <Text fontWeight={500} fontSize={{ base: 'xs', md: 'sm' }} color="whiteAlpha.900">
-                        {h}
-                      </Text>
-                    </HStack>
-                  ))}
-                </HStack>
+              {/* Proof strip */}
+              <MotionBox variants={fadeUp} mt={{ base: 12, md: 20 }}>
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  gap={{ base: 5, md: 10 }}
+                  pt={6}
+                  borderTop="1px solid"
+                  borderColor="whiteAlpha.200"
+                  color="whiteAlpha.800"
+                  fontSize="sm"
+                >
+                  <Link href={GOOGLE_REVIEWS_URL} isExternal display="flex" alignItems="center" gap={3} _hover={{ color: 'white' }}>
+                    <Icon as={PiGoogleLogoFill} boxSize={5} color="white" />
+                    <Stars size={3.5} color="#FBBC05" />
+                    <Text>
+                      <Text as="span" color="white" fontWeight={600}>{AVG_RATING}</Text> from {TOTAL_REVIEWS} Google reviews
+                    </Text>
+                  </Link>
+                  <HStack spacing={2}>
+                    <Icon as={PiMapPinLight} boxSize={5} color="brand.300" />
+                    <Text>{outlets.length} outlets · {outlets.map((o) => o.area).filter((a, i, arr) => arr.indexOf(a) === i).join(', ')}</Text>
+                  </HStack>
+                  <HStack spacing={2}>
+                    <Icon as={PiSealCheckFill} boxSize={5} color="brand.300" />
+                    <Text>25% off your first order</Text>
+                  </HStack>
+                </Flex>
               </MotionBox>
-            </Stack>
+            </StaggerGroup>
           </Flex>
         </Container>
-
-        {/* Floating glass info cards over the cloth */}
-        <FloatingCard position="absolute" top="22%" right="6%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={6}>
-          <GlassCard p={5} maxW="230px" bg="rgba(255,255,255,0.92)">
-            <HStack spacing={3}>
-              <Circle size={11} bgGradient="linear(135deg, brand.400, accent.500)" color="white">
-                <Icon as={FaClock} boxSize={5} />
-              </Circle>
-              <Box>
-                <Text fontWeight={800} fontSize="lg" color="gray.900">24h</Text>
-                <Text fontSize="xs" color="gray.500">Express turnaround</Text>
-              </Box>
-            </HStack>
-          </GlassCard>
-        </FloatingCard>
-
-        <FloatingCard position="absolute" bottom="24%" right="11%" zIndex={3} display={{ base: 'none', lg: 'block' }} duration={7} delay={0.8}>
-          <GlassCard p={5} maxW="250px" bg="rgba(255,255,255,0.92)">
-            <HStack spacing={3}>
-              <Circle size={11} bg="green.50" color="green.500">
-                <Icon as={FaLeaf} boxSize={5} />
-              </Circle>
-              <Box>
-                <Text fontWeight={800} fontSize="md" color="gray.900">Eco-Friendly</Text>
-                <Text fontSize="xs" color="gray.500">Biodegradable & gentle</Text>
-              </Box>
-            </HStack>
-          </GlassCard>
-        </FloatingCard>
       </Box>
 
-      {/* ============================== MARQUEE STRIP ============================== */}
-      <Box bg="white" borderBottom="1px solid" borderColor="gray.100" pt={{ base: 8, md: 10 }} pb={{ base: 6, md: 7 }}>
-        <Marquee duration={32}>
-          {marqueeItems.map((item, i) => (
-            <HStack key={i} spacing={2.5} px={2}>
-              <Icon as={FaCheck} color="brand.500" boxSize={3.5} />
-              <Text fontWeight={600} color="gray.600" fontSize={{ base: 'sm', md: 'md' }} whiteSpace="nowrap">
-                {item}
-              </Text>
-              <Box w={1.5} h={1.5} borderRadius="full" bg="brand.200" ml={4} />
-            </HStack>
-          ))}
-        </Marquee>
+      {/* ============================== STATEMENT ============================== */}
+      <Box as="section" bg="gray.50" pt={{ base: 24, md: 40 }} pb={{ base: 20, md: 32 }}>
+        <Container>
+          <Reveal>
+            <Heading
+              as="p"
+              fontSize={{ base: '30px', md: '52px', lg: '64px' }}
+              fontWeight={500}
+              lineHeight={{ base: '1.2', md: '1.12' }}
+              letterSpacing="-0.045em"
+              color="ink.900"
+              maxW="1100px"
+            >
+              Three outlets across Patna.
+              <InlineImage src={IMAGES.machines} alt="Commercial washing machines" />
+              <Box as="span" color="gray.400">Free pickup from your door.</Box>
+              <InlineImage src={IMAGES.folded} alt="Neatly folded laundry" />
+              Pressed, folded and back in <Accent>48 hours</Accent>.
+            </Heading>
+          </Reveal>
+        </Container>
+      </Box>
+
+      {/* ============================== SERVICES BENTO ============================== */}
+      <Box as="section" bg="gray.50" pb={{ base: 24, md: 40 }}>
+        <Container>
+          <SectionIntro
+            eyebrow="Services & prices"
+            title={<>Everything your wardrobe needs, <Accent>priced upfront.</Accent></>}
+            description="No hidden charges. Pay by the kilo for everyday wear, or per piece for dry cleaning and shoes."
+          >
+            <Link as={RouterLink} to="/services" mt={5} display="inline-flex" alignItems="center" gap={2} fontWeight={500} color="ink.900" borderBottom="1px solid" borderColor="ink.900" pb={0.5}>
+              See the full price list <Icon as={PiArrowUpRight} />
+            </Link>
+          </SectionIntro>
+
+          <StaggerGroup stagger={0.08}>
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(12, 1fr)' }}
+              autoRows={{ md: 'minmax(260px, auto)' }}
+              gap={{ base: 4, md: 5 }}
+            >
+              <ServiceTile
+                colSpan={{ md: 7 }}
+                rowSpan={{ md: 2 }}
+                to="/services?tab=1"
+                icon={PiWashingMachineLight}
+                title="Laundry by the kilo"
+                text="Wash & fold or wash & iron for everyday clothes. Sorted by colour and fabric, premium detergents."
+                price="₹70"
+                unit="/ kg"
+                image={IMAGES.folded}
+                minH={{ md: '560px' }}
+              />
+              <ServiceTile
+                colSpan={{ md: 5 }}
+                to="/services?tab=2"
+                icon={PiCoatHangerLight}
+                title="Dry cleaning"
+                text="Suits, sarees, lehengas and delicates — hand-finished and hung."
+                price="₹49"
+                unit="/ piece"
+              />
+              <ServiceTile
+                colSpan={{ md: 5 }}
+                to="/services?tab=2"
+                icon={PiSneakerLight}
+                title="Shoe care"
+                text="Deep cleaning for sports, canvas, leather and suede shoes."
+                price="₹199"
+                unit="/ pair"
+              />
+              <ServiceTile
+                colSpan={{ md: 5 }}
+                to="/services?tab=4"
+                icon={PiHouseLineLight}
+                title="Home linen"
+                text="Curtains, comforters, blankets and table linen."
+                price="₹199"
+                unit="/ panel"
+                image={IMAGES.home}
+              />
+              <ServiceTile
+                colSpan={{ md: 7 }}
+                to="/services?tab=5"
+                icon={PiLightningLight}
+                title="Express, same day"
+                text="Need it tonight? Priority processing with rush pickup and delivery."
+                dark
+              >
+                <Text fontSize={{ base: '64px', md: '96px' }} fontWeight={500} letterSpacing="-0.06em" lineHeight="0.9" color="brand.300">
+                  24h<Box as="span" color="whiteAlpha.400" fontSize="0.4em" letterSpacing="-0.02em" ml={2}>or less</Box>
+                </Text>
+              </ServiceTile>
+            </Grid>
+          </StaggerGroup>
+        </Container>
+      </Box>
+
+      {/* ============================== HOW IT WORKS ============================== */}
+      <Box as="section" bg="white" py={{ base: 24, md: 40 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 12, lg: 24 }}>
+            <Box position={{ lg: 'sticky' }} top={{ lg: '140px' }} alignSelf="start">
+              <StaggerGroup>
+                <MotionBox variants={fadeUp}>
+                  <Eyebrow>How it works</Eyebrow>
+                </MotionBox>
+                <MotionBox variants={fadeUp} mt={6}>
+                  <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
+                    From your door, <Accent>and back again.</Accent>
+                  </Heading>
+                </MotionBox>
+                <MotionBox variants={fadeUp} mt={6}>
+                  <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="400px">
+                    No trips to the laundry. No waiting around. Just three steps, and you never leave home.
+                  </Text>
+                </MotionBox>
+              </StaggerGroup>
+            </Box>
+
+            <Box ref={processRef} position="relative" pl={{ base: 10, md: 16 }}>
+              {/* Track + scroll-driven fill */}
+              <Box position="absolute" left={{ base: '11px', md: '15px' }} top={2} bottom={2} w="2px" bg="gray.100" borderRadius="full" />
+              <MotionBox
+                position="absolute"
+                left={{ base: '11px', md: '15px' }}
+                top={2}
+                bottom={2}
+                w="2px"
+                bg="brand.500"
+                borderRadius="full"
+                style={{ scaleY: lineProgress, transformOrigin: 'top' }}
+              />
+              <Stack spacing={{ base: 14, md: 24 }}>
+                {steps.map((step, i) => (
+                  <Reveal key={step.title} position="relative">
+                    <Flex
+                      position="absolute"
+                      left={{ base: '-40px', md: '-64px' }}
+                      top={1}
+                      w={{ base: 6, md: 8 }}
+                      h={{ base: 6, md: 8 }}
+                      borderRadius="full"
+                      bg="white"
+                      border="2px solid"
+                      borderColor="brand.500"
+                      align="center"
+                      justify="center"
+                    >
+                      <Box w={2} h={2} borderRadius="full" bg="brand.500" />
+                    </Flex>
+                    <Text fontFamily="serif" fontStyle="italic" fontSize={{ base: '56px', md: '88px' }} lineHeight="0.8" color="gray.300" mb={4}>
+                      0{i + 1}
+                    </Text>
+                    <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900" mb={3}>
+                      {step.title}
+                    </Heading>
+                    <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="480px">
+                      {step.text}
+                    </Text>
+                  </Reveal>
+                ))}
+              </Stack>
+            </Box>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* ============================== REVIEWS ============================== */}
+      <Box as="section" bg="gray.50" py={{ base: 24, md: 40 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '4fr 8fr' }} gap={{ base: 12, lg: 20 }}>
+            <Reveal>
+              <Eyebrow>Reviews</Eyebrow>
+              <Flex align="flex-end" gap={4} mt={8}>
+                <Text fontSize={{ base: '96px', md: '140px' }} fontWeight={500} lineHeight="0.8" letterSpacing="-0.06em" color="ink.900" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                  {AVG_RATING}
+                </Text>
+                <Box pb={2}>
+                  <Stars size={5} color="#F4B400" />
+                  <Text fontSize="sm" color="gray.600" mt={1.5}>
+                    {TOTAL_REVIEWS} reviews on Google
+                  </Text>
+                </Box>
+              </Flex>
+
+              <Stack spacing={0} mt={10} borderTop="1px solid" borderColor="gray.200">
+                {outlets.map((o) => (
+                  <Flex key={o.id} justify="space-between" align="center" py={4} borderBottom="1px solid" borderColor="gray.200" fontSize="sm">
+                    <Text color="ink.900" fontWeight={500}>{o.name}</Text>
+                    <HStack spacing={2} color="gray.600">
+                      <Icon as={PiStarFill} color="#F4B400" />
+                      <Text sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                        <Text as="span" color="ink.900" fontWeight={600}>{o.rating.toFixed(1)}</Text> · {o.reviews}
+                      </Text>
+                    </HStack>
+                  </Flex>
+                ))}
+              </Stack>
+
+              <Button
+                as="a"
+                href={GOOGLE_REVIEWS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                mt={8}
+                variant="outline"
+                h={12}
+                px={5}
+                leftIcon={<Icon as={PiGoogleLogoFill} boxSize={4} />}
+                rightIcon={<Icon as={PiArrowUpRight} boxSize={4} />}
+              >
+                Read all reviews
+              </Button>
+            </Reveal>
+
+            <StaggerGroup stagger={0.1}>
+              <Box sx={{ columnCount: { base: 1, md: 2 }, columnGap: '20px' }}>
+                {reviews.map((r, i) => (
+                  <MotionBox key={r.name + i} variants={fadeUp} mb={5} sx={{ breakInside: 'avoid' }}>
+                    <Bezel inner={{ p: { base: 6, md: 8 } }}>
+                      <Stars size={3.5} color="#F4B400" />
+                      <Text
+                        mt={5}
+                        fontSize={r.text.length > 80 ? { base: 'lg', md: 'xl' } : { base: '2xl', md: '28px' }}
+                        lineHeight="1.35"
+                        letterSpacing="-0.02em"
+                        color="ink.900"
+                      >
+                        “{r.text}”
+                      </Text>
+                      <Flex align="center" gap={3} mt={6}>
+                        <Flex w={10} h={10} borderRadius="14px" bg="gray.50" border="1px solid" borderColor="gray.100" align="center" justify="center" fontWeight={600} fontSize="sm" color="ink.700">
+                          {r.name.split(' ').map((p) => p[0]).join('')}
+                        </Flex>
+                        <Box>
+                          <Text fontSize="sm" fontWeight={500} color="ink.900">{r.name}</Text>
+                          <Text fontSize="xs" color="gray.500">{r.outlet} · {r.when}</Text>
+                        </Box>
+                      </Flex>
+                    </Bezel>
+                  </MotionBox>
+                ))}
+              </Box>
+            </StaggerGroup>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* ============================== OUTLETS ============================== */}
+      <Box as="section" bg="white" py={{ base: 24, md: 40 }}>
+        <Container>
+          <SectionIntro
+            eyebrow="Outlets"
+            title={<>Three outlets. <Accent>One standard.</Accent></>}
+            description="Walk in, drop off, or let us pick up. Every outlet runs the same process, with the same care."
+          />
+
+          <StaggerGroup stagger={0.08}>
+            <Box borderTop="1px solid" borderColor="gray.200">
+              {outlets.map((o, i) => (
+                <MotionBox key={o.id} variants={fadeUp}>
+                  <Grid
+                    as="a"
+                    href={o.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    role="group"
+                    templateColumns={{ base: '1fr auto', md: '60px 1.3fr 1.6fr auto' }}
+                    gap={{ base: 3, md: 8 }}
+                    alignItems="center"
+                    py={{ base: 6, md: 8 }}
+                    borderBottom="1px solid"
+                    borderColor="gray.200"
+                    transition={`padding 0.5s ${EASE}`}
+                    _hover={{ px: { md: 4 } }}
+                  >
+                    <Text display={{ base: 'none', md: 'block' }} fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300">
+                      0{i + 1}
+                    </Text>
+                    <Box>
+                      <Heading fontSize={{ base: 'xl', md: '28px' }} fontWeight={500} color="ink.900">
+                        {o.name}
+                      </Heading>
+                      <HStack spacing={4} mt={2} fontSize="sm" color="gray.600">
+                        <HStack spacing={1.5}>
+                          <Icon as={PiStarFill} color="#F4B400" />
+                          <Text>{o.rating.toFixed(1)} ({o.reviews})</Text>
+                        </HStack>
+                        <HStack spacing={1.5}>
+                          <Icon as={PiClockLight} />
+                          <Text>Open till {o.closes}</Text>
+                        </HStack>
+                      </HStack>
+                    </Box>
+                    <Text display={{ base: 'none', md: 'block' }} color="gray.600" fontSize="sm" maxW="360px">
+                      {o.address}
+                    </Text>
+                    <Flex
+                      align="center"
+                      justify="center"
+                      w={12}
+                      h={12}
+                      borderRadius="full"
+                      border="1px solid"
+                      borderColor="gray.200"
+                      color="ink.900"
+                      transition={`all 0.5s ${EASE}`}
+                      _groupHover={{ bg: 'ink.900', color: 'white', borderColor: 'ink.900', transform: 'rotate(45deg)' }}
+                    >
+                      <Icon as={PiArrowUpRight} boxSize={5} />
+                    </Flex>
+                  </Grid>
+                </MotionBox>
+              ))}
+            </Box>
+          </StaggerGroup>
+        </Container>
       </Box>
 
       {/* ============================== APP PROMO ============================== */}
       <AppPromo />
 
-      {/* ============================== STATS ============================== */}
-      <Box bg="white" py={{ base: 14, md: 20 }}>
-        <Container maxW="1200px">
-          <StaggerGroup>
-            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={{ base: 6, md: 8 }}>
-              {stats.map((stat, i) => (
-                <MotionBox key={i} variants={unfold}>
-                  <VStack
-                    spacing={2}
-                    p={{ base: 5, md: 7 }}
-                    bg="gray.50"
-                    borderRadius="2xl"
-                    border="1px solid"
-                    borderColor="gray.100"
-                    textAlign="center"
-                    transition="all 0.3s"
-                    _hover={{ transform: 'translateY(-6px)', boxShadow: 'card', borderColor: 'brand.100', bg: 'white' }}
-                  >
-                    <Circle size={12} bg="brand.50" color="brand.500" mb={1}>
-                      <Icon as={stat.icon} boxSize={5} />
-                    </Circle>
-                    <Heading fontSize={{ base: '3xl', md: '4xl' }} color="gray.900">
-                      <Counter to={stat.value} suffix={stat.suffix} />
+      {/* ============================== FINAL CTA ============================== */}
+      <Box as="section" bg="gray.50" py={{ base: 16, md: 24 }}>
+        <Container>
+          <Reveal>
+            <Bezel radius={40} pad={8} inner={{ bg: 'ink.900' }}>
+              <Grid templateColumns={{ base: '1fr', lg: '1.3fr 1fr' }} minH={{ lg: '520px' }}>
+                <Flex direction="column" justify="space-between" p={{ base: 8, md: 14 }} gap={12} position="relative" zIndex={1}>
+                  <Box>
+                    <Eyebrow dark>Welcome offer</Eyebrow>
+                    <Heading mt={8} color="white" fontSize={{ base: '44px', md: '72px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
+                      25% off your <Accent from="brand.200">first order.</Accent>
                     </Heading>
-                    <Text fontSize={{ base: 'xs', md: 'sm' }} color="gray.500" fontWeight={500}>
-                      {stat.label}
+                    <Text mt={6} color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} maxW="440px">
+                      Book a pickup today. We'll collect, clean and deliver — and take a quarter off the bill.
                     </Text>
-                  </VStack>
-                </MotionBox>
-              ))}
-            </SimpleGrid>
-          </StaggerGroup>
-        </Container>
-      </Box>
-
-      {/* ============================== SERVICES ============================== */}
-      <Box as="section" py={{ base: 16, md: 24 }} bg="gray.50" position="relative" overflow="hidden">
-        <Box position="absolute" top="-8%" left="-6%" w="360px" h="360px" borderRadius="full" bg="brand.100" filter="blur(90px)" opacity={0.45} />
-        <Box position="absolute" bottom="-10%" right="-6%" w="320px" h="320px" borderRadius="full" bg="accent.100" filter="blur(90px)" opacity={0.4} />
-
-        <Container maxW="1200px" position="relative">
-          <SectionHeading
-            badge="Our Best Services"
-            title={<>Premium Laundry Solutions <GradientText>For You</GradientText></>}
-            subtitle="We combine expertise with cutting-edge technology to deliver exceptional laundry services that respect both your garments and the environment."
-          />
-
-          <StaggerGroup mt={{ base: 12, md: 16 }}>
-            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={6}>
-              {services.map((s, i) => (
-                <MotionBox key={i} variants={unfold} as={RouterLink} to={s.to} display="block" height="100%">
-                  <VStack
-                    spacing={4}
-                    align="flex-start"
-                    h="100%"
-                    p={7}
-                    borderRadius="2xl"
-                    position="relative"
-                    overflow="hidden"
-                    bg={s.featured ? 'transparent' : 'white'}
-                    bgGradient={s.featured ? 'linear(160deg, brand.500, accent.600)' : undefined}
-                    color={s.featured ? 'white' : 'gray.800'}
-                    border="1px solid"
-                    borderColor={s.featured ? 'transparent' : 'gray.100'}
-                    boxShadow={s.featured ? 'glow' : 'soft'}
-                    transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
-                    _hover={{ transform: 'translateY(-10px)', boxShadow: s.featured ? 'floating' : 'cardHover' }}
-                  >
-                    <Circle
-                      size={14}
-                      bg={s.featured ? 'whiteAlpha.300' : `${s.color}.50`}
-                      color={s.featured ? 'white' : `${s.color}.500`}
-                      backdropFilter={s.featured ? 'blur(6px)' : undefined}
-                    >
-                      <Icon as={s.icon} boxSize={6} />
-                    </Circle>
-                    <Heading size="md">{s.title}</Heading>
-                    <Text fontSize="sm" color={s.featured ? 'whiteAlpha.900' : 'gray.600'} flex={1}>
-                      {s.text}
-                    </Text>
-                    <HStack spacing={2} fontWeight={600} fontSize="sm" color={s.featured ? 'white' : 'brand.600'}>
-                      <Text>Learn more</Text>
-                      <Icon as={FaArrowRight} boxSize={3} />
-                    </HStack>
-                  </VStack>
-                </MotionBox>
-              ))}
-            </SimpleGrid>
-          </StaggerGroup>
-
-          <Reveal delay={0.1} textAlign="center" mt={14}>
-            <Button as={RouterLink} to="/services" size="lg" h={14} px={8} variant="gradient" rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-              View All Services
-            </Button>
-          </Reveal>
-        </Container>
-      </Box>
-
-      {/* ============================== HOW IT WORKS ============================== */}
-      <Box as="section" py={{ base: 16, md: 24 }} bg="white">
-        <Container maxW="1200px">
-          <SectionHeading
-            badge="Simple Process"
-            title={<>Journey To Fresh Clothes, <GradientText>Made Simple</GradientText></>}
-            subtitle="From your door to ours and back again — premium laundry care in three effortless steps."
-          />
-
-          <StaggerGroup mt={{ base: 12, md: 20 }}>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 12, md: 4 }}>
-              {steps.map((step, i) => (
-                <MotionBox key={i} variants={unfold}>
-                  <VStack spacing={6} textAlign="center" px={{ base: 2, md: 6 }}>
-                    {/* Icon badge + connector row.
-                       The connector lives in this same flex row, pinned to the icon's
-                       vertical centre, so it can never cross the text below. It is hidden
-                       on the last step and on mobile. */}
-                    <Flex w="full" align="center" justify="center" position="relative">
-                      <Box position="relative" flexShrink={0} zIndex={1}>
-                        <Circle size={{ base: 20, md: 24 }} bg="white" boxShadow="card" border="1px solid" borderColor="gray.100">
-                          <Circle size={{ base: 14, md: 16 }} bg={`${step.color}.50`} color={`${step.color}.500`}>
-                            <Icon as={step.icon} boxSize={7} />
-                          </Circle>
-                        </Circle>
-                        <Circle
-                          size={8}
-                          position="absolute"
-                          top={0}
-                          right={0}
-                          bgGradient="linear(135deg, brand.500, accent.500)"
-                          color="white"
-                          fontSize="md"
-                          fontWeight={800}
-                          border="3px solid white"
-                          boxShadow="sm"
-                        >
-                          {i + 1}
-                        </Circle>
-                      </Box>
-
-                      {i < steps.length - 1 && (
-                        <Box
-                          display={{ base: 'none', md: 'block' }}
-                          position="absolute"
-                          left="calc(50% + 48px)"
-                          right="-50%"
-                          top="50%"
-                          height="2px"
-                          transform="translateY(-50%)"
-                          bgGradient="linear(to-r, brand.200, accent.200)"
-                          zIndex={0}
-                        />
-                      )}
-                    </Flex>
-
-                    <VStack spacing={3}>
-                      <Heading size="md" color="gray.900">{step.title}</Heading>
-                      <Text color="gray.600" maxW="2xs" fontSize="sm" lineHeight="1.7">{step.text}</Text>
-                    </VStack>
-                  </VStack>
-                </MotionBox>
-              ))}
-            </SimpleGrid>
-          </StaggerGroup>
-        </Container>
-      </Box>
-
-      {/* ============================== WHY CHOOSE US ============================== */}
-      <Box as="section" py={{ base: 16, md: 24 }} bg="gray.50" position="relative" overflow="hidden">
-        <Container maxW="1200px">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 12, lg: 16 }} alignItems="center">
-            <Reveal variant={fromLeft} position="relative">
-              <Box borderRadius="3xl" overflow="hidden" boxShadow="floating">
-                <Image
-                  src="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                  alt="Expert garment care at Whites & Brights"
-                  objectFit="cover"
-                  w="100%"
-                  h={{ base: '320px', md: '480px' }}
-                />
-              </Box>
-              {/* Floating accent card */}
-              <FloatingCard position="absolute" bottom={{ base: 4, md: 8 }} left={{ base: 4, md: -8 }} duration={6}>
-                <GlassCard p={5} bg="rgba(255,255,255,0.95)" maxW="220px">
-                  <HStack spacing={3}>
-                    <Circle size={12} bgGradient="linear(135deg, brand.500, accent.500)" color="white">
-                      <Icon as={FaShieldAlt} boxSize={5} />
-                    </Circle>
-                    <Box>
-                      <Text fontWeight={800} color="gray.900">Garment-Safe</Text>
-                      <Text fontSize="xs" color="gray.500">Fabric-specific care</Text>
-                    </Box>
-                  </HStack>
-                </GlassCard>
-              </FloatingCard>
-            </Reveal>
-
-            <Box>
-              <StaggerGroup>
-                <MotionBox variants={unfold}>
-                  <SectionBadge>Why Whites & Brights</SectionBadge>
-                </MotionBox>
-                <MotionBox variants={unfold} mt={5}>
-                  <Heading fontSize={{ base: '3xl', md: '42px' }} color="gray.900" lineHeight="1.1">
-                    Laundry care that feels <GradientText>genuinely premium</GradientText>
-                  </Heading>
-                </MotionBox>
-                <MotionBox variants={unfold} mt={5}>
-                  <Text color="gray.600" fontSize="lg">
-                    Every order is handled with meticulous attention — from sorting and stain treatment to pressing and packaging. Here's what sets us apart.
-                  </Text>
-                </MotionBox>
-
-                <Stack spacing={5} mt={8}>
-                  {[
-                    { icon: FaLeaf, title: 'Eco-conscious cleaning', text: 'Biodegradable detergents and water-saving machines, gentle on fabrics and the planet.' },
-                    { icon: FaClock, title: 'Reliable turnaround', text: 'Standard 24–48h service with same-day express options when you need it fast.' },
-                    { icon: FaMapMarkerAlt, title: 'Doorstep convenience', text: 'Free scheduled pickup and delivery, with friendly local service you can trust.' },
-                  ].map((f, i) => (
-                    <MotionBox key={i} variants={unfold}>
-                      <HStack spacing={4} align="flex-start">
-                        <Circle size={12} bg="white" color="brand.500" boxShadow="soft" flexShrink={0}>
-                          <Icon as={f.icon} boxSize={5} />
-                        </Circle>
-                        <Box>
-                          <Heading size="sm" color="gray.900" mb={1}>{f.title}</Heading>
-                          <Text color="gray.600" fontSize="sm">{f.text}</Text>
-                        </Box>
-                      </HStack>
-                    </MotionBox>
-                  ))}
-                </Stack>
-              </StaggerGroup>
-            </Box>
-          </SimpleGrid>
-        </Container>
-      </Box>
-
-      {/* ============================== PROMO BANNER ============================== */}
-      <Box as="section" py={{ base: 14, md: 20 }} bg="white">
-        <Container maxW="1200px">
-          <Reveal variant={scaleIn}>
-            <Box
-              position="relative"
-              borderRadius="4xl"
-              overflow="hidden"
-              bgGradient="linear(130deg, brand.900 0%, brand.700 55%, brand.500 100%)"
-              boxShadow="floating"
-            >
-              {/* decorative blobs */}
-              <Box position="absolute" top="-30%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
-              <Box position="absolute" bottom="-40%" left="20%" w="360px" h="360px" borderRadius="full" bg="whiteAlpha.100" />
-
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={0} position="relative">
-                <Box p={{ base: 8, md: 14 }} color="white">
-                  <Badge bg="highlight.500" color="white" px={4} py={1.5} mb={5} fontSize="sm">
-                    Inaugural Offer
-                  </Badge>
-                  <Heading fontSize={{ base: '3xl', md: '44px' }} lineHeight="1.05" mb={4}>
-                    Get <GradientText from="white" to="brand.200">25% OFF</GradientText> your first order
-                  </Heading>
-                  <Text fontSize={{ base: 'md', md: 'lg' }} color="whiteAlpha.900" mb={8} maxW="md">
-                    New customers enjoy 25% off as a welcome to the Whites & Brights family. Premium care, eco-friendly, delivered to your door.
-                  </Text>
-                  <Stack direction={{ base: 'column', sm: 'row' }} spacing={4}>
-                    <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} bg="white" color="brand.700" _hover={{ bg: 'gray.100', transform: 'translateY(-2px)' }} rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-                      Claim Your Offer
-                    </Button>
-                    <Button as={RouterLink} to="/services" size="lg" h={14} px={8} variant="glass">
-                      See Pricing
+                  </Box>
+                  <Stack direction={{ base: 'column', sm: 'row' }} spacing={3} align={{ base: 'stretch', sm: 'center' }}>
+                    <ArrowButton as={RouterLink} to="/contact" variant="light" justifyContent="space-between">
+                      Claim your 25% off
+                    </ArrowButton>
+                    <Button as="a" href={`tel:${PHONE_TEL}`} variant="glass" h={{ base: 12, md: 14 }} px={6} leftIcon={<Icon as={PiPhoneLight} boxSize={5} />}>
+                      {PHONE_DISPLAY}
                     </Button>
                   </Stack>
+                </Flex>
+                <Box position="relative" minH={{ base: '260px', lg: 'auto' }} display={{ base: 'none', md: 'block' }}>
+                  <Box position="absolute" inset={0} bgImage={`url(${IMAGES.iron})`} bgSize="cover" bgPosition="center" />
+                  <Box position="absolute" inset={0} bgGradient="linear(to-r, ink.900 0%, rgba(6,29,35,0.2) 45%, transparent)" />
                 </Box>
-                <Box position="relative" minH={{ base: '240px', md: 'auto' }}>
-                  <Image
-                    src="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                    alt="Fresh, neatly folded laundry"
-                    position="absolute"
-                    inset={0}
-                    w="100%"
-                    h="100%"
-                    objectFit="cover"
-                  />
-                  <Box position="absolute" inset={0} bgGradient="linear(to-r, brand.700, transparent)" opacity={0.5} display={{ base: 'block', md: 'block' }} />
-                </Box>
-              </SimpleGrid>
-            </Box>
-          </Reveal>
-        </Container>
-      </Box>
-
-      {/* ============================== FINAL CTA ============================== */}
-      <Box as="section" py={{ base: 16, md: 24 }} bg="gray.50">
-        <Container maxW="1000px">
-          <Reveal variant={unfold}>
-            <VStack spacing={7} textAlign="center">
-              <SectionBadge>Ready when you are</SectionBadge>
-              <Heading fontSize={{ base: '3xl', md: '48px' }} color="gray.900" lineHeight="1.1" maxW="3xl">
-                Effortless, premium laundry is just <GradientText>one tap away</GradientText>
-              </Heading>
-              <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="2xl">
-                Visit our outlet or schedule a pickup today. We'll take care of the rest.
-              </Text>
-              <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} pt={2}>
-                <Button as={RouterLink} to="/contact" size="lg" h={14} px={9} variant="gradient" rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-                  Book a Pickup
-                </Button>
-                <Button as={RouterLink} to="/franchise" size="lg" h={14} px={9} variant="outline" colorScheme="brand">
-                  Explore Franchise
-                </Button>
-              </Stack>
-            </VStack>
+              </Grid>
+            </Bezel>
           </Reveal>
         </Container>
       </Box>

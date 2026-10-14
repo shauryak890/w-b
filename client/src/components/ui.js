@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Flex, Text, Heading, Badge, Stack } from '@chakra-ui/react';
+import { Box, Flex, Text, Heading, Stack, Button, Icon } from '@chakra-ui/react';
 import { motion, useInView } from 'framer-motion';
+import { PiArrowUpRight } from 'react-icons/pi';
+import { EASE } from '../theme';
 
 /* ------------------------------------------------------------------ */
 /*  Motion-wrapped Chakra primitives + reusable variants               */
@@ -10,9 +12,11 @@ export const MotionFlex = motion(Flex);
 export const MotionText = motion(Text);
 export const MotionHeading = motion(Heading);
 
+const SPRING = [0.32, 0.72, 0, 1];
+
 export const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 40, filter: 'blur(8px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease: SPRING } },
 };
 
 export const fadeIn = {
@@ -35,17 +39,8 @@ export const fromRight = {
   show: { opacity: 1, x: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/* Signature reveal — a subtle perspective "unfold", echoing the fabric hero */
-export const unfold = {
-  hidden: { opacity: 0, y: 28, rotateX: -14, transformPerspective: 900 },
-  show: {
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    transformPerspective: 900,
-    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
-  },
-};
+/* Signature reveal — heavy fade-up that resolves out of a soft blur */
+export const unfold = fadeUp;
 
 export const staggerContainer = (stagger = 0.12, delay = 0) => ({
   hidden: {},
@@ -82,40 +77,114 @@ export const StaggerGroup = ({ children, stagger = 0.12, delay = 0, once = true,
 );
 
 /* ------------------------------------------------------------------ */
-/*  GradientText — brand cyan -> blue gradient clipped text            */
+/*  Accent — serif italic emphasis inside headings.                     */
+/*  (Named GradientText for backwards compatibility; it no longer       */
+/*  renders a gradient. `from` sets the colour on dark backgrounds.)    */
 /* ------------------------------------------------------------------ */
-export const GradientText = ({ children, from = 'brand.500', to = 'accent.500', ...rest }) => (
+export const GradientText = ({ children, from = 'brand.500', to, ...rest }) => (
   <Text
     as="span"
-    bgGradient={`linear(to-r, ${from}, ${to})`}
-    bgClip="text"
-    sx={{ WebkitTextFillColor: 'transparent' }}
+    fontFamily="serif"
+    fontStyle="italic"
+    fontWeight={400}
+    letterSpacing="-0.01em"
+    color={from === 'brand.500' ? 'brand.700' : from}
     {...rest}
   >
     {children}
   </Text>
 );
+export const Accent = GradientText;
 
 /* ------------------------------------------------------------------ */
-/*  SectionBadge — small pill above a section heading                  */
+/*  SectionBadge — tiny tracked eyebrow label above a heading           */
 /* ------------------------------------------------------------------ */
-export const SectionBadge = ({ children, icon, colorScheme = 'brand', ...rest }) => (
-  <Badge
+export const SectionBadge = ({ children, icon, dark = false, ...rest }) => (
+  <Flex
+    as="span"
     display="inline-flex"
     alignItems="center"
     gap={2}
-    px={4}
-    py={1.5}
-    fontSize="sm"
-    bg="brand.50"
-    color="brand.700"
+    px={3}
+    py={1}
+    borderRadius="full"
     border="1px solid"
-    borderColor="brand.100"
+    borderColor={dark ? 'whiteAlpha.300' : 'gray.200'}
+    bg={dark ? 'whiteAlpha.100' : 'white'}
+    color={dark ? 'whiteAlpha.900' : 'ink.700'}
+    fontSize="11px"
+    fontWeight={500}
+    letterSpacing="0.18em"
+    textTransform="uppercase"
+    lineHeight="1.6"
     {...rest}
   >
-    {icon}
+    {icon || <Box as="span" w={1.5} h={1.5} borderRadius="full" bg="brand.500" />}
     {children}
-  </Badge>
+  </Flex>
+);
+export const Eyebrow = SectionBadge;
+
+/* ------------------------------------------------------------------ */
+/*  ArrowButton — pill CTA with the arrow nested in its own circle      */
+/* ------------------------------------------------------------------ */
+export const ArrowButton = ({ children, variant = 'gradient', icon = PiArrowUpRight, ...rest }) => {
+  // The nested circle needs to contrast with the pill it sits in
+  const circleBg = variant === 'light' || variant === 'outline' ? 'ink.900' : 'whiteAlpha.200';
+  return (
+    <Button
+      variant={variant}
+      role="group"
+      h={{ base: 12, md: 14 }}
+      pl={{ base: 5, md: 7 }}
+      pr={2}
+      fontSize={{ base: 'sm', md: 'md' }}
+      gap={4}
+      {...rest}
+    >
+      {children}
+      <Flex
+        as="span"
+        align="center"
+        justify="center"
+        w={{ base: 8, md: 10 }}
+        h={{ base: 8, md: 10 }}
+        borderRadius="full"
+        bg={circleBg}
+        color="white"
+        transition={`transform 0.5s ${EASE}`}
+        _groupHover={{ transform: 'translate(2px, -2px) scale(1.06)' }}
+      >
+        <Icon as={icon} boxSize={4} />
+      </Flex>
+    </Button>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/*  Bezel — nested "tray + plate" card: outer shell, inner core         */
+/* ------------------------------------------------------------------ */
+export const Bezel = ({ children, inner = {}, dark = false, radius = 28, pad = 6, ...rest }) => (
+  <Box
+    p={`${pad}px`}
+    borderRadius={`${radius}px`}
+    bg={dark ? 'whiteAlpha.100' : 'rgba(6,29,35,0.035)'}
+    border="1px solid"
+    borderColor={dark ? 'whiteAlpha.200' : 'rgba(6,29,35,0.06)'}
+    {...rest}
+  >
+    <Box
+      h="100%"
+      borderRadius={`${radius - pad}px`}
+      bg={dark ? 'ink.800' : 'white'}
+      boxShadow={dark ? 'inset 0 1px 1px rgba(255,255,255,0.08)' : 'bezel'}
+      overflow="hidden"
+      position="relative"
+      {...inner}
+    >
+      {children}
+    </Box>
+  </Box>
 );
 
 /* ------------------------------------------------------------------ */
@@ -128,7 +197,7 @@ export const SectionHeading = ({
   subtitle,
   align = 'center',
   maxW = '3xl',
-  color = 'gray.900',
+  color = 'ink.900',
   subColor = 'gray.600',
   ...rest
 }) => (
@@ -141,9 +210,10 @@ export const SectionHeading = ({
       )}
       <MotionHeading
         variants={fadeUp}
-        fontSize={{ base: '3xl', md: '4xl', lg: '44px' }}
+        fontSize={{ base: '34px', md: '48px', lg: '56px' }}
         color={color}
-        lineHeight="1.1"
+        lineHeight="1.04"
+        maxW="4xl"
       >
         {title}
       </MotionHeading>
@@ -161,10 +231,9 @@ export const SectionHeading = ({
 /* ------------------------------------------------------------------ */
 export const GlassCard = ({ children, ...rest }) => (
   <Box
-    bg="rgba(255,255,255,0.75)"
-    backdropFilter="blur(16px) saturate(160%)"
+    bg="rgba(255,255,255,0.85)"
     border="1px solid"
-    borderColor="rgba(255,255,255,0.6)"
+    borderColor="rgba(255,255,255,0.7)"
     boxShadow="glass"
     borderRadius="2xl"
     {...rest}
@@ -251,4 +320,26 @@ export const Marquee = ({ children, duration = 28, gap = 12, reverse = false }) 
       </MotionBox>
     </Box>
   );
+};
+
+/* ------------------------------------------------------------------ */
+/*  Shared form field styling (Input / Textarea / Select `sx`)         */
+/* ------------------------------------------------------------------ */
+export const inputStyles = {
+  bg: 'gray.50',
+  border: '1px solid',
+  borderColor: 'gray.200',
+  borderRadius: '14px',
+  fontSize: 'md',
+  transition: `all 0.3s ${EASE}`,
+  _placeholder: { color: 'gray.400' },
+  _hover: { borderColor: 'gray.300' },
+  _focus: { borderColor: 'ink.900', boxShadow: '0 0 0 3px rgba(0, 163, 179, 0.18)', bg: 'white' },
+};
+
+export const labelStyles = {
+  fontSize: 'sm',
+  fontWeight: 500,
+  color: 'ink.900',
+  mb: 2,
 };

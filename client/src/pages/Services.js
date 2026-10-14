@@ -1,1389 +1,360 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Stack,
-  SimpleGrid,
-  Image,
-  Flex,
-  Icon,
-  Button,
-  VStack,
-  HStack,
-  List,
-  ListItem,
-  ListIcon,
-  Divider,
-  Badge,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { 
-  FaCheck, 
-  FaTshirt, 
-  FaSnowflake, 
-  FaHome, 
-  FaBolt, 
-  FaCalendarAlt,
-  FaTags,
-  FaShoppingBasket,
-  FaArrowRight,
-  FaLeaf
-} from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { Box, Container, Heading, Text, Stack, Grid, Flex, Icon, HStack, Button, SimpleGrid, Link } from '@chakra-ui/react';
+import { PiCheckBold, PiArrowUpRight, PiSealPercentLight, PiLeafLight, PiBuildingsLight, PiWhatsappLogoFill } from 'react-icons/pi';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { GradientText } from '../components/ui';
+import PageHero, { SectionIntro } from '../components/PageHero';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, fadeUp } from '../components/ui';
+import { EASE } from '../theme';
+import { categories, express, subscriptions, navItems } from '../data/services';
+import { WHATSAPP_URL } from '../data/business';
 
-const MotionBox = motion(Box);
+import usePageMeta from '../hooks/usePageMeta';
+// Keeps section headings clear of the floating navbar + sticky category bar
+const SCROLL_OFFSET = 150;
 
-// Pricing Table Component
-const PricingTable = ({ category, items }) => {
-  const trHoverBg = useColorModeValue('gray.50', 'gray.700');
-  const tableBg = useColorModeValue('white', 'gray.700');
-  const tableBorder = useColorModeValue('gray.200', 'gray.600');
-  const tableHeaderBg = useColorModeValue('gray.50', 'gray.800');
-  const tableHeaderColor = useColorModeValue('gray.900', 'white');
-
-  return (
-    <Box
-      borderRadius="lg"
-      overflow="hidden"
-      bg={tableBg}
-      boxShadow="lg"
-      my={6}
-    >
-      <Box
-        p={4}
-        bg={tableHeaderBg}
-        borderBottom="1px"
-        borderColor={tableBorder}
-      >
-        <Text fontWeight="bold" fontSize="lg" color={tableHeaderColor}>{category}</Text>
-      </Box>
-      <Box overflowX="auto">
-        <Table variant="simple" w="full">
-          <Thead bg={tableHeaderBg}>
-            <Tr>
-              <Th>Item</Th>
-              <Th isNumeric>Price</Th>
-              <Th>Turnaround Time</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {items.map((item, index) => (
-              <Tr key={index} 
-                _hover={{ bg: trHoverBg }}
-                transition="background 0.2s"
-              >
-                <Td>{item.name}</Td>
-                <Td isNumeric fontWeight="medium">{item.price}</Td>
-                <Td>{item.time}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
-    </Box>
-  );
+const scrollToSection = (id, smooth = true) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  window.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
 };
 
-const Table = ({ children, ...props }) => (
-  <Box as="table" {...props}>{children}</Box>
-);
-
-const Thead = ({ children, ...props }) => (
-  <Box as="thead" {...props}>{children}</Box>
-);
-
-const Tbody = ({ children, ...props }) => (
-  <Box as="tbody" {...props}>{children}</Box>
-);
-
-const Tr = ({ children, ...props }) => (
-  <Box as="tr" {...props}>{children}</Box>
-);
-
-const Th = ({ children, isNumeric, ...props }) => (
-  <Box 
-    as="th" 
-    p={4} 
-    textAlign={isNumeric ? "right" : "left"} 
-    fontWeight="semibold"
-    fontSize="sm"
-    {...props}
-  >
-    {children}
-  </Box>
-);
-
-const Td = ({ children, isNumeric, ...props }) => (
-  <Box 
-    as="td" 
-    p={4} 
-    textAlign={isNumeric ? "right" : "left"}
-    borderTop="1px"
-    borderColor={useColorModeValue('gray.100', 'gray.700')}
-    fontSize="sm"
-    {...props}
-  >
-    {children}
-  </Box>
-);
-
-const Service = ({ title, description, image, features, icon, color = "brand", tabLink, onTabClick }) => {
-  const featureTextColor = useColorModeValue('gray.700', 'gray.300');
-  
-  const handleClick = () => {
-    if (onTabClick) {
-      onTabClick();
-    }
-  };
-  
-  return (
-    <MotionBox
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, type: 'tween', ease: 'easeInOut' }}
-      bg={useColorModeValue('white', 'gray.800')}
-      borderRadius="xl"
-      overflow="hidden"
-      boxShadow="xl"
-      height="100%"
-      position="relative"
-      _hover={{ 
-        transform: 'translateY(-8px)',
-        boxShadow: '2xl',
-        '& > .service-gradient': {
-          opacity: 0.8,
-        }
-      }}
-    >
-      {/* Gradient bar at top */}
-      <Box 
-        className="service-gradient"
-        position="absolute"
-        top="0"
-        left="0"
-        right="0"
-        height="6px"
-        bgGradient={`linear(to-r, ${color}.400, ${color}.600)`}
-        opacity={0.6}
-        transition="opacity 0.3s ease"
-      />
-
-      <Box h={'200px'} overflow={'hidden'}>
-        <Image
-          src={image || 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'}
-          alt={title}
-          objectFit="cover"
-          width="100%"
-          height="100%"
-          transition="transform 0.5s ease"
-          _hover={{ transform: 'scale(1.05)' }}
-        />
-      </Box>
-
-      <Box p={6}>
-        <VStack spacing={2} mb={4} align="center">
-          {icon && (
-            <Flex 
-              w={16} 
-              h={16} 
-              align="center" 
-              justify="center" 
-              borderRadius="lg"
-              bg={`${color}.50`}
-              color={`${color}.500`}
-              boxShadow="md"
-              mb={2}
-              transition="all 0.3s ease"
-              _hover={{ transform: 'scale(1.05)', boxShadow: 'lg' }}
-            >
-              <Icon as={icon} boxSize={8} />
-            </Flex>
-          )}
-          <Heading fontSize={'xl'} fontWeight={600} color={`${color}.600`} textAlign="center">
-            {title}
-          </Heading>
-        </VStack>
-
-        <Text color={useColorModeValue('gray.600', 'gray.300')} mb={5} fontSize="md">
-          {description}
-        </Text>
-
-        <Divider mb={5} opacity={0.3} />
-
-        <VStack align="start" spacing={3}>
-          <Text fontWeight={600} fontSize="sm" color={`${color}.500`}>
-            Key Features:
-          </Text>
-          {features.map((feature, index) => (
-            <HStack key={index} align="center" spacing={2}>
-              <Flex
-                align="center"
-                justify="center"
-                borderRadius="full"
-                bg={`${color}.50`}
-                color={`${color}.500`}
-                w={5}
-                h={5}
-                boxShadow="sm"
-              >
-                <Icon as={FaCheck} fontSize="xs" />
-              </Flex>
-              <Text fontSize="sm" color={featureTextColor}>
-                {feature}
-              </Text>
-            </HStack>
-          ))}
-        </VStack>
-
-        <Button
-          onClick={handleClick}
-          mt={6}
-          size="sm"
-          variant="ghost"
-          colorScheme={color}
-          rightIcon={<FaArrowRight size={12} />}
-          _hover={{ bg: `${color}.50` }}
-          cursor={onTabClick ? "pointer" : "default"}
+const PriceTable = ({ title, items }) => (
+  <Bezel inner={{ p: { base: 5, md: 7 } }}>
+    <Flex justify="space-between" align="baseline" mb={3}>
+      <Heading fontSize={{ base: 'lg', md: 'xl' }} fontWeight={500} color="ink.900">
+        {title}
+      </Heading>
+      <Text fontSize="11px" letterSpacing="0.14em" textTransform="uppercase" color="gray.500">
+        Price · Time
+      </Text>
+    </Flex>
+    <Box as="ul" listStyleType="none">
+      {items.map((item) => (
+        <Flex
+          as="li"
+          key={item.name}
+          align="baseline"
+          gap={3}
+          py={3}
+          borderTop="1px solid"
+          borderColor="gray.100"
+          fontSize={{ base: 'sm', md: 'md' }}
         >
-          Learn more
-        </Button>
+          <Text color="gray.700" flexShrink={0}>{item.name}</Text>
+          <Box flex={1} borderBottom="1px dotted" borderColor="gray.300" transform="translateY(-4px)" minW={4} />
+          <Text fontWeight={600} color="ink.900" sx={{ fontVariantNumeric: 'tabular-nums' }} flexShrink={0}>
+            {item.price}
+          </Text>
+          <Text fontSize="xs" color="gray.500" w="48px" textAlign="right" flexShrink={0}>
+            {item.time}
+          </Text>
+        </Flex>
+      ))}
+    </Box>
+  </Bezel>
+);
+
+const CategorySection = ({ cat, index }) => (
+  <Box id={cat.id} as="section" py={{ base: 16, md: 24 }} borderTop={index === 0 ? 'none' : '1px solid'} borderColor="gray.200">
+    <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 16 }}>
+      {/* Sticky summary column */}
+      <Box position={{ lg: 'sticky' }} top={{ lg: `${SCROLL_OFFSET}px` }} alignSelf="start">
+        <StaggerGroup>
+          <MotionBox variants={fadeUp}>
+            <Flex align="center" gap={3} color="gray.500" fontSize="sm">
+              <Text fontFamily="serif" fontStyle="italic" fontSize="2xl" color="gray.400">0{index + 1}</Text>
+              <Icon as={cat.icon} boxSize={6} color="ink.900" />
+            </Flex>
+          </MotionBox>
+          <MotionBox variants={fadeUp} mt={5}>
+            <Heading fontSize={{ base: '36px', md: '48px' }} fontWeight={500} color="ink.900">
+              {cat.title}
+            </Heading>
+          </MotionBox>
+          <MotionBox variants={fadeUp} mt={4}>
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="440px">
+              {cat.description}
+            </Text>
+          </MotionBox>
+          <MotionBox variants={fadeUp} mt={6}>
+            <HStack align="baseline" spacing={2}>
+              <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.14em" color="gray.500">from</Text>
+              <Text fontSize={{ base: '44px', md: '56px' }} fontWeight={500} letterSpacing="-0.05em" lineHeight="1" color="ink.900">
+                {cat.from}
+              </Text>
+              <Text color="gray.500">{cat.unit}</Text>
+            </HStack>
+          </MotionBox>
+          <MotionBox variants={fadeUp} mt={6}>
+            <Stack spacing={2.5}>
+              {cat.features.map((f) => (
+                <HStack key={f} spacing={3} align="flex-start">
+                  <Flex mt="3px" w={5} h={5} borderRadius="full" bg="brand.50" color="brand.700" align="center" justify="center" flexShrink={0}>
+                    <Icon as={PiCheckBold} boxSize={3} />
+                  </Flex>
+                  <Text color="gray.700" fontSize="sm">{f}</Text>
+                </HStack>
+              ))}
+            </Stack>
+          </MotionBox>
+          {cat.note && (
+            <MotionBox variants={fadeUp} mt={6}>
+              <Text fontSize="sm" color="ink.700" bg="brand.50" px={4} py={2.5} borderRadius="14px" display="inline-block">
+                {cat.note}
+              </Text>
+            </MotionBox>
+          )}
+          <MotionBox variants={fadeUp} mt={8} display={{ base: 'none', lg: 'block' }}>
+            <Box h="200px" borderRadius="24px" bgImage={`url(${cat.image})`} bgSize="cover" bgPosition="center" boxShadow="card" />
+          </MotionBox>
+        </StaggerGroup>
       </Box>
-    </MotionBox>
-  );
-};
+
+      {/* Price lists */}
+      <StaggerGroup stagger={0.08}>
+        <Stack spacing={5}>
+          {cat.tables.map((t) => (
+            <MotionBox key={t.title} variants={fadeUp}>
+              <PriceTable {...t} />
+            </MotionBox>
+          ))}
+        </Stack>
+      </StaggerGroup>
+    </Grid>
+  </Box>
+);
 
 export default function Services() {
+  usePageMeta('Services & Prices', 'Full price list for laundry by the kilo, dry cleaning, steam ironing, shoes, household items, express and monthly subscriptions.');
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState(0);
-  
+  const [active, setActive] = useState(navItems[0].id);
+
+  // Support legacy `?tab=N` deep links (navbar, footer) by scrolling to that section
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const tab = params.get('tab');
-    if (tab) {
-      setActiveTab(parseInt(tab));
+    const tab = parseInt(new URLSearchParams(location.search).get('tab'), 10);
+    const target = navItems.find((n) => n.tab === tab);
+    if (target) {
+      const t = setTimeout(() => scrollToSection(target.id, false), 80);
+      return () => clearTimeout(t);
     }
-  }, [location]);
-  
+    return undefined;
+  }, [location.search]);
+
+  // Highlight the category currently in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px' }
+    );
+    navItems.forEach((n) => {
+      const el = document.getElementById(n.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Box pt={20} bg={useColorModeValue('gray.50', 'gray.900')}>
-      {/* Hero Section */}
-      <Box 
-        bg={useColorModeValue('white', 'gray.800')} 
-        py={16}
-        position="relative"
-        overflow="hidden"
-      >
-        {/* Abstract Background Elements */}
-        <Box
-          position="absolute"
-          top="-10%"
-          right="-5%"
-          width="500px"
-          height="500px"
-          borderRadius="full"
-          bg="brand.50"
-          filter="blur(60px)"
-          opacity="0.6"
-          zIndex="0"
-          display={{ base: 'none', md: 'block' }}
-        />
-        
-        <Container maxW="7xl" position="relative" zIndex="1">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={10} alignItems="center">
-            <MotionBox
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <VStack spacing={6} align="flex-start" textAlign="left">
-                <Badge display="inline-flex" alignItems="center" gap={2} colorScheme="brand" fontSize="sm" px={4} py={1.5} borderRadius="full">
-                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.500" />
-                  Premium Care
-                </Badge>
-                <Heading
-                  fontSize={{ base: '40px', md: '52px', lg: '60px' }}
-                  lineHeight="1.05"
-                  letterSpacing="-0.03em"
-                  fontWeight={800}
-                  color={useColorModeValue('gray.900', 'white')}
-                >
-                  Expert Laundry <GradientText>Services</GradientText>
-                </Heading>
-                <Text
-                  fontSize="xl"
-                  color={useColorModeValue('gray.600', 'gray.400')}
-                  maxW="3xl"
-                >
-                  At Whites & Brights, we offer a comprehensive range of premium laundry and dry cleaning services, 
-                  tailored to meet your specific needs with meticulous attention to detail.
-                </Text>
-                
+    <Box as="main">
+      <PageHero
+        eyebrow="Services & prices"
+        title={
+          <>
+            Every garment.
+            <br />
+            <Accent>One standard</Accent> of care.
+          </>
+        }
+        description="Clear prices for everything we clean — from everyday laundry by the kilo to bridal lehengas, leather jackets and sneakers. Pickup and delivery are free."
+        actions={
+          <HStack spacing={3} flexWrap="wrap">
+            <ArrowButton as={RouterLink} to="/contact">Book a pickup</ArrowButton>
+            <HStack spacing={2} px={4} h={{ base: 12, md: 14 }} borderRadius="full" border="1px solid" borderColor="gray.200" bg="white" fontSize="sm" color="ink.900">
+              <Icon as={PiSealPercentLight} boxSize={5} color="brand.700" />
+              <Text>25% off your first order</Text>
+            </HStack>
+          </HStack>
+        }
+        pb={{ base: 10, md: 14 }}
+      />
+
+      {/* Sticky category bar */}
+      <Box position="sticky" top={{ base: '76px', md: '92px' }} zIndex={10} bg="rgba(244,246,245,0.88)" backdropFilter="blur(14px)" borderBottom="1px solid" borderColor="gray.200">
+        <Container>
+          <HStack
+            spacing={1.5}
+            py={3}
+            overflowX="auto"
+            sx={{ scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}
+          >
+            {navItems.map((n) => {
+              const isActive = active === n.id;
+              return (
                 <Button
-                  mt={4}
-                  size="lg"
-                  height="60px"
-                  px={8}
-                  fontSize="md"
-                  fontWeight="600"
-                  variant="gradient"
-                  rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-                  as={RouterLink}
-                  to="/contact"
+                  key={n.id}
+                  onClick={() => scrollToSection(n.id)}
+                  flexShrink={0}
+                  h={10}
+                  px={4}
+                  fontSize="sm"
+                  fontWeight={500}
+                  variant="ghost"
+                  bg={isActive ? 'ink.900' : 'white'}
+                  color={isActive ? 'white' : 'gray.700'}
+                  border="1px solid"
+                  borderColor={isActive ? 'ink.900' : 'gray.200'}
+                  _hover={{ bg: isActive ? 'ink.900' : 'gray.100' }}
+                  transition={`all 0.4s ${EASE}`}
                 >
-                  Get a Quote
+                  {n.label}
                 </Button>
-              </VStack>
-            </MotionBox>
-            
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              display={{ base: 'none', md: 'block' }}
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80"
-                alt="Premium Laundry Services"
-                borderRadius="xl"
-                shadow="2xl"
-                objectFit="cover"
-                width="100%"
-              />
-            </MotionBox>
-          </SimpleGrid>
+              );
+            })}
+          </HStack>
         </Container>
       </Box>
-      
-      {/* Services Categories Navigation */}
-      <Box bg={useColorModeValue('white', 'gray.800')} shadow="sm">
-        <Container maxW="7xl" py={4}>
-          <Tabs 
-            variant="soft-rounded" 
-            colorScheme="brand"
-            onChange={(index) => setActiveTab(index)}
-            index={activeTab}
-          >
-            <TabList 
-              overflowX="auto" 
-              py={2}
-              css={{
-                scrollbarWidth: 'none',
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                },
-              }}
-              display="flex"
-              flexWrap={{ base: 'nowrap', md: 'wrap' }}
-              justifyContent={{ base: 'flex-start', md: 'center' }}
-            >
-              <Tab mx={1} whiteSpace="nowrap">All Services</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Laundry by KG</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Dry Cleaning</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Steam Ironing</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Household Items</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Express Services</Tab>
-              <Tab mx={1} whiteSpace="nowrap">Subscription Plans</Tab>
-            </TabList>
-            
-            <TabPanels mt={8} p={4}>
-          {/* All Services Tab */}
-          <TabPanel px={0}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-              <Service
-                title="Laundry by KG"
-                description="Pay only for what you need cleaned with our per-kilogram service, perfect for everyday laundry."
-                image="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                icon={FaTshirt}
-                color="brand"
-                onTabClick={() => setActiveTab(1)}
-                features={[
-                  "Sorted by color and fabric type",
-                  "Premium detergents & fabric softeners",
-                  "Folded to perfection",
-                  "Quick 24-hour turnaround",
-                  "Eco-friendly options available"
-                ]}
-              />
-              
-              <Service
-                title="Dry Cleaning"
-                description="Specialized cleaning for your delicate and special garments that require extra care."
-                image="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80"
-                icon={FaSnowflake}
-                color="accent"
-                onTabClick={() => setActiveTab(2)}
-                features={[
-                  "Expert handling of delicate fabrics",
-                  "Stain treatment specialists",
-                  "Garment inspection & button check",
-                  "Pressed and hung with care",
-                  "Eco-friendly solvents"
-                ]}
-              />
-              
-              <Service
-                title="Household Items"
-                description="Keep your home linens fresh, clean and hygienic with our specialized home textiles cleaning service."
-                image="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-                icon={FaHome}
-                color="highlight"
-                onTabClick={() => setActiveTab(4)}
-                features={[
-                  "All bedding sizes accommodated",
-                  "Duvet covers & inserts",
-                  "Table linens & napkins",
-                  "Allergen removal treatment",
-                  "Perfectly pressed & folded"
-                ]}
-              />
-              
-              <Service
-                title="Express Delivery"
-                description="Quick turnaround when you need it most - have your clean clothes back within hours."
-                image="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                icon={FaBolt}
-                color="accent"
-                onTabClick={() => setActiveTab(5)}
-                features={[
-                  "Same-day service available",
-                  "Priority processing",
-                  "Rush hour pickup & delivery",
-                  "Text notifications",
-                  "Professional handling"
-                ]}
-              />
-              
-              <Service
-                title="Subscription Plans"
-                description="Regular service at discounted rates - sign up for weekly, biweekly, or monthly pickup and delivery."
-                image="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=715&q=80"
-                icon={FaCalendarAlt}
-                color="brand"
-                onTabClick={() => setActiveTab(6)}
-                features={[
-                  "Regular scheduled service",
-                  "Up to 20% discount on regular prices",
-                  "Free pickup and delivery",
-                  "Personalized preferences saved",
-                  "Cancel or pause anytime"
-                ]}
-              />
-              
-              <Service
-                title="Steam Ironing"
-                description="Professional steam ironing services for all your garments with special care for delicate fabrics."
-                image="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                icon={FaTshirt}
-                color="highlight"
-                onTabClick={() => setActiveTab(3)}
-                features={[
-                  "Professional pressing for all garment types",
-                  "Specialized handling for different fabrics",
-                  "Crisp collars and perfect creases",
-                  "Quick turnaround options",
-                  "Competitive pricing by item type"
-                ]}
-              />
-              
-              <Service
-                title="Commercial Services"
-                description="Tailored solutions for businesses requiring regular, professional laundry services."
-                image="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                icon={FaShoppingBasket}
-                color="highlight"
-                onTabClick={() => window.location.href = '/contact'}
-                features={[
-                  "Restaurants & hospitality",
-                  "Salons & spas",
-                  "Corporate office needs",
-                  "Custom billing options",
-                  "Delivery & pickup service"
-                ]}
-              />
-            </SimpleGrid>
-          </TabPanel>
-          
-          {/* Laundry by KG Tab */}
-          <TabPanel px={0}>
-            <Stack spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                bg={useColorModeValue('white', 'gray.800')}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                p={8}
-              >
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-                  <VStack align="start" spacing={4}>
-                    <Flex
-                      w={16}
-                      h={16}
-                      align="center"
-                      justify="center"
-                      color="brand.500"
-                      rounded="full"
-                      bg="brand.50"
-                      mb={2}
-                    >
-                      <Icon as={FaTshirt} w={8} h={8} />
-                    </Flex>
-                    
-                    <Heading size="xl" color="gray.800">Laundry by KG</Heading>
-                    
-                    <Text color="gray.600" fontSize="lg">
-                      Our Laundry by KG service is the most economical option for your everyday laundry needs. 
-                      Simply bring in your clothes, and we'll weigh them and charge you only for what you bring.
-                    </Text>
-                    
-                    <List spacing={3} mt={4}>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Professional washing, drying, and folding</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Garments sorted by color and fabric type</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Premium detergents and fabric softeners</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Eco-friendly options available</Text>
-                        </HStack>
-                      </ListItem>
-                    </List>
-                  </VStack>
-                  
-                  <Image 
-                    src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                    borderRadius="lg"
-                    shadow="lg"
-                    objectFit="cover"
-                    height="100%"
-                    maxHeight="300px"
-                  />
-                </SimpleGrid>
-              </MotionBox>
-              
-              {/* Pricing Table */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Heading size="lg" mb={6}>Pricing</Heading>
-                <Box 
-                  bg="green.50" 
-                  p={4} 
-                  borderRadius="md" 
-                  mb={4} 
-                  borderLeft="4px" 
-                  borderColor="green.500"
-                >
-                  <Flex align="center">
-                    <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Inaugural Offer: For 1st time customer 25% OFF</Text>
+
+      {/* Category sections */}
+      <Box bg="gray.50">
+        <Container>
+          {categories.map((cat, i) => (
+            <CategorySection key={cat.id} cat={cat} index={i} />
+          ))}
+        </Container>
+      </Box>
+
+      {/* Express */}
+      <Box id={express.id} as="section" bg="gray.50" pb={{ base: 16, md: 24 }}>
+        <Container>
+          <Reveal>
+            <Bezel radius={40} pad={8} inner={{ bg: 'ink.900', color: 'white' }}>
+              <Grid templateColumns={{ base: '1fr', lg: '1.1fr 1fr' }} gap={{ base: 10, lg: 16 }} p={{ base: 8, md: 14 }} alignItems="center">
+                <Box>
+                  <Flex align="center" gap={3} color="whiteAlpha.600">
+                    <Text fontFamily="serif" fontStyle="italic" fontSize="2xl">0{categories.length + 1}</Text>
+                    <Icon as={express.icon} boxSize={6} color="brand.300" />
                   </Flex>
-                </Box>
-                <PricingTable 
-                  category="Laundry by KG"
-                  items={[
-                    { name: "Wash & Iron Per KG", price: "₹80/kg", time: "48 hours" },
-                    { name: "Wash & Fold Per KG", price: "₹70/kg", time: "48 hours" },
-                    { name: "Premium Laundry Per KG", price: "₹160/kg", time: "48 hours" },
-                    { name: "Woolen Laundry Per KG", price: "₹179/kg", time: "72 hours" }
-                  ]}
-                />
-              </MotionBox>
-            </Stack>
-          </TabPanel>
-
-          {/* Dry Cleaning Tab */}
-          <TabPanel px={0}>
-            <Stack spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                bg={useColorModeValue('white', 'gray.800')}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                p={8}
-              >
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-                  <VStack align="start" spacing={4}>
-                    <Flex
-                      w={16}
-                      h={16}
-                      align="center"
-                      justify="center"
-                      color="accent.500"
-                      rounded="full"
-                      bg="accent.50"
-                      mb={2}
-                    >
-                      <Icon as={FaSnowflake} w={8} h={8} />
-                    </Flex>
-                    
-                    <Heading size="xl" color="gray.800">Dry Cleaning</Heading>
-                    
-                    <Text color="gray.600" fontSize="lg">
-                      Our professional dry cleaning service is perfect for delicate fabrics, formal wear, and garments that require special care.
-                    </Text>
-                    
-                    <List spacing={3} mt={4}>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Expert handling of silk, wool, and delicate fabrics</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Specialized stain treatment</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Hand-finished details and pressing</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Eco-friendly solvents and processes</Text>
-                        </HStack>
-                      </ListItem>
-                    </List>
-                  </VStack>
-                  
-                  <Image 
-                    src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80"
-                    borderRadius="lg"
-                    shadow="lg"
-                    objectFit="cover"
-                    height="100%"
-                    maxHeight="300px"
-                  />
-                </SimpleGrid>
-              </MotionBox>
-              
-              {/* Dry Cleaning Pricing */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Heading size="lg" mb={6}>Pricing</Heading>
-                <Box 
-                  bg="green.50" 
-                  p={4} 
-                  borderRadius="md" 
-                  mb={4} 
-                  borderLeft="4px" 
-                  borderColor="green.500"
-                >
-                  <Flex align="center">
-                    <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Inaugural Offer: For 1st time customer 25% OFF</Text>
-                  </Flex>
-                </Box>
-                {/* Women's Wear Dry Cleaning */}
-                <PricingTable 
-                  category="Women's Wear - Dry Cleaning"
-                  items={[
-                    { name: "Lehenga Choli", price: "₹199+", time: "72 hours" },
-                    { name: "Top", price: "₹69+", time: "48 hours" },
-                    { name: "Leggings", price: "₹49+", time: "48 hours" },
-                    { name: "Cape Top", price: "₹149+", time: "48 hours" },
-                    { name: "Skirt", price: "₹149+", time: "48 hours" },
-                    { name: "Blouse", price: "₹69+", time: "48 hours" },
-                    { name: "Gown", price: "₹249+", time: "72 hours" },
-                    { name: "Dress", price: "₹199+", time: "72 hours" },
-                    { name: "Saree", price: "₹199+", time: "72 hours" },
-                    { name: "Dupatta", price: "₹49+", time: "48 hours" },
-                    { name: "Sharara/Gharara", price: "₹249+", time: "72 hours" },
-                    { name: "Anarkali", price: "₹199+", time: "72 hours" }
-                  ]}
-                />
-                
-                {/* Men's Wear Dry Cleaning */}
-                <PricingTable 
-                  category="Men's Wear - Dry Cleaning"
-                  items={[
-                    { name: "Kurta Pajama", price: "₹99+", time: "48 hours" },
-                    { name: "Shirt", price: "₹79+", time: "48 hours" },
-                    { name: "T-shirt", price: "₹69+", time: "48 hours" },
-                    { name: "Pants/Trousers", price: "₹89+", time: "48 hours" },
-                    { name: "Jeans", price: "₹99+", time: "48 hours" },
-                    { name: "Suit (2 piece)", price: "₹499+", time: "72 hours" },
-                    { name: "Suit (3 piece)", price: "₹599+", time: "72 hours" },
-                    { name: "Blazer/Coat", price: "₹299+", time: "72 hours" },
-                    { name: "Sherwani", price: "₹499+", time: "72 hours" },
-                    { name: "Indo-Western", price: "₹399+", time: "72 hours" }
-                  ]}
-                />
-                
-                {/* Children's Wear Dry Cleaning */}
-                <PricingTable 
-                  category="Children's Wear - Dry Cleaning"
-                  items={[
-                    { name: "Child Shirt/T-shirt", price: "₹49+", time: "48 hours" },
-                    { name: "Child Pants/Jeans", price: "₹59+", time: "48 hours" },
-                    { name: "Child Dress", price: "₹99+", time: "48 hours" },
-                    { name: "Child Kurta Pajama", price: "₹79+", time: "48 hours" },
-                    { name: "Child Lehenga/Ethnic Wear", price: "₹149+", time: "72 hours" },
-                    { name: "School Uniform (Set)", price: "₹89+", time: "48 hours" },
-                    { name: "Baby Clothes (< 2 years)", price: "₹39+", time: "48 hours" }
-                  ]}
-                />
-              </MotionBox>
-            </Stack>
-          </TabPanel>
-          
-          {/* Steam Ironing Tab */}
-          <TabPanel px={0}>
-            <Stack spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                bg={useColorModeValue('white', 'gray.800')}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                p={8}
-              >
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-                  <VStack align="start" spacing={4}>
-                    <Flex
-                      w={16}
-                      h={16}
-                      align="center"
-                      justify="center"
-                      color="highlight.500"
-                      rounded="full"
-                      bg="highlight.50"
-                      mb={2}
-                    >
-                      <Icon as={FaTshirt} w={8} h={8} />
-                    </Flex>
-                    
-                    <Heading size="xl" color="gray.800">Steam Ironing</Heading>
-                    
-                    <Text color="gray.600" fontSize="lg">
-                      Professional steam ironing services for all your garments. Our expert pressing ensures crisp, wrinkle-free results with special care for delicate fabrics.
-                    </Text>
-                    
-                    <List spacing={3} mt={4}>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Professional steam ironing for all garment types</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Specialized handling for different fabrics</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Crisp collars and perfect creases</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Quick turnaround options available</Text>
-                        </HStack>
-                      </ListItem>
-                    </List>
-                  </VStack>
-                  
-                  <Image 
-                    src="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-                    borderRadius="lg"
-                    shadow="lg"
-                    objectFit="cover"
-                    height="100%"
-                    maxHeight="300px"
-                  />
-                </SimpleGrid>
-              </MotionBox>
-              
-              {/* Steam Ironing Pricing */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Heading size="lg" mb={6}>Pricing</Heading>
-                <Box 
-                  bg="green.50" 
-                  p={4} 
-                  borderRadius="md" 
-                  mb={4} 
-                  borderLeft="4px" 
-                  borderColor="green.500"
-                >
-                  <Flex align="center">
-                    <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Same-day service available with 20% premium</Text>
-                  </Flex>
-                </Box>
-                
-                {/* Men's Wear Steam Ironing */}
-                <PricingTable 
-                  category="Men's Wear - Steam Ironing"
-                  items={[
-                    { name: "Shirt/T-shirt", price: "₹ 20", time: "24 hours" },
-                    { name: "Trouser/Jeans", price: "₹ 20", time: "24 hours" },
-                    { name: "Coat", price: "₹ 100", time: "24 hours" },
-                    { name: "Pyjama-Plain", price: "₹ 30", time: "24 hours" },
-                    { name: "Pyjama-Silk/Designer", price: "₹ 45", time: "24 hours" }
-                  ]}
-                />
-                
-                {/* Women's Wear Steam Ironing */}
-                <PricingTable 
-                  category="Women's Wear - Steam Ironing"
-                  items={[
-                    { name: "Kurti Short", price: "₹ 15", time: "24 hours" },
-                    { name: "Kurti Long", price: "₹ 30", time: "24 hours" },
-                    { name: "Saree-Silk", price: "₹ 150", time: "48 hours" },
-                    { name: "Saree-Heavy", price: "₹ 130", time: "48 hours" },
-                    { name: "Saree-Designer", price: "₹ 150", time: "48 hours" },
-                    { name: "Dupatta-Plain", price: "₹ 15", time: "24 hours" },
-                    { name: "Dupatta-Designer", price: "₹ 45", time: "24 hours" },
-                    { name: "Kurta-Plain", price: "₹ 30", time: "24 hours" },
-                    { name: "Kurta-Silk", price: "₹ 45", time: "24 hours" },
-                    { name: "Long Dress", price: "₹ 40", time: "24 hours" }
-                  ]}
-                />
-                
-                {/* Home Furnishings Steam Ironing */}
-                <PricingTable 
-                  category="Home Furnishings - Steam Ironing"
-                  items={[
-                    { name: "Fabric Wall Panel", price: "₹149+", time: "48 hours" },
-                    { name: "Fabric Stool", price: "₹99+", time: "48 hours" },
-                    { name: "Designer Leather Chair", price: "₹299+", time: "48 hours" },
-                    { name: "Suede Leather Chair", price: "₹249+", time: "48 hours" },
-                    { name: "Leather Chair", price: "₹199+", time: "48 hours" },
-                    { name: "Fabric Chair (Silk/Designer)", price: "₹299+", time: "48 hours" },
-                    { name: "Fabric Chair (Velvet)", price: "₹249+", time: "48 hours" },
-                    { name: "Fabric Chair (Linen)", price: "₹199+", time: "48 hours" },
-                    { name: "Fabric Chair (Cotton/Polyester Blend)", price: "₹149+", time: "48 hours" }
-                  ]}
-                />
-              </MotionBox>
-            </Stack>
-          </TabPanel>
-          
-          {/* Additional tabs for other services */}
-          <TabPanel px={0}>
-            <Stack spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                bg={useColorModeValue('white', 'gray.800')}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                p={8}
-              >
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-                  <VStack align="start" spacing={4}>
-                    <Flex
-                      w={16}
-                      h={16}
-                      align="center"
-                      justify="center"
-                      color="highlight.500"
-                      rounded="full"
-                      bg="highlight.50"
-                      mb={2}
-                    >
-                      <Icon as={FaHome} w={8} h={8} />
-                    </Flex>
-                    
-                    <Heading size="xl" color="gray.800">Household Items</Heading>
-                    
-                    <Text color="gray.600" fontSize="lg">
-                      Keep your home linens, accessories, and specialty items fresh, clean and hygienic with our specialized cleaning services.
-                    </Text>
-                    
-                    <List spacing={3} mt={4}>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>All bedding sizes accommodated</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Professional cleaning for shoes & bags</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Specialty jacket & coat cleaning</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Expert stain removal</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Careful handling of delicate materials</Text>
-                        </HStack>
-                      </ListItem>
-                    </List>
-                  </VStack>
-                  
-                  <Image 
-                    src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-                    borderRadius="lg"
-                    shadow="lg"
-                    objectFit="cover"
-                    height="100%"
-                    maxHeight="300px"
-                  />
-                </SimpleGrid>
-              </MotionBox>
-              
-              {/* Household Cleaning Pricing */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Heading size="lg" mb={6}>Pricing</Heading>
-                <Box 
-                  bg="green.50" 
-                  p={4} 
-                  borderRadius="md" 
-                  mb={4} 
-                  borderLeft="4px" 
-                  borderColor="green.500"
-                >
-                  <Flex align="center">
-                    <Icon as={FaTags} color="green.500" mr={2} />
-                    <Text fontWeight="bold" color="green.700">Special care for premium materials and branded items</Text>
-                  </Flex>
-                </Box>
-                
-                {/* Shoes Cleaning */}
-                <PricingTable 
-                  category="Shoe Cleaning Services"
-                  items={[
-                    { name: "Sports Shoes", price: "₹249+", time: "48 hours" },
-                    { name: "Canvas Shoes", price: "₹199+", time: "48 hours" },
-                    { name: "Leather Shoes", price: "₹299+", time: "72 hours" },
-                    { name: "Suede Shoes", price: "₹349+", time: "72 hours" },
-                    { name: "Formal Shoes", price: "₹279+", time: "48 hours" },
-                    { name: "Boots", price: "₹399+", time: "72 hours" },
-                    { name: "Designer Shoes", price: "₹449+", time: "72 hours" }
-                  ]}
-                />
-                
-                {/* Bags Cleaning */}
-                <PricingTable 
-                  category="Bag Cleaning Services"
-                  items={[
-                    { name: "Handbag (Small)", price: "₹399+", time: "72 hours" },
-                    { name: "Handbag (Medium)", price: "₹499+", time: "72 hours" },
-                    { name: "Handbag (Large)", price: "₹599+", time: "96 hours" },
-                    { name: "Backpack", price: "₹349+", time: "72 hours" },
-                    { name: "Leather Bag", price: "₹599+", time: "96 hours" },
-                    { name: "Canvas Bag", price: "₹299+", time: "72 hours" },
-                    { name: "Designer Bag", price: "₹999+", time: "96 hours" },
-                    { name: "Clutch", price: "₹249+", time: "72 hours" },
-                    { name: "Wallet/Belt", price: "₹199+", time: "48 hours" }
-                  ]}
-                />
-                
-                {/* Jackets Cleaning */}
-                <PricingTable 
-                  category="Jacket & Coat Cleaning"
-                  items={[
-                    { name: "Leather Jacket", price: "₹599+", time: "96 hours" },
-                    { name: "Suede Jacket", price: "₹649+", time: "96 hours" },
-                    { name: "Winter Jacket", price: "₹499+", time: "72 hours" },
-                    { name: "Down Jacket", price: "₹549+", time: "96 hours" },
-                    { name: "Sports Jacket", price: "₹399+", time: "72 hours" },
-                    { name: "Bomber Jacket", price: "₹449+", time: "72 hours" },
-                    { name: "Designer Jacket", price: "₹699+", time: "96 hours" },
-                    { name: "Wool Coat", price: "₹599+", time: "96 hours" },
-                    { name: "Trench Coat", price: "₹649+", time: "96 hours" }
-                  ]}
-                />
-                
-                {/* Home Textiles */}
-                <PricingTable 
-                  category="Home Textiles"
-                  items={[
-                    { name: "Bedsheet (Single)", price: "₹149+", time: "48 hours" },
-                    { name: "Bedsheet (Double)", price: "₹199+", time: "48 hours" },
-                    { name: "Duvet Cover (Single)", price: "₹199+", time: "72 hours" },
-                    { name: "Duvet Cover (Double)", price: "₹249+", time: "72 hours" },
-                    { name: "Comforter/Quilt (Single)", price: "₹399+", time: "96 hours" },
-                    { name: "Comforter/Quilt (Double)", price: "₹599+", time: "96 hours" },
-                    { name: "Curtains (Per Panel)", price: "₹199+", time: "72 hours" },
-                    { name: "Sofa Cover (Per Seat)", price: "₹249+", time: "72 hours" },
-                    { name: "Pillow Cover", price: "₹49+", time: "48 hours" },
-                    { name: "Table Cloth", price: "₹149+", time: "48 hours" },
-                    { name: "Cushion Cover", price: "₹59+", time: "48 hours" }
-                  ]}
-                />
-              </MotionBox>
-            </Stack>
-          </TabPanel>
-          
-          <TabPanel px={0}>
-            <Service
-              title="Express Delivery"
-              description="Quick turnaround when you need it most - have your clean clothes back within hours."
-              image="https://images.unsplash.com/photo-1543269664-56d93c1b41a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80"
-              icon={FaBolt}
-              color="accent"
-              features={[
-                "Same-day service available",
-                "Priority processing",
-                "Rush hour pickup & delivery",
-                "Text notifications",
-                "Professional handling"
-              ]}
-            />
-          </TabPanel>
-          
-          <TabPanel px={0}>
-            <Stack spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                bg={useColorModeValue('white', 'gray.800')}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                p={8}
-              >
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-                  <VStack align="start" spacing={4}>
-                    <Flex
-                      w={16}
-                      h={16}
-                      align="center"
-                      justify="center"
-                      color="brand.500"
-                      rounded="full"
-                      bg="brand.50"
-                      mb={2}
-                    >
-                      <Icon as={FaCalendarAlt} w={8} h={8} />
-                    </Flex>
-                    
-                    <Heading size="xl" color="gray.800">Monthly Subscription Plans</Heading>
-                    
-                    <Text color="gray.600" fontSize="lg">
-                      Save more with our convenient monthly subscription packs! Enjoy hassle-free laundry service with free pickup & delivery, priority processing, and exclusive benefits.
-                    </Text>
-                    
-                    <List spacing={3} mt={4}>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Free pickup and delivery</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Priority processing and delivery</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Personalized service preferences</Text>
-                        </HStack>
-                      </ListItem>
-                      <ListItem>
-                        <HStack>
-                          <ListIcon as={FaCheck} color="green.500" />
-                          <Text>Flexible plans - pause or cancel anytime</Text>
-                        </HStack>
-                      </ListItem>
-                    </List>
-                  </VStack>
-                  
-                  <Image 
-                    src="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=715&q=80"
-                    borderRadius="lg"
-                    shadow="lg"
-                    objectFit="cover"
-                    height="100%"
-                    maxHeight="300px"
-                  />
-                </SimpleGrid>
-              </MotionBox>
-              
-              {/* Subscription Plans Pricing */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Heading size="lg" mb={6}>Monthly Subscription Packs</Heading>
-                
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-                  {/* Silver Plan */}
-                  <Box
-                    bg="white"
-                    borderRadius="xl"
-                    overflow="hidden"
-                    boxShadow="lg"
-                    borderWidth="2px"
-                    borderColor="gray.200"
-                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                    transition="all 0.3s"
-                  >
-                    <Box bg="gray.100" py={4} textAlign="center">
-                      <Heading size="md" color="gray.700">Silver</Heading>
-                    </Box>
-                    <VStack spacing={4} p={6} align="stretch">
-                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹650</Text>
-                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
-                      <Divider />
-                      <VStack align="start" spacing={3}>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Weight Limit: 10 kg</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Wash & Fold Service</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Free Pickup & Delivery</Text>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </Box>
-
-                  {/* Gold Plan */}
-                  <Box
-                    bg="white"
-                    borderRadius="xl"
-                    overflow="hidden"
-                    boxShadow="lg"
-                    borderWidth="2px"
-                    borderColor="yellow.400"
-                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                    transition="all 0.3s"
-                  >
-                    <Box bg="yellow.400" py={4} textAlign="center">
-                      <Heading size="md" color="white">Gold</Heading>
-                    </Box>
-                    <VStack spacing={4} p={6} align="stretch">
-                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹1,100</Text>
-                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
-                      <Divider />
-                      <VStack align="start" spacing={3}>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Weight Limit: 15 kg</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Wash & Iron Service</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Priority Delivery</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">+ ₹50 Voucher</Text>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </Box>
-
-                  {/* Platinum Plan */}
-                  <Box
-                    bg="white"
-                    borderRadius="xl"
-                    overflow="hidden"
-                    boxShadow="lg"
-                    borderWidth="2px"
-                    borderColor="purple.400"
-                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                    transition="all 0.3s"
-                  >
-                    <Box bg="purple.400" py={4} textAlign="center">
-                      <Heading size="md" color="white">Platinum</Heading>
-                    </Box>
-                    <VStack spacing={4} p={6} align="stretch">
-                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹1,999</Text>
-                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
-                      <Divider />
-                      <VStack align="start" spacing={3}>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Weight Limit: 25 kg</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Premium Laundry</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Free Saree Polish/Blanket</Text>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </Box>
-
-                  {/* Elite Family Pack */}
-                  <Box
-                    bg="white"
-                    borderRadius="xl"
-                    overflow="hidden"
-                    boxShadow="lg"
-                    borderWidth="2px"
-                    borderColor="brand.500"
-                    _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                    transition="all 0.3s"
-                  >
-                    <Box bg="brand.500" py={4} textAlign="center">
-                      <Heading size="md" color="white">Elite Family Pack</Heading>
-                    </Box>
-                    <VStack spacing={4} p={6} align="stretch">
-                      <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.500">₹2,999</Text>
-                      <Text textAlign="center" fontSize="sm" color="gray.600">per month</Text>
-                      <Divider />
-                      <VStack align="start" spacing={3}>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Weight Limit: 40 kg</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">Mix Services</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">5% Extra Wash</Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={FaCheck} color="green.500" />
-                          <Text fontSize="sm">1 Steam Iron Free</Text>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </Box>
-                </SimpleGrid>
-
-                <Box mt={8} p={6} bg="blue.50" borderRadius="lg" borderLeft="4px" borderColor="blue.500">
-                  <Heading size="md" mb={3} color="blue.700">
-                    Why Choose Our Subscription Plans?
+                  <Heading mt={5} fontSize={{ base: '40px', md: '64px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
+                    Need it tonight? <Accent from="brand.200">Go express.</Accent>
                   </Heading>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                    <HStack>
-                      <Icon as={FaCheck} color="green.500" />
-                      <Text fontSize="sm">Save up to 20% compared to regular pricing</Text>
-                    </HStack>
-                    <HStack>
-                      <Icon as={FaCheck} color="green.500" />
-                      <Text fontSize="sm">Free pickup and delivery every time</Text>
-                    </HStack>
-                    <HStack>
-                      <Icon as={FaCheck} color="green.500" />
-                      <Text fontSize="sm">Priority service with faster turnaround</Text>
-                    </HStack>
-                    <HStack>
-                      <Icon as={FaCheck} color="green.500" />
-                      <Text fontSize="sm">Flexible - pause or cancel anytime</Text>
-                    </HStack>
-                  </SimpleGrid>
+                  <Text mt={5} color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} maxW="440px">
+                    Same-day turnaround with priority processing and rush pickup. Express is charged at a 20% premium on regular prices.
+                  </Text>
+                  <HStack mt={8} spacing={3} flexWrap="wrap">
+                    <ArrowButton as="a" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" variant="light" icon={PiWhatsappLogoFill}>
+                      Request express pickup
+                    </ArrowButton>
+                  </HStack>
                 </Box>
-              </MotionBox>
-            </Stack>
-          </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Container>
-      </Box>
-      
-      <Box py={{ base: 12, md: 16 }}>
-        <Container maxW="7xl">
-          <Box
-            position="relative"
-            overflow="hidden"
-            borderRadius="4xl"
-            bgGradient="linear(130deg, brand.900 0%, brand.700 55%, brand.500 100%)"
-            boxShadow="floating"
-            px={{ base: 8, md: 16 }}
-            py={{ base: 12, md: 16 }}
-          >
-            <Box position="absolute" top="-30%" right="-5%" w="380px" h="380px" borderRadius="full" bg="whiteAlpha.100" />
-            <Box position="absolute" bottom="-40%" left="10%" w="320px" h="320px" borderRadius="full" bg="whiteAlpha.100" />
-            <VStack spacing={5} position="relative" textAlign="center">
-              <Flex align="center" justify="center" w={16} h={16} borderRadius="2xl" bg="whiteAlpha.200" backdropFilter="blur(8px)" color="white">
-                <Icon as={FaLeaf} boxSize={7} />
-              </Flex>
-              <Heading color="white" fontSize={{ base: '2xl', md: '4xl' }}>
-                Eco-Friendly Commitment
-              </Heading>
-              <Text color="whiteAlpha.900" textAlign="center" fontSize="lg" maxW="3xl" mx="auto">
-                Whites & Brights is committed to environmentally sustainable practices. We use biodegradable detergents, energy-efficient machines, and water-saving technologies to minimize our environmental footprint while delivering exceptional cleaning results.
-              </Text>
-              <Button as={RouterLink} to="/contact" size="lg" h={14} px={8} mt={2} bg="white" color="brand.700" _hover={{ bg: 'gray.100', transform: 'translateY(-2px)' }} rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}>
-                Book a Pickup
-              </Button>
-            </VStack>
-          </Box>
+                <SimpleGrid columns={2} spacing={3}>
+                  {express.features.map((f) => (
+                    <Box key={f} p={5} borderRadius="20px" bg="whiteAlpha.100" border="1px solid" borderColor="whiteAlpha.200">
+                      <Icon as={PiCheckBold} color="brand.300" boxSize={4} />
+                      <Text mt={3} fontSize="sm" fontWeight={500}>{f}</Text>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </Grid>
+            </Bezel>
+          </Reveal>
         </Container>
       </Box>
 
+      {/* Subscriptions */}
+      <Box id={subscriptions.id} as="section" bg="white" py={{ base: 24, md: 32 }}>
+        <Container>
+          <SectionIntro
+            eyebrow="Monthly subscriptions"
+            title={<>Laundry on autopilot, <Accent>for less.</Accent></>}
+            description="A fixed monthly pack with free pickups and priority service. Pause or cancel whenever you like."
+          />
+          <StaggerGroup stagger={0.08}>
+            <SimpleGrid columns={{ base: 1, sm: 2, xl: 4 }} spacing={4}>
+              {subscriptions.plans.map((p, i) => {
+                const featured = i === subscriptions.plans.length - 1;
+                return (
+                  <MotionBox key={p.name} variants={fadeUp} h="100%">
+                    <Bezel h="100%" dark={featured} inner={{ p: { base: 6, md: 7 }, bg: featured ? 'ink.900' : 'white', color: featured ? 'white' : 'ink.900', display: 'flex', flexDirection: 'column' }}>
+                      <Text fontSize="sm" fontWeight={500} color={featured ? 'brand.200' : 'gray.500'}>{p.name}</Text>
+                      <HStack align="baseline" spacing={1.5} mt={4}>
+                        <Text fontSize={{ base: '40px', md: '44px' }} fontWeight={500} letterSpacing="-0.05em" lineHeight="1" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                          {p.price}
+                        </Text>
+                        <Text fontSize="sm" whiteSpace="nowrap" color={featured ? 'whiteAlpha.600' : 'gray.500'}>/ month</Text>
+                      </HStack>
+                      <Stack spacing={3} mt={6} pt={6} borderTop="1px solid" borderColor={featured ? 'whiteAlpha.200' : 'gray.100'} flex={1}>
+                        {p.features.map((f) => (
+                          <HStack key={f} spacing={3}>
+                            <Icon as={PiCheckBold} boxSize={3.5} color={featured ? 'brand.300' : 'brand.700'} />
+                            <Text fontSize="sm" color={featured ? 'whiteAlpha.900' : 'gray.700'}>{f}</Text>
+                          </HStack>
+                        ))}
+                      </Stack>
+                      <Button
+                        as={RouterLink}
+                        to="/contact"
+                        mt={8}
+                        h={12}
+                        variant={featured ? 'light' : 'outline'}
+                        rightIcon={<Icon as={PiArrowUpRight} />}
+                      >
+                        Choose {p.name}
+                      </Button>
+                    </Bezel>
+                  </MotionBox>
+                );
+              })}
+            </SimpleGrid>
+          </StaggerGroup>
+          <Reveal mt={8}>
+            <Flex wrap="wrap" gap={{ base: 3, md: 8 }} color="gray.600" fontSize="sm">
+              {subscriptions.perks.map((perk) => (
+                <HStack key={perk} spacing={2}>
+                  <Icon as={PiCheckBold} color="brand.700" />
+                  <Text>{perk}</Text>
+                </HStack>
+              ))}
+            </Flex>
+          </Reveal>
+        </Container>
+      </Box>
+
+      {/* Commercial + eco */}
+      <Box as="section" bg="gray.50" py={{ base: 16, md: 24 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', md: '1.3fr 1fr' }} gap={4}>
+            <Reveal h="100%">
+              <Bezel h="100%" inner={{ p: { base: 8, md: 12 } }}>
+                <Icon as={PiBuildingsLight} boxSize={8} color="ink.900" />
+                <Heading mt={6} fontSize={{ base: '28px', md: '40px' }} fontWeight={500} color="ink.900">
+                  Running a hotel, salon or office?
+                </Heading>
+                <Text mt={4} color="gray.600" maxW="480px">
+                  Scheduled pickups, custom billing and bulk rates for restaurants, hospitality, salons, spas and corporate offices.
+                </Text>
+                <Link as={RouterLink} to="/contact?enquiry=business" mt={8} display="inline-flex" alignItems="center" gap={2} fontWeight={500} color="ink.900" borderBottom="1px solid" borderColor="ink.900" pb={0.5}>
+                  Talk to us about business laundry <Icon as={PiArrowUpRight} />
+                </Link>
+              </Bezel>
+            </Reveal>
+            <Reveal h="100%">
+              <Bezel h="100%" inner={{ p: { base: 8, md: 12 }, bg: 'brand.50' }}>
+                <Icon as={PiLeafLight} boxSize={8} color="brand.800" />
+                <Heading mt={6} fontSize={{ base: '28px', md: '40px' }} fontWeight={500} color="ink.900">
+                  Gentle on fabric, <Accent>and the planet.</Accent>
+                </Heading>
+                <Text mt={4} color="gray.700">
+                  Biodegradable detergents, energy-efficient machines and water-saving cycles at every outlet.
+                </Text>
+              </Bezel>
+            </Reveal>
+          </Grid>
+        </Container>
+      </Box>
     </Box>
   );
 }

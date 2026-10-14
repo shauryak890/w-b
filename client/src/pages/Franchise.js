@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -6,1572 +6,467 @@ import {
   Text,
   Button,
   SimpleGrid,
+  Grid,
   Flex,
   Stack,
-  VStack,
   HStack,
-  Image,
   Icon,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  List,
-  ListItem,
-  ListIcon,
-  Divider,
-  useColorModeValue,
-  Badge,
+  Collapse,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { 
-  FaChartLine, 
-  FaMoneyBillWave, 
-  FaHandshake, 
-  FaTools, 
-  FaBullhorn, 
-  FaCheckCircle,
-  FaStore,
-  FaUserTie,
-  FaTruck,
-  FaUsers,
-  FaArrowRight,
-} from 'react-icons/fa';
+import {
+  PiArrowUpRight,
+  PiCaretDownBold,
+  PiCheckBold,
+  PiPhoneLight,
+  PiQuotesFill,
+} from 'react-icons/pi';
 import { Link as RouterLink } from 'react-router-dom';
-import { GradientText, Counter } from '../components/ui';
+import { SectionIntro } from '../components/PageHero';
+import FaqList from '../components/FaqList';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, Counter, fadeUp } from '../components/ui';
+import { EASE } from '../theme';
+import { PHONE_DISPLAY, PHONE_TEL } from '../data/business';
 
-// Motion components
-const MotionBox = motion(Box);
+import usePageMeta from '../hooks/usePageMeta';
+const APPLY_URL = '/contact?enquiry=franchise';
+const HERO_IMAGE = 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1800&q=80';
 
-// Franchise testimonials
-const testimonials = [
+const stats = [
+  { value: 25000, prefix: '₹', suffix: ' Cr', label: 'Indian laundry market', note: 'Growing 8.7% a year' },
+  { text: '50–60%', label: 'Profit margin', note: 'In premium urban markets' },
+  { text: '16–18', label: 'Months to ROI', note: 'Average payback period' },
+  { value: 80, suffix: '%', label: 'Customer retention', note: 'With subscription models' },
+];
+
+const reasons = [
   {
-    quote:
-      "Starting my journey with Whites & Brights has been fantastic. Even though we just opened recently, the support team guided me through every step of the setup and training process. The response from customers has been overwhelming already!",
-    name: 'Poonam Singh',
-    role: 'Franchise Owner since July 2025',
-    initials: 'PS',
+    title: 'Recession-proof demand',
+    text: 'Clothes need cleaning in every economy. Laundry stays an essential, repeat service even in downturns.',
   },
   {
-    quote:
-      "Partnering with Whites & Brights has genuinely changed my life. What started as a side venture quickly grew into a steady, reliable source of income that gave my family real financial freedom. The proven systems, marketing support and hands-on guidance meant I was never figuring things out alone — today I'm proud to run a profitable business I can call my own.",
-    name: 'Mukesh',
-    role: 'Franchise Owner since January 2026',
-    initials: 'MK',
+    title: 'Cash-based, predictable revenue',
+    text: 'Customers pay on delivery or by subscription — healthy daily cash flow with almost no receivables.',
+  },
+  {
+    title: 'No experience required',
+    text: 'We train you and your staff end-to-end, from machine operation to customer service and accounts.',
   },
 ];
 
-// Self-contained fade carousel for testimonials (no external slider lib)
-const TestimonialCarousel = ({ items, cardBg, textColor }) => {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+const models = [
+  {
+    tier: 'Smart Laundry Point',
+    name: 'Smart Point',
+    type: 'FOFO · Franchise owned, franchise operated',
+    tagline: 'A compact store-front for high-traffic locations, with processing at a central facility.',
+    total: '₹15,00,000',
+    space: '300–350 sq.ft',
+    items: [
+      ['Store setup & premium interior (one-time)', '₹3,50,000'],
+      ['Commercial machine package', '₹7,50,000'],
+      ['POS + software + app integration', '₹1,00,000'],
+      ['Delivery, marketing & chemical support kit', '₹3,00,000'],
+    ],
+  },
+  {
+    tier: 'W&B Prime Franchise',
+    name: 'Prime Franchise',
+    type: 'FOFO · Franchise owned, franchise operated',
+    tagline: 'A complete store with in-house processing, advanced equipment and shoe care.',
+    total: '₹25,10,000',
+    space: '400–500 sq.ft',
+    items: [
+      ['Franchise fee', '₹2,50,000'],
+      ['Store setup & premium interior', '₹4,00,000'],
+      ['Commercial machine package', '₹9,60,000'],
+      ['Vacuum steam iron press table set (×2)', '₹1,50,000'],
+      ['Shoe washer with sterilisation', '₹1,20,000'],
+      ['Shoe dryer (20 pair)', '₹1,10,000'],
+      ['Spotting machine, 2-gun with boiler', '₹1,20,000'],
+      ['POS + software + app integration', '₹1,00,000'],
+      ['Delivery, marketing & chemical support kit', '₹3,00,000'],
+    ],
+  },
+  {
+    tier: 'W&B Signature Enterprise',
+    name: 'Laundry Hub + 10 CC',
+    type: 'FOCO · Franchise owned, company operated',
+    tagline: 'A full processing hub with 10 collection centres — we run operations, you own the business.',
+    total: '₹1.00–1.21 Cr',
+    space: '1,500–2,000 sq.ft',
+    featured: true,
+    items: [
+      ['Processing hub', 'All services on-site'],
+      ['Collection centres included', '10'],
+      ['Operations', 'Managed by W&B'],
+    ],
+  },
+];
 
-  const goTo = useCallback((i) => setIndex(((i % items.length) + items.length) % items.length), [items.length]);
+const support = [
+  {
+    title: 'Setup & training',
+    items: ['Complete store setup assistance', '2-week training programme', 'Equipment operation & maintenance', 'Staff hiring and training'],
+  },
+  {
+    title: 'Marketing & technology',
+    items: ['Local marketing strategy & materials', 'Social media support', 'Proprietary POS & management software', 'Customer acquisition campaigns'],
+  },
+  {
+    title: 'Ongoing operations',
+    items: ['Supply chain management', 'Regular business reviews & coaching', '24/7 operational helpdesk', 'Continuous training & updates'],
+  },
+];
 
-  useEffect(() => {
-    if (paused) return undefined;
-    const id = setInterval(() => setIndex((prev) => (prev + 1) % items.length), 5000);
-    return () => clearInterval(id);
-  }, [paused, items.length]);
+const testimonials = [
+  {
+    quote:
+      'Even though we opened recently, the support team guided me through every step of the setup and training. The response from customers has been overwhelming already.',
+    name: 'Poonam Singh',
+    role: 'Franchise owner since July 2025',
+  },
+  {
+    quote:
+      "What started as a side venture grew into a steady, reliable income. The systems, marketing support and hands-on guidance meant I was never figuring things out alone.",
+    name: 'Mukesh',
+    role: 'Franchise owner since January 2026',
+  },
+];
+
+const steps = [
+  { title: 'Apply', text: 'Fill in a short form so we understand you, your city and your budget.' },
+  { title: 'Discovery meeting', text: 'Meet the franchise team, see the numbers in detail and ask anything.' },
+  { title: 'Business planning', text: 'Pick a location and format, build your plan and arrange financing with our help.' },
+  { title: 'Grand opening', text: 'Sign, train, set up — and open your Whites & Brights store.' },
+];
+
+const faqs = [
+  {
+    q: 'Do I need prior experience in the laundry industry?',
+    a: 'No. Our training programme covers everything you need to run the business, and we keep supporting you after launch.',
+  },
+  {
+    q: 'How long does it take to open?',
+    a: 'Typically 3–4 months from signing to opening — covering location selection, lease, build-out, equipment installation, hiring and training.',
+  },
+  {
+    q: 'What ongoing fees will I pay?',
+    a: 'A royalty of 6% of gross sales (support, technology and brand development) and a 2% marketing contribution. There are no hidden fees.',
+  },
+  {
+    q: 'Can I own more than one franchise?',
+    a: 'Yes. After running your first location for at least 6 months you can apply for more, with reduced franchise fees for additional units.',
+  },
+  {
+    q: 'Which territories are available?',
+    a: 'We are expanding across tier 1 and tier 2 cities in India. We will walk you through available territories during the application process.',
+  },
+];
+
+/* ------------------------------------------------------------------ */
+
+const ModelCard = ({ m }) => {
+  const [open, setOpen] = useState(false);
+  const dark = !!m.featured;
+  const muted = dark ? 'whiteAlpha.700' : 'gray.600';
+  const line = dark ? 'whiteAlpha.200' : 'gray.100';
 
   return (
-    <Box maxW="800px" mx="auto" w="full">
-      <Box
-        position="relative"
-        minH={{ base: '340px', md: '300px' }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        {items.map((t, i) => (
-          <MotionBox
-            key={t.name}
-            position="absolute"
-            inset={0}
-            animate={{ opacity: i === index ? 1 : 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            pointerEvents={i === index ? 'auto' : 'none'}
-          >
-            <Flex
-              direction="column"
-              h="full"
-              bg={cardBg}
-              borderRadius="xl"
-              boxShadow="lg"
-              p={{ base: 6, md: 8 }}
-            >
-              <Text fontSize={{ base: 'md', md: 'lg' }} fontStyle="italic" mb={6} flex="1">
-                &ldquo;{t.quote}&rdquo;
-              </Text>
-              <HStack>
-                <Flex
-                  w={12}
-                  h={12}
-                  borderRadius="full"
-                  bgGradient="linear(135deg, brand.500, accent.500)"
-                  color="white"
-                  fontWeight="bold"
-                  align="center"
-                  justify="center"
-                  mr={3}
-                  flexShrink={0}
-                >
-                  {t.initials}
-                </Flex>
-                <Box>
-                  <Text fontWeight="bold">{t.name}</Text>
-                  <Text fontSize="sm" color={textColor}>{t.role}</Text>
-                </Box>
-              </HStack>
-            </Flex>
-          </MotionBox>
-        ))}
+    <Bezel h="100%" dark={dark} inner={{ bg: dark ? 'ink.900' : 'white', color: dark ? 'white' : 'ink.900', p: { base: 6, md: 8 }, display: 'flex', flexDirection: 'column' }}>
+      <Text fontSize="11px" letterSpacing="0.16em" textTransform="uppercase" color={dark ? 'brand.200' : 'brand.700'} fontWeight={500}>
+        {m.tier}
+      </Text>
+      <Heading mt={3} fontSize={{ base: '2xl', md: '28px' }} fontWeight={500}>
+        {m.name}
+      </Heading>
+      <Text mt={2} fontSize="xs" color={muted}>{m.type}</Text>
+      <Text mt={4} fontSize="sm" color={muted} minH={{ lg: '60px' }}>{m.tagline}</Text>
+
+      <Box mt={6} pt={6} borderTop="1px solid" borderColor={line}>
+        <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.14em" color={muted}>Total investment</Text>
+        <Text mt={1} fontSize={{ base: '36px', lg: '32px', xl: '40px' }} fontWeight={500} letterSpacing="-0.05em" lineHeight="1.1" whiteSpace="nowrap" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+          {m.total}
+        </Text>
+        <Text mt={1} fontSize="xs" color={muted}>Incl. 18% GST · {m.space}</Text>
       </Box>
 
-      {/* Dots */}
-      <HStack justify="center" spacing={3} mt={8}>
-        {items.map((t, i) => (
-          <Box
-            key={t.name}
-            as="button"
-            aria-label={`Show testimonial ${i + 1}`}
-            onClick={() => goTo(i)}
-            w={i === index ? 8 : 2.5}
-            h={2.5}
-            borderRadius="full"
-            bg={i === index ? 'brand.500' : 'gray.300'}
-            transition="all 0.3s ease"
-            _hover={{ bg: i === index ? 'brand.500' : 'gray.400' }}
+      <Box mt={6} flex={1}>
+        <Button
+          onClick={() => setOpen((v) => !v)}
+          variant="ghost"
+          w="full"
+          justifyContent="space-between"
+          px={0}
+          h={10}
+          fontSize="sm"
+          color={dark ? 'white' : 'ink.900'}
+          _hover={{ bg: 'transparent', color: dark ? 'brand.200' : 'brand.700' }}
+          rightIcon={<Icon as={PiCaretDownBold} boxSize={3} transform={open ? 'rotate(180deg)' : 'none'} transition={`transform 0.4s ${EASE}`} />}
+          aria-expanded={open}
+        >
+          What's included
+        </Button>
+        <Collapse in={open} animateOpacity>
+          <Stack spacing={0} pb={2}>
+            {m.items.map(([label, value]) => (
+              <Flex key={label} justify="space-between" gap={4} py={2.5} borderTop="1px solid" borderColor={line} fontSize="sm">
+                <Text color={muted}>{label}</Text>
+                <Text fontWeight={500} textAlign="right" flexShrink={0} sx={{ fontVariantNumeric: 'tabular-nums' }}>{value}</Text>
+              </Flex>
+            ))}
+          </Stack>
+        </Collapse>
+      </Box>
+
+      <Button
+        as={RouterLink}
+        to={APPLY_URL}
+        mt={6}
+        h={12}
+        variant={dark ? 'light' : 'outline'}
+        rightIcon={<Icon as={PiArrowUpRight} />}
+      >
+        {dark ? 'Talk to us about Signature' : `Apply for ${m.name}`}
+      </Button>
+    </Bezel>
+  );
+};
+
+export default function Franchise() {
+  usePageMeta('Franchise Opportunity', 'Own a Whites & Brights laundry franchise. Compare Smart Point, Prime and Signature models, investment and support.');
+  return (
+    <Box as="main">
+      {/* Hero — full-bleed photo */}
+      <Box as="section" position="relative" bg="ink.900" color="white" overflow="hidden">
+        <Box position="absolute" inset={0} bgImage={`url(${HERO_IMAGE})`} bgSize="cover" bgPosition="center" />
+        <Box position="absolute" inset={0} bgGradient="linear(to-r, rgba(6,29,35,0.95) 0%, rgba(6,29,35,0.8) 50%, rgba(6,29,35,0.45) 100%)" />
+        <Container position="relative">
+          <StaggerGroup stagger={0.1} animate="show" pt={{ base: 36, md: 48 }} pb={{ base: 12, md: 16 }}>
+            <MotionBox variants={fadeUp}>
+              <Text as="span" display="inline-flex" alignItems="center" gap={2} px={3} py={1} borderRadius="full" border="1px solid" borderColor="whiteAlpha.300" bg="whiteAlpha.100" fontSize="11px" letterSpacing="0.18em" textTransform="uppercase">
+                <Box w={1.5} h={1.5} borderRadius="full" bg="brand.300" />
+                Franchise opportunity
+              </Text>
+            </MotionBox>
+            <MotionBox variants={fadeUp} mt={8}>
+              <Heading as="h1" fontSize={{ base: '46px', sm: '60px', md: '84px', xl: '96px' }} fontWeight={500} lineHeight="0.95" letterSpacing="-0.05em" maxW="980px">
+                Own a laundry brand <Accent from="brand.200">people already trust.</Accent>
+              </Heading>
+            </MotionBox>
+            <MotionBox variants={fadeUp} mt={8}>
+              <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.800" maxW="560px">
+                Partner with Whites & Brights to build a profitable, recession-proof business — with our machines, software, marketing and training behind you.
+              </Text>
+            </MotionBox>
+            <MotionBox variants={fadeUp} mt={10}>
+              <Stack direction={{ base: 'column', sm: 'row' }} spacing={3}>
+                <ArrowButton as={RouterLink} to={APPLY_URL} variant="light" justifyContent="space-between">
+                  Apply for a franchise
+                </ArrowButton>
+                <Button as="a" href="#models" variant="glass" h={{ base: 12, md: 14 }} px={6}>
+                  Compare models
+                </Button>
+              </Stack>
+            </MotionBox>
+
+            {/* Market stats */}
+            <MotionBox variants={fadeUp} mt={{ base: 16, md: 24 }}>
+              <SimpleGrid columns={{ base: 2, lg: 4 }} borderTop="1px solid" borderColor="whiteAlpha.200">
+                {stats.map((s, i) => (
+                  <Box key={s.label} pt={6} pb={2} pr={4} pl={{ base: i % 2 ? 4 : 0, lg: i ? 6 : 0 }} borderLeft={{ base: i % 2 ? '1px solid' : 'none', lg: i ? '1px solid' : 'none' }} borderColor="whiteAlpha.200">
+                    <Text fontSize={{ base: '32px', md: '48px' }} fontWeight={500} letterSpacing="-0.05em" lineHeight="1" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {s.text || <Counter to={s.value} prefix={s.prefix} suffix={s.suffix} />}
+                    </Text>
+                    <Text mt={3} fontSize="sm" fontWeight={500}>{s.label}</Text>
+                    <Text fontSize="xs" color="whiteAlpha.600">{s.note}</Text>
+                  </Box>
+                ))}
+              </SimpleGrid>
+            </MotionBox>
+          </StaggerGroup>
+        </Container>
+      </Box>
+
+      {/* Why laundry */}
+      <Box as="section" bg="gray.50" py={{ base: 24, md: 36 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
+            <Reveal>
+              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>Why laundry</Text>
+              <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
+                A business people use <Accent>every single week.</Accent>
+              </Heading>
+              <Text mt={6} color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="420px">
+                Rising incomes, busier lives and urbanisation are turning laundry from a chore into a service — and the organised market is still young.
+              </Text>
+            </Reveal>
+            <StaggerGroup>
+              <Box borderTop="1px solid" borderColor="gray.200">
+                {reasons.map((r, i) => (
+                  <MotionBox key={r.title} variants={fadeUp}>
+                    <Grid templateColumns="64px 1fr" gap={4} py={{ base: 7, md: 9 }} borderBottom="1px solid" borderColor="gray.200">
+                      <Text fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300" lineHeight="1">0{i + 1}</Text>
+                      <Box>
+                        <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{r.title}</Heading>
+                        <Text mt={2} color="gray.600" maxW="480px">{r.text}</Text>
+                      </Box>
+                    </Grid>
+                  </MotionBox>
+                ))}
+              </Box>
+            </StaggerGroup>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Models */}
+      <Box id="models" as="section" bg="white" py={{ base: 24, md: 36 }} scrollMarginTop="100px">
+        <Container>
+          <SectionIntro
+            eyebrow="Franchise models"
+            title={<>Three formats. <Accent>Pick your scale.</Accent></>}
+            description="From a compact collection point to a full processing hub. All prices include 18% GST as per Indian Government standards."
           />
-        ))}
-      </HStack>
-    </Box>
-  );
-};
+          <StaggerGroup stagger={0.08}>
+            <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={4} alignItems="stretch">
+              {models.map((m) => (
+                <MotionBox key={m.name} variants={fadeUp} h="100%">
+                  <ModelCard m={m} />
+                </MotionBox>
+              ))}
+            </SimpleGrid>
+          </StaggerGroup>
+        </Container>
+      </Box>
 
-const Franchise = () => {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.700', 'gray.200');
-  const headingColor = useColorModeValue('gray.800', 'white');
-  const accentColor = useColorModeValue('brand.500', 'brand.300');
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const statBg = useColorModeValue('brand.50', 'gray.700');
-  
-  return (
-    <Box>
-      {/* Hero Section */}
-      <Box 
-        as="section" 
-        position="relative" 
-        h={{ base: "auto", md: "650px" }}
-        overflow="hidden"
-      >
-        <Box
-          position="absolute"
-          top="0"
-          left="0"
-          right="0"
-          bottom="0"
-          bgImage="url('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80')"
-          bgSize="cover"
-          bgPosition="center"
-          _after={{
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            bgGradient: 'linear(to-r, rgba(2,73,90,0.95), rgba(2,73,90,0.62))',
-            zIndex: 0
-          }}
-        />
-        
-        <Container maxW="1200px" position="relative" zIndex="1" h="100%" py={{ base: 20, md: 0 }}>
-          <Flex 
-            direction="column" 
-            justify="center" 
-            h="100%"
-            maxW={{ base: "100%", lg: "60%" }}
-            color="white"
-          >
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Badge
-                display="inline-flex"
-                alignItems="center"
-                gap={2}
-                bg="whiteAlpha.200"
-                color="white"
-                backdropFilter="blur(8px)"
-                border="1px solid"
-                borderColor="whiteAlpha.400"
-                fontSize={{ base: "sm", md: "md" }}
-                px={4}
-                py={2}
-                mb={4}
-              >
-                <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" />
-                Business Opportunity
-              </Badge>
-            </MotionBox>
-            
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <Heading
-                as="h1"
-                fontSize={{ base: '3xl', md: '5xl', lg: '6xl' }}
-                fontWeight="bold"
-                lineHeight="1.05"
-                letterSpacing="-0.03em"
-                mb={6}
-              >
-                Join the Fastest-Growing <GradientText from="brand.300" to="accent.200">Laundry Franchise</GradientText>
+      {/* Support */}
+      <Box as="section" bg="gray.50" py={{ base: 24, md: 36 }}>
+        <Container>
+          <SectionIntro
+            eyebrow="Support"
+            title={<>You run the store. <Accent>We've got the rest.</Accent></>}
+            description="End-to-end support from the day you sign, and for as long as you're open."
+          />
+          <StaggerGroup stagger={0.08}>
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 10, md: 8 }}>
+              {support.map((s, i) => (
+                <MotionBox key={s.title} variants={fadeUp} borderTop="2px solid" borderColor={i === 0 ? 'brand.500' : 'ink.900'} pt={6}>
+                  <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{s.title}</Heading>
+                  <Stack spacing={3} mt={6}>
+                    {s.items.map((item) => (
+                      <HStack key={item} spacing={3} align="flex-start">
+                        <Icon as={PiCheckBold} boxSize={3.5} color="brand.700" mt="5px" />
+                        <Text color="gray.700">{item}</Text>
+                      </HStack>
+                    ))}
+                  </Stack>
+                </MotionBox>
+              ))}
+            </SimpleGrid>
+          </StaggerGroup>
+        </Container>
+      </Box>
+
+      {/* Testimonials */}
+      <Box as="section" bg="white" py={{ base: 24, md: 36 }}>
+        <Container>
+          <SectionIntro eyebrow="Franchise partners" title={<>In their <Accent>own words.</Accent></>} />
+          <StaggerGroup stagger={0.1}>
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+              {testimonials.map((t) => (
+                <MotionBox key={t.name} variants={fadeUp} h="100%">
+                  <Bezel h="100%" inner={{ p: { base: 7, md: 10 }, display: 'flex', flexDirection: 'column' }}>
+                    <Icon as={PiQuotesFill} boxSize={8} color="brand.500" />
+                    <Text mt={6} fontSize={{ base: 'xl', md: '2xl' }} lineHeight="1.4" letterSpacing="-0.02em" color="ink.900" flex={1}>
+                      {t.quote}
+                    </Text>
+                    <Flex align="center" gap={3} mt={8}>
+                      <Flex w="44px" h="44px" borderRadius="14px" bg="gray.50" border="1px solid" borderColor="gray.100" align="center" justify="center" fontWeight={600} fontSize="sm" color="ink.700">
+                        {t.name.split(' ').map((p) => p[0]).join('')}
+                      </Flex>
+                      <Box>
+                        <Text fontWeight={500} color="ink.900">{t.name}</Text>
+                        <Text fontSize="sm" color="gray.500">{t.role}</Text>
+                      </Box>
+                    </Flex>
+                  </Bezel>
+                </MotionBox>
+              ))}
+            </SimpleGrid>
+          </StaggerGroup>
+        </Container>
+      </Box>
+
+      {/* Process */}
+      <Box as="section" bg="gray.50" py={{ base: 24, md: 36 }}>
+        <Container>
+          <SectionIntro
+            eyebrow="How to apply"
+            title={<>From first call <Accent>to grand opening.</Accent></>}
+            description="Our franchise team replies within 48 hours of receiving your application."
+          />
+          <StaggerGroup stagger={0.1}>
+            <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 10, lg: 6 }}>
+              {steps.map((s, i) => (
+                <MotionBox key={s.title} variants={fadeUp} position="relative">
+                  <Flex align="center" gap={3} mb={6}>
+                    <Flex w={10} h={10} borderRadius="full" bg={i === steps.length - 1 ? 'ink.900' : 'white'} color={i === steps.length - 1 ? 'white' : 'ink.900'} border="1px solid" borderColor="gray.200" align="center" justify="center" fontWeight={500} fontSize="sm" flexShrink={0}>
+                      {i + 1}
+                    </Flex>
+                    <Box flex={1} h="1px" bg="gray.300" display={{ base: 'none', lg: i < steps.length - 1 ? 'block' : 'none' }} />
+                  </Flex>
+                  <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{s.title}</Heading>
+                  <Text mt={2} color="gray.600" maxW="280px">{s.text}</Text>
+                </MotionBox>
+              ))}
+            </SimpleGrid>
+          </StaggerGroup>
+        </Container>
+      </Box>
+
+      {/* FAQ */}
+      <Box as="section" bg="white" py={{ base: 24, md: 36 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
+            <Reveal>
+              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>FAQ</Text>
+              <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
+                Questions <Accent>franchisees ask.</Accent>
               </Heading>
-            </MotionBox>
-            
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <Text
-                fontSize={{ base: 'lg', md: 'xl' }}
-                mb={8}
-                maxW="xl"
-              >
-                Partner with Whites & Brights to build a profitable, recession-proof business with exceptional returns and comprehensive support at every step.
+              <Text mt={6} color="gray.600" maxW="380px">
+                Something else on your mind? Call us on{' '}
+                <Box as="a" href={`tel:${PHONE_TEL}`} color="ink.900" fontWeight={500} borderBottom="1px solid">{PHONE_DISPLAY}</Box>.
               </Text>
-            </MotionBox>
-            
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <Button
-                size="lg"
-                variant="gradient"
-                px={8}
-                py={7}
-                fontSize="md"
-                fontWeight="bold"
-                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-                as="a"
-                href="#franchise-application"
-              >
-                Apply For Franchise
-              </Button>
-            </MotionBox>
-          </Flex>
+            </Reveal>
+            <Reveal>
+              <FaqList items={faqs} />
+            </Reveal>
+          </Grid>
         </Container>
       </Box>
 
-      {/* Why Invest Section */}
-      <Box as="section" py={20} bg={bgColor}>
-        <Container maxW="1200px">
-          <Stack spacing={16}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Why Invest in the <GradientText>Laundry Industry?</GradientText>
+      {/* Final CTA */}
+      <Box as="section" bg="gray.50" py={{ base: 16, md: 24 }}>
+        <Container>
+          <Reveal>
+            <Bezel radius={40} pad={8} inner={{ bg: 'ink.900', color: 'white', p: { base: 8, md: 16 } }}>
+              <Grid templateColumns={{ base: '1fr', lg: '1.4fr 1fr' }} gap={10} alignItems="end">
+                <Heading fontSize={{ base: '40px', md: '68px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
+                  Ready to build your future <Accent from="brand.200">with us?</Accent>
                 </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  The Indian laundry and dry cleaning industry is rapidly growing with increasing urbanization, rising disposable incomes, and changing lifestyles creating exceptional business opportunities.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            {/* Industry Stats and Graphs */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Stat
-                  px={6}
-                  py={8}
-                  bg={statBg}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  textAlign="center"
-                >
-                  <Icon as={FaChartLine} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}><Counter to={25000} prefix="₹" suffix="Cr" /></StatNumber>
-                  <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Market Size</StatLabel>
-                  <StatHelpText>Growing at 8.7% annually</StatHelpText>
-                </Stat>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Stat
-                  px={6}
-                  py={8}
-                  bg={statBg}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  textAlign="center"
-                >
-                  <Icon as={FaMoneyBillWave} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>50-60%</StatNumber>
-                  <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Profit Margin</StatLabel>
-                  <StatHelpText>In premium urban markets</StatHelpText>
-                </Stat>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Stat
-                  px={6}
-                  py={8}
-                  bg={statBg}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  textAlign="center"
-                >
-                  <Icon as={FaStore} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}>16-18</StatNumber>
-                  <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Months</StatLabel>
-                  <StatHelpText>Average ROI timeline</StatHelpText>
-                </Stat>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Stat
-                  px={6}
-                  py={8}
-                  bg={statBg}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  textAlign="center"
-                >
-                  <Icon as={FaUsers} w={10} h={10} color={accentColor} mb={4} />
-                  <StatNumber fontSize="4xl" fontWeight="bold" color={accentColor}><Counter to={80} suffix="%" /></StatNumber>
-                  <StatLabel fontSize="lg" fontWeight="medium" mb={2}>Customer Retention</StatLabel>
-                  <StatHelpText>With subscription models</StatHelpText>
-                </Stat>
-              </MotionBox>
-            </SimpleGrid>
-
-            {/* Key Benefits */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mt={10}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                >
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="brand.500"
-                    mb={1}
-                  >
-                    <Icon as={FaMoneyBillWave} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">Recession-Proof Business</Heading>
-                  <Text color={textColor}>
-                    Laundry services remain essential regardless of economic conditions, providing stable revenue even during downturns.
-                  </Text>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                >
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="accent.500"
-                    mb={1}
-                  >
-                    <Icon as={FaHandshake} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">Cash-Based Model</Heading>
-                  <Text color={textColor}>
-                    Enjoy immediate cash flow with minimal accounts receivable, creating a healthy and predictable business model.
-                  </Text>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                >
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="green.500"
-                    mb={1}
-                  >
-                    <Icon as={FaUserTie} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">No Experience Required</Heading>
-                  <Text color={textColor}>
-                    Our comprehensive training and support system ensures success regardless of your prior business or industry experience.
-                  </Text>
-                </VStack>
-              </MotionBox>
-            </SimpleGrid>
-          </Stack>
-        </Container>
-      </Box>
-      {/* Business Model Breakdown */}
-      <Box as="section" py={20} bg={useColorModeValue('gray.50', 'gray.900')}>        
-        <Container maxW="1200px">
-          <Stack spacing={16}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Franchise <GradientText>Business Models</GradientText>
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  Choose between our Silver and Gold business models designed to fit your investment capabilities and business goals.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            {/* Franchise Models */}
-            <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={10} alignItems="stretch">
-              {/* Silver Model */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  overflow="hidden"
-                  boxShadow="card"
-                  height="100%"
-                  position="relative"
-                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
-                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
-                >
-                  <Box
-                    position="absolute"
-                    top="0"
-                    right="0"
-                    bg="gray.400"
-                    color="white"
-                    px={4}
-                    py={2}
-                    borderBottomLeftRadius="md"
-                    fontWeight="bold"
-                    zIndex="1"
-                  >
-                    SMART LAUNDRY POINT
-                  </Box>
-                  <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Smart Point</Heading>
-                    <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
-                      FOFO Model (Franchise Owned Franchise Operated)
-                    </Text>
-                    <Text mb={8} color={textColor} fontStyle="italic">
-                      Perfect for entrepreneurs looking to start with a manageable investment
-                    </Text>
-                    
-                    <VStack spacing={6} align="stretch">
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Store setup and Premium interior</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,50,000</Text>
-                      </HStack>
-                      <Text fontSize="sm" color="gray.500" ml={2} mt={-5}>One-time payment</Text>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Commercial machine package</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹7,50,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">POS+Software+Application Integration</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,00,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Delivery, Marketing, Chemical support kit</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹15,00,000</Text>
-                      </HStack>
-                      
-                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
-                        18% GST inclusive on all costs as per Indian Govt. standards
-                      </Text>
-                    </VStack>
-                  </Box>
-                </Box>
-              </MotionBox>
-
-              {/* Gold Model */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  overflow="hidden"
-                  boxShadow="card"
-                  height="100%"
-                  position="relative"
-                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
-                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
-                >
-                  <Box
-                    position="absolute"
-                    top="0"
-                    right="0"
-                    bg="yellow.500"
-                    color="white"
-                    px={4}
-                    py={2}
-                    borderBottomLeftRadius="md"
-                    fontWeight="bold"
-                    zIndex="1"
-                  >
-                    W&B PRIME FRANCHISE
-                  </Box>
-                  <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Prime Franchise</Heading>
-                    <Text fontSize="md" bg="blue.100" color="blue.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
-                      FOFO Model (Franchise Owned Franchise Operated)
-                    </Text>
-                    <Text mb={8} color={textColor} fontStyle="italic">
-                      Complete business solution with advanced equipment and full support
-                    </Text>
-                    
-                    <VStack spacing={6} align="stretch">
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Franchise Fee</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹2,50,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Store setup and Premium interior</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹4,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Commercial machine package</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹9,60,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Vacuum steam iron press table set (2)</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,50,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Shoe washer with sterilization 1x</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,20,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Shoe dryer 20 pair</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,10,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Spotting machine, 2 gun with boiler</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,20,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">POS+Software+Application Integration</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹1,00,000</Text>
-                      </HStack>
-                      <Divider />
-
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Delivery, Marketing, Chemical support kit</Text>
-                        <Text fontWeight="bold" color={accentColor}>₹3,00,000</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹25,10,000</Text>
-                      </HStack>
-                      
-                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right">
-                        18% GST inclusive on all costs as per Indian Govt. standards
-                      </Text>
-                    </VStack>
-                  </Box>
-                </Box>
-              </MotionBox>
-
-              {/* Platinum Model */}
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="2xl"
-                  overflow="hidden"
-                  boxShadow="card"
-                  height="100%"
-                  position="relative"
-                  transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
-                  _hover={{ transform: 'translateY(-8px)', boxShadow: 'cardHover' }}
-                >
-                  <Box
-                    position="absolute"
-                    top="0"
-                    right="0"
-                    bg="purple.600"
-                    color="white"
-                    px={4}
-                    py={2}
-                    borderBottomLeftRadius="md"
-                    fontWeight="bold"
-                    zIndex="1"
-                  >
-                    W&B SIGNATURE ENTERPRISE
-                  </Box>
-                  <Box p={8} pt={16}>
-                    <Heading size="lg" mb={2} color={headingColor}>Premium Laundry Hub + 10 CC</Heading>
-                    <Text fontSize="md" bg="purple.100" color="purple.800" fontWeight="bold" px={2} py={1} borderRadius="md" display="inline-block" mb={2}>
-                      FOCO Model (Franchise Owned Company Operated)
-                    </Text>
-                    <Text mb={8} color={textColor} fontStyle="italic">
-                      Comprehensive enterprise solution with company-managed operations and multiple revenue streams
-                    </Text>
-                    
-                    <VStack spacing={6} align="stretch">
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Space Required</Text>
-                        <Text fontWeight="bold" color={accentColor}>1500-2000 sq.ft</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Includes</Text>
-                        <Text fontWeight="bold" color={accentColor}>10 Collection Centers</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="medium">Business Model</Text>
-                        <Text fontWeight="bold" color={accentColor}>FOCO</Text>
-                      </HStack>
-                      <Divider />
-                      
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold" fontSize="lg">Total Investment</Text>
-                        <Text fontWeight="bold" fontSize="lg" color={accentColor}>₹1.00 - 1.21 Cr</Text>
-                      </HStack>
-                      
-                      <Text fontSize="sm" color="gray.600" fontStyle="italic" textAlign="right" mb={4}>
-                        18% GST inclusive on all costs as per Indian Govt. standards
-                      </Text>
-
-                      <Button
-                        as={RouterLink}
-                        to="/contact"
-                        colorScheme="purple"
-                        size="lg"
-                        w="full"
-                        _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                        _active={{ transform: 'translateY(0)' }}
-                      >
-                        Contact Us For Details
-                      </Button>
-                    </VStack>
-                  </Box>
-                </Box>
-              </MotionBox>
-            </SimpleGrid>
-
-            {/* Space Requirements */}
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} mt={8}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="md"
-                  height="100%"
-                  p={6}
-                  textAlign="center"
-                >
-                  <Heading size="md" mb={2} color={headingColor}>Smart Laundry Point</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>300-350 sq.ft</Text>
-                  <Text color={textColor}>Ideal for high-traffic locations with processing done at central facility</Text>
-                </Box>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="md"
-                  height="100%"
-                  p={6}
-                  textAlign="center"
-                >
-                  <Heading size="md" mb={2} color={headingColor}>W&B Prime Franchise</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>400-500 sq.ft</Text>
-                  <Text color={textColor}>Combined collection and limited processing capabilities</Text>
-                </Box>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Box
-                  bg={cardBg}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  boxShadow="md"
-                  height="100%"
-                  p={6}
-                  textAlign="center"
-                >
-                  <Heading size="md" mb={2} color={headingColor}>W&B Signature Enterprise</Heading>
-                  <Text fontSize="3xl" fontWeight="bold" color={accentColor} mb={2}>1500-2000 sq.ft</Text>
-                  <Text color={textColor}>Complete processing facility with all services available on-site</Text>
-                </Box>
-              </MotionBox>
-            </SimpleGrid>
-          </Stack>
-        </Container>
-      </Box>
-
-      {/* Support System */}
-      <Box as="section" py={20} bg={bgColor}>
-        <Container maxW="1200px">
-          <Stack spacing={16}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Our Comprehensive <GradientText>Support System</GradientText>
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  We provide end-to-end support to ensure your franchise succeeds from day one and continues to grow year after year.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                  position="relative"
-                  overflow="hidden"
-                >
-                  <Box 
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    height="6px"
-                    bgGradient="linear(to-r, brand.400, brand.600)"
-                    opacity={0.8}
-                  />
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="brand.500"
-                    mb={1}
-                  >
-                    <Icon as={FaTools} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">Setup & Training</Heading>
-                  <List spacing={3}>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Complete store setup assistance
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      2-week comprehensive training program
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Equipment operation & maintenance training
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Staff hiring and training support
-                    </ListItem>
-                  </List>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                  position="relative"
-                  overflow="hidden"
-                >
-                  <Box 
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    height="6px"
-                    bgGradient="linear(to-r, accent.400, accent.600)"
-                    opacity={0.8}
-                  />
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="accent.500"
-                    mb={1}
-                  >
-                    <Icon as={FaBullhorn} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">Marketing & Technology</Heading>
-                  <List spacing={3}>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Local marketing strategy & materials
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Social media management support
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Proprietary POS & management software
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Customer acquisition campaigns
-                    </ListItem>
-                  </List>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <VStack 
-                  align="start" 
-                  spacing={4} 
-                  p={6} 
-                  bg={cardBg} 
-                  borderRadius="lg" 
-                  boxShadow="md"
-                  h="100%"
-                  position="relative"
-                  overflow="hidden"
-                >
-                  <Box 
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    height="6px"
-                    bgGradient="linear(to-r, green.400, green.600)"
-                    opacity={0.8}
-                  />
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="green.500"
-                    mb={1}
-                  >
-                    <Icon as={FaTruck} w={8} h={8} />
-                  </Flex>
-                  <Heading size="md">Ongoing Operations</Heading>
-                  <List spacing={3}>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Supply chain management
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Regular business reviews & coaching
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      24/7 operational support helpdesk
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FaCheckCircle} color="green.500" />
-                      Continuous training & updates
-                    </ListItem>
-                  </List>
-                </VStack>
-              </MotionBox>
-            </SimpleGrid>
-          </Stack>
-        </Container>
-      </Box>
-
-      {/* Testimonials Section */}
-      <Box 
-        as="section" 
-        py={20} 
-        bg={useColorModeValue('gray.50', 'gray.900')}
-        position="relative"
-        overflow="hidden"
-      >
-        <Box
-          position="absolute"
-          top="-10%"
-          right="-5%"
-          width="300px"
-          height="300px"
-          borderRadius="full"
-          bg="brand.50"
-          filter="blur(60px)"
-          opacity="0.4"
-          zIndex="0"
-        />
-        <Container maxW="1200px" position="relative" zIndex="1">
-          <Stack spacing={12}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Success <GradientText>Stories</GradientText>
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  Hear from our franchise partners who have built thriving businesses with Whites & Brights.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            <TestimonialCarousel items={testimonials} cardBg={cardBg} textColor={textColor} />
-          </Stack>
-        </Container>
-      </Box>
-
-      {/* FAQ Section */}
-      <Box as="section" py={20} bg={bgColor}>
-        <Container maxW="1200px">
-          <Stack spacing={12}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Frequently Asked <GradientText>Questions</GradientText>
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  Get answers to the most common questions about our franchise opportunity.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            <Accordion allowMultiple width="100%" maxW="4xl" mx="auto">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <AccordionItem mb={4} border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                  <h2>
-                    <AccordionButton py={4} bg={cardBg}>
-                      <Box flex="1" textAlign="left" fontWeight="semibold">
-                        Do I need prior experience in the laundry industry?
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel py={4} px={6} bg={cardBg}>
-                    No prior experience is required. Our comprehensive training program will equip you with all the necessary skills and knowledge to run a successful laundry business. We provide ongoing support to ensure your success regardless of your background.
-                  </AccordionPanel>
-                </AccordionItem>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <AccordionItem mb={4} border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                  <h2>
-                    <AccordionButton py={4} bg={cardBg}>
-                      <Box flex="1" textAlign="left" fontWeight="semibold">
-                        How long does it take to open a Whites & Brights franchise?
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel py={4} px={6} bg={cardBg}>
-                    The typical timeline from signing the franchise agreement to opening your store is approximately 3-4 months. This includes location selection, lease negotiation, store build-out, equipment installation, staff hiring, and training. Our team will guide you through each step of the process.
-                  </AccordionPanel>
-                </AccordionItem>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <AccordionItem mb={4} border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                  <h2>
-                    <AccordionButton py={4} bg={cardBg}>
-                      <Box flex="1" textAlign="left" fontWeight="semibold">
-                        What ongoing fees will I need to pay?
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel py={4} px={6} bg={cardBg}>
-                    Franchisees pay a royalty fee of 6% of gross sales, which covers ongoing support, technology updates, and brand development. There is also a marketing contribution of 2% that goes toward national marketing campaigns that benefit all locations. There are no hidden fees beyond these standard industry charges.
-                  </AccordionPanel>
-                </AccordionItem>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <AccordionItem mb={4} border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                  <h2>
-                    <AccordionButton py={4} bg={cardBg}>
-                      <Box flex="1" textAlign="left" fontWeight="semibold">
-                        Can I own multiple Whites & Brights franchises?
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel py={4} px={6} bg={cardBg}>
-                    Yes, we encourage multi-unit ownership for qualified franchisees. After successfully operating your first location for at least 6 months, you can apply for additional units. We offer development incentives for multi-unit operators, including reduced franchise fees for subsequent locations.
-                  </AccordionPanel>
-                </AccordionItem>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <AccordionItem mb={4} border="1px solid" borderColor="gray.200" borderRadius="md" overflow="hidden">
-                  <h2>
-                    <AccordionButton py={4} bg={cardBg}>
-                      <Box flex="1" textAlign="left" fontWeight="semibold">
-                        What territories are currently available?
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel py={4} px={6} bg={cardBg}>
-                    We are currently expanding across major metropolitan areas in India, with a focus on tier 1 and tier 2 cities. Each franchise territory is carefully mapped to ensure sufficient population density and market potential. During your application process, we'll discuss available territories that match your preferences and market analysis.
-                  </AccordionPanel>
-                </AccordionItem>
-              </MotionBox>
-            </Accordion>
-          </Stack>
-        </Container>
-      </Box>
-
-      {/* Application Process */}
-      <Box 
-        as="section" 
-        py={20} 
-        bg={useColorModeValue('gray.50', 'gray.900')}
-        position="relative"
-        overflow="hidden"
-      >
-        <Box
-          position="absolute"
-          bottom="-10%"
-          left="-5%"
-          width="300px"
-          height="300px"
-          borderRadius="full"
-          bg="accent.50"
-          filter="blur(60px)"
-          opacity="0.4"
-          zIndex="0"
-        />
-        <Container maxW="1200px" position="relative" zIndex="1">
-          <Stack spacing={16}>
-            <Stack spacing={4} textAlign="center">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Heading 
-                  fontSize={{ base: '2xl', md: '3xl' }}
-                  mb={2}
-                  color={headingColor}
-                >
-                  Application <GradientText>Process</GradientText>
-                </Heading>
-                <Text
-                  fontSize={{ base: 'md', md: 'lg' }}
-                  color={textColor}
-                  maxW="3xl"
-                  mx="auto"
-                >
-                  Your journey to becoming a Whites & Brights franchise owner starts here.
-                </Text>
-              </MotionBox>
-            </Stack>
-
-            <SimpleGrid columns={{ base: 1, md: 4 }} spacing={{ base: 10, md: 5 }}>
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <VStack spacing={4} align="center">
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="brand.500"
-                    mb={1}
-                    position="relative"
-                  >
-                    <Text fontWeight="bold" fontSize="xl">1</Text>
-                    <Box
-                      position="absolute"
-                      top="50%"
-                      right="-100%"
-                      height="2px"
-                      width="100%"
-                      bg="brand.500"
-                      display={{ base: 'none', md: 'block' }}
-                    />
-                  </Flex>
-                  <Heading size="md" textAlign="center">Initial Application</Heading>
-                  <Text textAlign="center" color={textColor}>
-                    Complete our online application form to express your interest and provide basic information.
-                  </Text>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <VStack spacing={4} align="center">
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="accent.500"
-                    mb={1}
-                    position="relative"
-                  >
-                    <Text fontWeight="bold" fontSize="xl">2</Text>
-                    <Box
-                      position="absolute"
-                      top="50%"
-                      right="-100%"
-                      height="2px"
-                      width="100%"
-                      bg="accent.500"
-                      display={{ base: 'none', md: 'block' }}
-                    />
-                  </Flex>
-                  <Heading size="md" textAlign="center">Discovery Meeting</Heading>
-                  <Text textAlign="center" color={textColor}>
-                    Meet with our franchise team to discuss the opportunity in detail and ask questions.
-                  </Text>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <VStack spacing={4} align="center">
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="green.500"
-                    mb={1}
-                    position="relative"
-                  >
-                    <Text fontWeight="bold" fontSize="xl">3</Text>
-                    <Box
-                      position="absolute"
-                      top="50%"
-                      right="-100%"
-                      height="2px"
-                      width="100%"
-                      bg="green.500"
-                      display={{ base: 'none', md: 'block' }}
-                    />
-                  </Flex>
-                  <Heading size="md" textAlign="center">Business Planning</Heading>
-                  <Text textAlign="center" color={textColor}>
-                    Develop your business plan and secure financing with our guidance and support.
-                  </Text>
-                </VStack>
-              </MotionBox>
-
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <VStack spacing={4} align="center">
-                  <Flex
-                    w={16}
-                    h={16}
-                    align="center"
-                    justify="center"
-                    color="white"
-                    rounded="full"
-                    bg="purple.500"
-                    mb={1}
-                  >
-                    <Text fontWeight="bold" fontSize="xl">4</Text>
-                  </Flex>
-                  <Heading size="md" textAlign="center">Grand Opening</Heading>
-                  <Text textAlign="center" color={textColor}>
-                    Sign the franchise agreement, complete training, and launch your Whites & Brights location.
-                  </Text>
-                </VStack>
-              </MotionBox>
-            </SimpleGrid>
-
-            {/* CTA */}
-            <Box textAlign="center" mt={10} id="franchise-application">
-              <MotionBox
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Button 
-                  size="lg" 
-                  colorScheme="brand" 
-                  px={10} 
-                  py={7}
-                  fontSize="lg"
-                  fontWeight="bold"
-                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                  transition="all 0.3s"
-                  as={RouterLink}
-                  to="/contact"
-                >
-                  Apply Now
-                </Button>
-                <Text mt={4} fontSize="sm" color={textColor}>
-                  Our franchise team will respond within 48 hours of receiving your application.
-                </Text>
-              </MotionBox>
-            </Box>
-          </Stack>
-        </Container>
-      </Box>
-
-      {/* Footer CTA */}
-      <Box 
-        as="section" 
-        py={16} 
-        bg="brand.600" 
-        color="white"
-        position="relative"
-        overflow="hidden"
-      >
-        <Box
-          position="absolute"
-          top="0"
-          right="0"
-          bottom="0"
-          width="50%"
-          bg="brand.700"
-          clipPath="polygon(20% 0, 100% 0, 100% 100%, 0% 100%)"
-          opacity="0.3"
-          zIndex="0"
-        />
-        <Container maxW="1200px" position="relative" zIndex="1">
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignItems="center">
-            <MotionBox
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <Heading size="xl" mb={4}>
-                Ready to Build Your Future with Whites & Brights?
-              </Heading>
-              <Text fontSize="lg" mb={6} opacity={0.9}>
-                Join our growing family of successful franchise owners and be part of the booming laundry industry.
-              </Text>
-              <HStack spacing={4}>
-                <Button 
-                  size="lg" 
-                  colorScheme="whiteAlpha" 
-                  fontWeight="bold"
-                  _hover={{ bg: 'white', color: 'brand.600' }}
-                  as={RouterLink}
-                  to="/contact"
-                >
-                  Apply Now
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  colorScheme="whiteAlpha"
-                  fontWeight="bold"
-                  _hover={{ bg: 'whiteAlpha.200' }}
-                  as="a"
-                  href="#franchise-application"
-                >
-                  Learn More
-                </Button>
-              </HStack>
-            </MotionBox>
-            
-            <MotionBox
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              display={{ base: 'none', md: 'block' }}
-            >
-              <Image 
-                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" 
-                alt="Happy franchise owner"
-                borderRadius="lg"
-                boxShadow="2xl"
-                objectFit="cover"
-                height="300px"
-                width="100%"
-              />
-            </MotionBox>
-          </SimpleGrid>
+                <Stack spacing={3} align={{ base: 'stretch', lg: 'flex-end' }}>
+                  <ArrowButton as={RouterLink} to={APPLY_URL} variant="light" justifyContent="space-between">
+                    Apply now
+                  </ArrowButton>
+                  <Button as="a" href={`tel:${PHONE_TEL}`} variant="glass" h={{ base: 12, md: 14 }} px={6} leftIcon={<Icon as={PiPhoneLight} boxSize={5} />}>
+                    {PHONE_DISPLAY}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Bezel>
+          </Reveal>
         </Container>
       </Box>
     </Box>
   );
-};
-
-export default Franchise;
+}

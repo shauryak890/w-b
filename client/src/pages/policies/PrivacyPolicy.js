@@ -1,234 +1,133 @@
 import React from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  VStack,
-  UnorderedList,
-  ListItem,
-  Divider,
-  Button,
-  HStack,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  useToast,
-  Icon,
-} from '@chakra-ui/react';
-import { FaFileDownload, FaPrint, FaShieldAlt, FaLock, FaUserShield } from 'react-icons/fa';
+import { Box, Grid, Text, SimpleGrid, Icon } from '@chakra-ui/react';
+import { PiShieldCheckLight, PiLockLight, PiUserCircleCheckLight } from 'react-icons/pi';
+import LegalLayout, { P, Bullets, LegalContact } from '../../components/LegalLayout';
+import usePageMeta from '../../hooks/usePageMeta';
 
-const SecurityFeature = ({ icon, title, description }) => (
-  <Box
-    bg="white"
-    p={6}
-    borderRadius="xl"
-    boxShadow="md"
-    _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-    transition="all 0.2s"
-  >
-    <VStack spacing={4}>
-      <Icon as={icon} w={8} h={8} color="brand.500" />
-      <Heading size="sm" textAlign="center">{title}</Heading>
-      <Text color="gray.600" fontSize="sm" textAlign="center">
-        {description}
-      </Text>
-    </VStack>
-  </Box>
-);
+const dataCollected = [
+  { category: 'Personal Information', examples: 'Name, address, phone number, email', purpose: 'Service delivery, communication' },
+  { category: 'Payment Information', examples: 'Credit card details, billing address', purpose: 'Processing payments' },
+  { category: 'Service Preferences', examples: 'Cleaning preferences, special instructions', purpose: 'Service customization' },
+  { category: 'Usage Data', examples: 'App usage, website interactions', purpose: 'Service improvement' },
+];
+
+const security = [
+  { icon: PiShieldCheckLight, title: 'Data Encryption', description: 'All sensitive data is encrypted using industry-standard protocols' },
+  { icon: PiLockLight, title: 'Secure Storage', description: 'Data is stored in secure, monitored facilities' },
+  { icon: PiUserCircleCheckLight, title: 'Access Control', description: 'Strict access controls and authentication measures' },
+];
+
+const sections = [
+  {
+    id: 'introduction',
+    title: 'Introduction',
+    content: (
+      <P>
+        At Whites & Brights, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our services.
+      </P>
+    ),
+  },
+  {
+    id: 'information-we-collect',
+    title: 'Information We Collect',
+    content: (
+      <>
+        <P>We collect and process the following types of information:</P>
+        <Box borderRadius="20px" bg="white" border="1px solid" borderColor="gray.200" overflow="hidden">
+          <Grid templateColumns={{ base: '1fr', md: '1fr 1.3fr 1.1fr' }} px={6} py={3} bg="gray.50" display={{ base: 'none', md: 'grid' }} fontSize="11px" letterSpacing="0.14em" textTransform="uppercase" color="gray.500">
+            <Text>Category</Text>
+            <Text>Examples</Text>
+            <Text>Purpose</Text>
+          </Grid>
+          {dataCollected.map((d) => (
+            <Grid key={d.category} templateColumns={{ base: '1fr', md: '1fr 1.3fr 1.1fr' }} gap={{ base: 1, md: 4 }} px={6} py={4} borderTop="1px solid" borderColor="gray.100" fontSize={{ base: 'sm', md: 'md' }}>
+              <Text fontWeight={500} color="ink.900">{d.category}</Text>
+              <Text color="gray.700">{d.examples}</Text>
+              <Text color="gray.500">{d.purpose}</Text>
+            </Grid>
+          ))}
+        </Box>
+      </>
+    ),
+  },
+  {
+    id: 'security-measures',
+    title: 'Security Measures',
+    content: (
+      <>
+        <P>We implement various security measures to protect your information:</P>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
+          {security.map((s) => (
+            <Box key={s.title} p={5} borderRadius="20px" bg="white" border="1px solid" borderColor="gray.200">
+              <Icon as={s.icon} boxSize={7} color="ink.900" />
+              <Text mt={4} fontWeight={500} color="ink.900">{s.title}</Text>
+              <Text mt={1} fontSize="sm" color="gray.600">{s.description}</Text>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </>
+    ),
+  },
+  {
+    id: 'how-we-use',
+    title: 'How We Use Your Information',
+    content: (
+      <>
+        <P>Your information is used for the following purposes:</P>
+        <Bullets
+          items={[
+            'Providing and improving our services',
+            'Processing payments and transactions',
+            'Communicating about your orders and services',
+            'Sending service updates and marketing communications',
+            'Analyzing service usage and trends',
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'information-sharing',
+    title: 'Information Sharing',
+    content: (
+      <>
+        <P>We may share your information with:</P>
+        <Bullets
+          items={[
+            'Service providers who assist in our operations',
+            'Payment processors for secure transactions',
+            'Legal authorities when required by law',
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'your-rights',
+    title: 'Your Rights',
+    content: (
+      <>
+        <P>You have the following rights regarding your data:</P>
+        <Bullets
+          items={[
+            'Access your personal information',
+            'Request corrections to your data',
+            'Request deletion of your data',
+            'Opt-out of marketing communications',
+            'Export your data',
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'contact',
+    title: 'Contact Us',
+    content: <LegalContact intro="For privacy-related inquiries or to exercise your rights, contact our Privacy Officer:" />,
+  },
+];
 
 export default function PrivacyPolicy() {
-  const toast = useToast();
-  const lastUpdated = "May 19, 2025";
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleDownload = () => {
-    toast({
-      title: "Document downloaded",
-      description: "Privacy Policy has been downloaded successfully.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
-  const dataCollected = [
-    { category: "Personal Information", examples: "Name, address, phone number, email", purpose: "Service delivery, communication" },
-    { category: "Payment Information", examples: "Credit card details, billing address", purpose: "Processing payments" },
-    { category: "Service Preferences", examples: "Cleaning preferences, special instructions", purpose: "Service customization" },
-    { category: "Usage Data", examples: "App usage, website interactions", purpose: "Service improvement" },
-  ];
-
-  return (
-    <Box pt={20} pb={20} bg="gray.50">
-      <Container maxW="4xl">
-        <VStack spacing={8} align="stretch">
-          {/* Header */}
-          <VStack spacing={4} align="start">
-            <Heading
-              size="2xl"
-              bgGradient="linear(to-r, brand.500, accent.500)"
-              bgClip="text"
-            >
-              Privacy Policy
-            </Heading>
-            <Text color="gray.600">Last Updated: {lastUpdated}</Text>
-            <HStack spacing={4}>
-              <Button
-                leftIcon={<FaFileDownload />}
-                colorScheme="brand"
-                variant="outline"
-                onClick={handleDownload}
-              >
-                Download PDF
-              </Button>
-              <Button
-                leftIcon={<FaPrint />}
-                colorScheme="brand"
-                variant="outline"
-                onClick={handlePrint}
-              >
-                Print
-              </Button>
-            </HStack>
-          </VStack>
-
-          <Divider />
-
-          {/* Introduction */}
-          <VStack align="start" spacing={4}>
-            <Heading size="md">1. Introduction</Heading>
-            <Text color="gray.700">
-              At Whites & Brights, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our services.
-            </Text>
-          </VStack>
-
-          {/* Data Collection */}
-          <VStack align="start" spacing={4}>
-            <Heading size="md">2. Information We Collect</Heading>
-            <Text color="gray.700">
-              We collect and process the following types of information:
-            </Text>
-            <Box overflowX="auto" w="full">
-              <Table variant="simple" bg="white" borderRadius="lg" boxShadow="sm">
-                <Thead bg="gray.50">
-                  <Tr>
-                    <Th>Category</Th>
-                    <Th>Examples</Th>
-                    <Th>Purpose</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {dataCollected.map((item, index) => (
-                    <Tr key={index}>
-                      <Td fontWeight="medium">{item.category}</Td>
-                      <Td>{item.examples}</Td>
-                      <Td>{item.purpose}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </Box>
-          </VStack>
-
-          {/* Security Measures */}
-          <VStack align="start" spacing={6}>
-            <Heading size="md">3. Security Measures</Heading>
-            <Box w="full">
-              <VStack spacing={6}>
-                <Text color="gray.700">
-                  We implement various security measures to protect your information:
-                </Text>
-                <Box w="full">
-                  <VStack spacing={6}>
-                    <HStack spacing={6} w="full" flexWrap="wrap" justify="center">
-                      <SecurityFeature
-                        icon={FaShieldAlt}
-                        title="Data Encryption"
-                        description="All sensitive data is encrypted using industry-standard protocols"
-                      />
-                      <SecurityFeature
-                        icon={FaLock}
-                        title="Secure Storage"
-                        description="Data is stored in secure, monitored facilities"
-                      />
-                      <SecurityFeature
-                        icon={FaUserShield}
-                        title="Access Control"
-                        description="Strict access controls and authentication measures"
-                      />
-                    </HStack>
-                  </VStack>
-                </Box>
-              </VStack>
-            </Box>
-          </VStack>
-
-          {/* Data Usage */}
-          <VStack align="start" spacing={4}>
-            <Heading size="md">4. How We Use Your Information</Heading>
-            <Text color="gray.700">
-              Your information is used for the following purposes:
-            </Text>
-            <UnorderedList spacing={2} pl={4}>
-              <ListItem>Providing and improving our services</ListItem>
-              <ListItem>Processing payments and transactions</ListItem>
-              <ListItem>Communicating about your orders and services</ListItem>
-              <ListItem>Sending service updates and marketing communications</ListItem>
-              <ListItem>Analyzing service usage and trends</ListItem>
-            </UnorderedList>
-          </VStack>
-
-          {/* Data Sharing */}
-          <VStack align="start" spacing={4}>
-            <Heading size="md">5. Information Sharing</Heading>
-            <Text color="gray.700">
-              We may share your information with:
-            </Text>
-            <UnorderedList spacing={2} pl={4}>
-              <ListItem>Service providers who assist in our operations</ListItem>
-              <ListItem>Payment processors for secure transactions</ListItem>
-              <ListItem>Legal authorities when required by law</ListItem>
-            </UnorderedList>
-          </VStack>
-
-          {/* Your Rights */}
-          <VStack align="start" spacing={4}>
-            <Heading size="md">6. Your Rights</Heading>
-            <Text color="gray.700">
-              You have the following rights regarding your data:
-            </Text>
-            <UnorderedList spacing={2} pl={4}>
-              <ListItem>Access your personal information</ListItem>
-              <ListItem>Request corrections to your data</ListItem>
-              <ListItem>Request deletion of your data</ListItem>
-              <ListItem>Opt-out of marketing communications</ListItem>
-              <ListItem>Export your data</ListItem>
-            </UnorderedList>
-          </VStack>
-
-          {/* Contact Information */}
-          <VStack align="start" spacing={4} bg="white" p={6} borderRadius="xl">
-            <Heading size="md">Contact Us</Heading>
-            <Text color="gray.700">
-              For privacy-related inquiries or to exercise your rights, contact our Privacy Officer:
-            </Text>
-            <Text color="brand.500" fontWeight="bold">
-              Email: info@whitesandbrights.com
-              <br />
-              Phone: +91 81027 33336
-              <br />
-              Address: Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105
-            </Text>
-          </VStack>
-        </VStack>
-      </Container>
-    </Box>
-  );
+  usePageMeta('Privacy Policy', 'How Whites & Brights collects, uses and protects your personal information.');
+  return <LegalLayout eyebrow="Legal" title="Privacy" accent="policy." lastUpdated="May 19, 2025" sections={sections} />;
 }

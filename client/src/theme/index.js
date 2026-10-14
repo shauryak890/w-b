@@ -1,11 +1,19 @@
 import { extendTheme } from '@chakra-ui/react';
 
 /**
- * Whites & Brights — premium theme.
- * Brand palette is logo-derived (cyan #00B4C5) and intentionally unchanged.
- * Everything else (type scale, shadows, radii, component styles) is tuned
- * for a modern, layered, "premium SaaS" feel.
+ * Whites & Brights — "fresh linen" theme.
+ * Calm off-white base, deep teal-ink for dark surfaces and primary actions,
+ * and the logo cyan (#00B4C5, intentionally unchanged) as the single accent.
+ * Neutrals are tinted toward the brand teal so every grey belongs to one family.
  */
+
+// Shared easing — a soft spring-like curve used across hover/press transitions
+export const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+// Subtle paper grain, applied once as a fixed overlay (never on scrolling layers)
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
 const theme = extendTheme({
   config: {
     initialColorMode: 'light',
@@ -14,62 +22,78 @@ const theme = extendTheme({
 
   colors: {
     brand: {
-      50: '#E0F7FA',
-      100: '#B2EBF2',
-      200: '#80DEEA',
+      50: '#E6F8FA',
+      100: '#C2EEF2',
+      200: '#8FE0E8',
       300: '#4DD0E1',
       400: '#26C6DA',
-      500: '#00B4C5', // Primary brand color
-      600: '#00ACC1',
-      700: '#0097A7',
-      800: '#00838F',
-      900: '#02495A', // Deep brand navy (used for dark sections)
+      500: '#00B4C5', // Primary brand color (logo)
+      600: '#00A3B3',
+      700: '#00838F', // Accessible cyan for text/buttons on light backgrounds
+      800: '#036A74',
+      900: '#02495A',
     },
+    // Deep teal-ink — dark sections, primary buttons, headings
+    ink: {
+      50: '#EEF4F4',
+      100: '#D5E3E4',
+      200: '#A9C4C7',
+      300: '#79A1A6',
+      400: '#4D7C83',
+      500: '#2E5E66',
+      600: '#1D4950',
+      700: '#133940',
+      800: '#0A2A31',
+      900: '#061D23',
+    },
+    // Kept for backwards compatibility with existing pages; prefer brand/ink
     accent: {
-      50: '#F0F4FF',
-      100: '#DBE4FF',
-      200: '#BAC8FF',
-      300: '#99ACFF',
-      400: '#7890FF',
-      500: '#5774FF', // Secondary accent
-      600: '#2F4BFF',
-      700: '#0022FF',
-      800: '#001ACC',
-      900: '#001299',
+      50: '#EEF4F4',
+      100: '#D5E3E4',
+      200: '#A9C4C7',
+      300: '#79A1A6',
+      400: '#4D7C83',
+      500: '#00838F',
+      600: '#036A74',
+      700: '#133940',
+      800: '#0A2A31',
+      900: '#061D23',
     },
     highlight: {
-      50: '#FFF0F4',
-      100: '#FFD9E2',
-      200: '#FFB3C5',
-      300: '#FF8DA8',
-      400: '#FF668B',
-      500: '#FF406E',
-      600: '#FF1A51',
-      700: '#F0003D',
-      800: '#BD0030',
-      900: '#8A0023',
+      50: '#FFF4EC',
+      100: '#FFE3CF',
+      200: '#FFC9A3',
+      300: '#FFAA72',
+      400: '#F98B47',
+      500: '#E8742C', // Warm offer accent — used sparingly
+      600: '#C95E1C',
+      700: '#A04914',
+      800: '#7A370F',
+      900: '#55260A',
     },
-    // Cool, slightly blue-tinted neutrals for a cleaner premium base
+    // Teal-tinted neutrals — one grey family across the whole site
     gray: {
-      50: '#F7FAFC',
-      100: '#EDF2F7',
-      200: '#E2E8F0',
-      300: '#CBD5E0',
-      400: '#A0AEC0',
-      500: '#718096',
-      600: '#566377',
-      700: '#3B4658',
-      800: '#222B3A',
-      900: '#141A24',
+      50: '#F4F6F5',
+      100: '#EAEEED',
+      200: '#DCE2E1',
+      300: '#C3CCCB',
+      400: '#97A3A2',
+      500: '#6B7978',
+      600: '#4F5D5D',
+      700: '#364343',
+      800: '#1F2C2D',
+      900: '#121C1D',
     },
   },
 
   fonts: {
-    heading: '"Plus Jakarta Sans", "Poppins", sans-serif',
-    body: '"Inter", sans-serif',
+    heading: '"Geist", -apple-system, "Segoe UI", sans-serif',
+    body: '"Geist", -apple-system, "Segoe UI", sans-serif',
+    serif: '"Instrument Serif", Georgia, serif',
   },
 
   fontWeights: {
+    light: 300,
     normal: 400,
     medium: 500,
     semibold: 600,
@@ -81,18 +105,19 @@ const theme = extendTheme({
     xl: '0.875rem',
     '2xl': '1.25rem',
     '3xl': '1.75rem',
-    '4xl': '2.5rem',
+    '4xl': '2.25rem',
   },
 
   shadows: {
-    soft: '0 2px 10px rgba(2, 73, 90, 0.06)',
-    card: '0 10px 30px rgba(2, 73, 90, 0.08)',
-    cardHover: '0 22px 48px rgba(2, 73, 90, 0.16)',
-    floating: '0 24px 60px rgba(2, 73, 90, 0.20)',
-    glass: '0 8px 32px rgba(2, 73, 90, 0.14)',
-    glow: '0 12px 34px rgba(0, 180, 197, 0.38)',
-    glowAccent: '0 12px 34px rgba(87, 116, 255, 0.38)',
+    soft: '0 1px 2px rgba(6, 29, 35, 0.04), 0 8px 24px -12px rgba(6, 29, 35, 0.10)',
+    card: '0 2px 4px rgba(6, 29, 35, 0.03), 0 24px 48px -24px rgba(6, 29, 35, 0.16)',
+    cardHover: '0 2px 4px rgba(6, 29, 35, 0.04), 0 36px 64px -28px rgba(6, 29, 35, 0.28)',
+    floating: '0 40px 80px -32px rgba(6, 29, 35, 0.36)',
+    glass: '0 8px 32px -8px rgba(6, 29, 35, 0.18)',
+    glow: '0 16px 40px -16px rgba(0, 131, 143, 0.45)',
+    glowAccent: '0 16px 40px -16px rgba(0, 131, 143, 0.45)',
     insetTop: 'inset 0 1px 0 rgba(255,255,255,0.6)',
+    bezel: 'inset 0 1px 1px rgba(255,255,255,0.7)',
   },
 
   styles: {
@@ -103,15 +128,23 @@ const theme = extendTheme({
       body: {
         bg: 'gray.50',
         color: 'gray.800',
-        fontFeatureSettings: '"cv11", "ss01"',
         WebkitFontSmoothing: 'antialiased',
         textRendering: 'optimizeLegibility',
         overflowX: 'hidden',
       },
+      // Fixed grain overlay for a tactile, paper-like surface
+      'body::after': {
+        content: '""',
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 1500,
+        opacity: 0.035,
+        backgroundImage: GRAIN,
+      },
       '::selection': {
         background: 'rgba(0, 180, 197, 0.22)',
       },
-      // Custom premium scrollbar (WebKit)
       '::-webkit-scrollbar': {
         width: '10px',
         height: '10px',
@@ -120,13 +153,13 @@ const theme = extendTheme({
         background: 'transparent',
       },
       '::-webkit-scrollbar-thumb': {
-        background: 'rgba(0, 180, 197, 0.35)',
+        background: 'rgba(6, 29, 35, 0.22)',
         borderRadius: '9999px',
         border: '2px solid transparent',
         backgroundClip: 'content-box',
       },
       '::-webkit-scrollbar-thumb:hover': {
-        background: 'rgba(0, 180, 197, 0.6)',
+        background: 'rgba(6, 29, 35, 0.4)',
         backgroundClip: 'content-box',
       },
     },
@@ -136,79 +169,88 @@ const theme = extendTheme({
     Heading: {
       baseStyle: {
         fontFamily: 'heading',
-        fontWeight: 700,
-        letterSpacing: '-0.02em',
-        lineHeight: 1.15,
+        fontWeight: 600,
+        letterSpacing: '-0.035em',
+        lineHeight: 1.08,
+        textWrap: 'balance',
+      },
+    },
+
+    Text: {
+      baseStyle: {
+        textWrap: 'pretty',
       },
     },
 
     Button: {
       baseStyle: {
-        fontWeight: 600,
+        fontWeight: 500,
         borderRadius: 'full',
         letterSpacing: '-0.01em',
-        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: `all 0.45s ${EASE}`,
+        _active: { transform: 'scale(0.98)' },
         _focusVisible: {
-          boxShadow: '0 0 0 3px rgba(0, 180, 197, 0.45)',
+          boxShadow: '0 0 0 3px rgba(0, 163, 179, 0.45)',
         },
       },
       defaultProps: {
         colorScheme: 'brand',
       },
       variants: {
-        // Signature gradient CTA (cyan -> blue). The blue end keeps white text legible.
+        // Primary CTA. Historically a cyan→blue gradient; now solid deep ink so it
+        // reads as the single strongest action on the page.
         gradient: {
-          bgGradient: 'linear(to-r, brand.500, accent.500)',
+          bg: 'ink.900',
           color: 'white',
-          boxShadow: 'glow',
-          position: 'relative',
-          overflow: 'hidden',
+          boxShadow: 'soft',
           _hover: {
-            bgGradient: 'linear(to-r, brand.600, accent.600)',
-            transform: 'translateY(-2px)',
-            boxShadow: 'floating',
-            _disabled: { transform: 'none' },
+            bg: 'ink.700',
+            boxShadow: 'glow',
+            _disabled: { bg: 'ink.900' },
           },
-          _active: { transform: 'translateY(0)' },
         },
-        // Frosted-glass button for use on imagery / dark heroes
+        // Light pill for dark sections
+        light: {
+          bg: 'white',
+          color: 'ink.900',
+          _hover: { bg: 'brand.50' },
+        },
+        // Frosted button for imagery / dark heroes
         glass: {
-          bg: 'whiteAlpha.200',
+          bg: 'whiteAlpha.100',
           color: 'white',
-          backdropFilter: 'blur(10px)',
           border: '1px solid',
-          borderColor: 'whiteAlpha.400',
+          borderColor: 'whiteAlpha.300',
           _hover: {
-            bg: 'whiteAlpha.300',
-            transform: 'translateY(-2px)',
+            bg: 'whiteAlpha.200',
+            borderColor: 'whiteAlpha.500',
           },
-          _active: { transform: 'translateY(0)' },
         },
         solid: (props) => {
           const { colorScheme: c } = props;
           if (c === 'brand') {
             return {
-              bg: 'brand.600',
+              bg: 'brand.700',
               color: 'white',
-              boxShadow: '0 8px 20px rgba(0, 172, 193, 0.28)',
               _hover: {
-                bg: 'brand.700',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 14px 30px rgba(0, 151, 167, 0.34)',
-                _disabled: { transform: 'none' },
+                bg: 'brand.800',
+                _disabled: { bg: 'brand.700' },
               },
-              _active: { transform: 'translateY(0)' },
             };
           }
-          return {
-            _hover: { transform: 'translateY(-2px)', _disabled: { transform: 'none' } },
-            _active: { transform: 'translateY(0)' },
-          };
+          return {};
         },
-        outline: {
-          borderWidth: '2px',
-          _hover: { transform: 'translateY(-2px)' },
-          _active: { transform: 'translateY(0)' },
+        outline: (props) => {
+          const { colorScheme: c } = props;
+          if (c === 'brand') {
+            return {
+              borderWidth: '1px',
+              borderColor: 'gray.300',
+              color: 'ink.900',
+              _hover: { bg: 'white', borderColor: 'ink.900' },
+            };
+          }
+          return { borderWidth: '1px' };
         },
       },
     },
@@ -217,14 +259,14 @@ const theme = extendTheme({
       baseStyle: {
         borderRadius: 'full',
         textTransform: 'none',
-        fontWeight: 600,
+        fontWeight: 500,
         letterSpacing: '0.01em',
       },
     },
 
     Container: {
       baseStyle: {
-        maxW: '1200px',
+        maxW: '1240px',
         px: { base: 5, md: 8 },
       },
     },

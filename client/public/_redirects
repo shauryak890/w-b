@@ -1,5 +1,5 @@
-# Serve the app download(s) as real files — never rewrite them to index.html.
-/downloads/*  /downloads/:splat  200
+# The APK is no longer self-hosted — send old download links to Google Play.
+/downloads/*  https://play.google.com/store/apps/details?id=com.whitesandbrights.app  301!
 
 # SPA fallback: everything else renders the React app.
 /*  /index.html  200

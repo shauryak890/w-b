@@ -1,204 +1,137 @@
-import React from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  VStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Icon,
-  SimpleGrid,
-  Button,
-} from '@chakra-ui/react';
-import { FaSearch, FaClock, FaTshirt, FaMoneyBillWave, FaShieldAlt, FaArrowRight } from 'react-icons/fa';
+import React, { useMemo, useState } from 'react';
+import { Box, Container, Grid, Heading, Text, Stack, Icon, Input, InputGroup, InputLeftElement, Flex, Button } from '@chakra-ui/react';
+import { PiMagnifyingGlassLight, PiWhatsappLogoFill, PiArrowUpRight } from 'react-icons/pi';
 import { Link as RouterLink } from 'react-router-dom';
+import PageHero from '../components/PageHero';
+import FaqList from '../components/FaqList';
+import { Reveal, Accent, inputStyles } from '../components/ui';
+import { EASE } from '../theme';
+import { faqCategories } from '../data/faq';
+import { WHATSAPP_URL } from '../data/business';
 
-const FAQCategory = ({ title, icon, questions }) => {
-  return (
-    <Box bg="white" p={6} borderRadius="xl" boxShadow="lg">
-      <VStack align="start" spacing={4}>
-        <Icon as={icon} w={8} h={8} color="brand.500" />
-        <Heading size="md" color="gray.800">{title}</Heading>
-        <Accordion allowMultiple width="100%">
-          {questions.map((q, index) => (
-            <AccordionItem key={index} border="none" mb={2}>
-              <AccordionButton 
-                _hover={{ bg: 'brand.50' }}
-                borderRadius="md"
-                p={4}
-              >
-                <Box flex="1" textAlign="left" fontWeight="medium">
-                  {q.question}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4} px={4}>
-                <Text color="gray.600">{q.answer}</Text>
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </VStack>
-    </Box>
-  );
-};
-
+import usePageMeta from '../hooks/usePageMeta';
 export default function FAQ() {
-  const categories = [
-    {
-      title: 'Service & Timing',
-      icon: FaClock,
-      questions: [
-        {
-          question: 'What are your operating hours?',
-          answer: 'We operate Monday through Saturday from 9:00 AM to 9:00 PM. Drop-offs are accepted until 8:00 PM.',
-        },
-        {
-          question: 'How long does the service take?',
-          answer: 'Standard service is 24-48 hours. We also offer same-day and express services for an additional fee.',
-        },
-        {
-          question: 'Do you offer pickup and delivery?',
-          answer: 'Yes, we offer free pickup and delivery for orders over $30 within our service area.',
-        },
-      ],
-    },
-    {
-      title: 'Garment Care',
-      icon: FaTshirt,
-      questions: [
-        {
-          question: 'How do you handle delicate items?',
-          answer: 'Delicate items receive special attention and are cleaned according to their care labels using appropriate methods and gentle detergents.',
-        },
-        {
-          question: 'What if something gets damaged?',
-          answer: 'We have a comprehensive insurance policy and will reimburse you for any damages that occur during our care.',
-        },
-        {
-          question: 'Do you handle stain removal?',
-          answer: 'Yes, we specialize in stain removal and use various techniques depending on the type of stain and fabric.',
-        },
-      ],
-    },
-    {
-      title: 'Pricing & Payment',
-      icon: FaMoneyBillWave,
-      questions: [
-        {
-          question: 'How is pricing calculated?',
-          answer: 'Pricing is based on the type of service, garment type, and any special handling required. We offer transparent pricing with no hidden fees.',
-        },
-        {
-          question: 'What payment methods do you accept?',
-          answer: 'We accept all major credit cards, digital wallets, and cash. Corporate accounts can be billed monthly.',
-        },
-        {
-          question: 'Do you offer any discounts?',
-          answer: 'Yes, we offer loyalty programs, student discounts, and special promotions for regular customers.',
-        },
-      ],
-    },
-    {
-      title: 'Policies & Security',
-      icon: FaShieldAlt,
-      questions: [
-        {
-          question: 'What is your privacy policy?',
-          answer: 'We protect your personal information and never share it with third parties. View our full privacy policy for details.',
-        },
-        {
-          question: 'How do you track orders?',
-          answer: 'Each order receives a unique tracking number, and you can monitor its status through our mobile app or website.',
-        },
-        {
-          question: 'What is your lost item policy?',
-          answer: 'We maintain detailed records of all items and have procedures in place to prevent loss. Any lost items are covered by our insurance.',
-        },
-      ],
-    },
-  ];
+  usePageMeta('FAQ', 'Answers about pickups, pricing, garment care and policies at Whites & Brights.');
+  const [query, setQuery] = useState('');
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return faqCategories;
+    return faqCategories
+      .map((c) => ({ ...c, questions: c.questions.filter((f) => `${f.q} ${f.a}`.toLowerCase().includes(q)) }))
+      .filter((c) => c.questions.length);
+  }, [query]);
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(`faq-${id}`);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+  };
 
   return (
-    <Box pt={20} pb={20} bg="gray.50">
-      <Container maxW="7xl">
-        <VStack spacing={12}>
-          {/* Hero Section */}
-          <VStack spacing={4} textAlign="center" w="full">
-            <Heading 
-              size="2xl" 
-              bgGradient="linear(to-r, brand.500, accent.500)"
-              bgClip="text"
-            >
-              Frequently Asked Questions
-            </Heading>
-            <Text fontSize="xl" color="gray.600" maxW="2xl">
-              Find answers to common questions about our services, policies, and procedures.
+    <Box as="main">
+      <PageHero
+        eyebrow="FAQ"
+        title={
+          <>
+            Answers, <Accent>before you ask.</Accent>
+          </>
+        }
+        aside={
+          <Stack spacing={4}>
+            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="460px">
+              Everything about pickups, pricing, garment care and policies.
             </Text>
-          </VStack>
-
-          {/* Search Bar */}
-          <Box w="full" maxW="2xl" mx="auto">
             <InputGroup size="lg">
-              <InputLeftElement pointerEvents="none">
-                <Icon as={FaSearch} color="gray.400" />
+              <InputLeftElement pointerEvents="none" h="full">
+                <Icon as={PiMagnifyingGlassLight} boxSize={5} color="gray.500" />
               </InputLeftElement>
               <Input
-                placeholder="Search your question..."
-                bg="white"
-                borderRadius="full"
-                boxShadow="sm"
-                _focus={{
-                  boxShadow: 'outline',
-                  borderColor: 'brand.500',
-                }}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search questions…"
+                aria-label="Search frequently asked questions"
+                h={14}
+                sx={{ ...inputStyles, bg: 'white', borderRadius: 'full' }}
               />
             </InputGroup>
-          </Box>
+          </Stack>
+        }
+      />
 
-          {/* FAQ Categories */}
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} w="full">
-            {categories.map((category, index) => (
-              <FAQCategory key={index} {...category} />
-            ))}
-          </SimpleGrid>
+      <Box as="section" bg="gray.50" pb={{ base: 24, md: 32 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '3fr 9fr' }} gap={{ base: 6, lg: 16 }} alignItems="start">
+            {/* Category nav */}
+            <Stack
+              spacing={1}
+              position={{ lg: 'sticky' }}
+              top={{ lg: '120px' }}
+              direction={{ base: 'row', lg: 'column' }}
+              overflowX={{ base: 'auto', lg: 'visible' }}
+              sx={{ scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}
+            >
+              {faqCategories.map((c) => (
+                <Button
+                  key={c.id}
+                  onClick={() => scrollTo(c.id)}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  flexShrink={0}
+                  h="44px"
+                  px={4}
+                  fontSize="sm"
+                  fontWeight={500}
+                  color="gray.700"
+                  leftIcon={<Icon as={c.icon} boxSize={5} />}
+                  isDisabled={!filtered.some((f) => f.id === c.id)}
+                  _hover={{ bg: 'white', color: 'ink.900' }}
+                  transition={`all 0.4s ${EASE}`}
+                >
+                  {c.title}
+                </Button>
+              ))}
+            </Stack>
 
-          {/* Contact Support */}
-          <Box 
-            w="full" 
-            bg="white" 
-            p={8} 
-            borderRadius="xl" 
-            boxShadow="lg"
-            textAlign="center"
-          >
-            <VStack spacing={4}>
-              <Heading size="md">Still have questions?</Heading>
-              <Text color="gray.600">
-                Our support team is here to help you with any specific questions or concerns.
-              </Text>
-              <Button
-                as={RouterLink}
-                to="/contact"
-                variant="gradient"
-                size="lg"
-                h={14}
-                px={8}
-                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-              >
-                Contact Support
+            <Stack spacing={{ base: 12, md: 16 }}>
+              {filtered.length === 0 && (
+                <Reveal>
+                  <Box p={{ base: 8, md: 12 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
+                    <Heading fontSize="2xl" fontWeight={500} color="ink.900">No answers for “{query}”</Heading>
+                    <Text mt={2} color="gray.600">Try a different word, or ask us directly — we reply quickly on WhatsApp.</Text>
+                    <Flex mt={6} gap={3} wrap="wrap">
+                      <Button as="a" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" variant="gradient" h={12} px={5} leftIcon={<Icon as={PiWhatsappLogoFill} color="#25D366" boxSize={5} />}>
+                        Ask on WhatsApp
+                      </Button>
+                      <Button variant="outline" h={12} px={5} onClick={() => setQuery('')}>Clear search</Button>
+                    </Flex>
+                  </Box>
+                </Reveal>
+              )}
+              {filtered.map((c) => (
+                <Box key={c.id} id={`faq-${c.id}`}>
+                  <Flex align="center" gap={3} mb={4}>
+                    <Icon as={c.icon} boxSize={6} color="brand.700" />
+                    <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">{c.title}</Heading>
+                  </Flex>
+                  <FaqList items={c.questions} />
+                </Box>
+              ))}
+            </Stack>
+          </Grid>
+
+          <Reveal mt={{ base: 16, md: 24 }}>
+            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={6} p={{ base: 7, md: 10 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
+              <Box>
+                <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">Still have a question?</Heading>
+                <Text mt={2} color="gray.600">Our team is happy to help with anything specific.</Text>
+              </Box>
+              <Button as={RouterLink} to="/contact?enquiry=services" variant="outline" h={12} px={6} rightIcon={<Icon as={PiArrowUpRight} />} flexShrink={0}>
+                Contact support
               </Button>
-            </VStack>
-          </Box>
-        </VStack>
-      </Container>
+            </Flex>
+          </Reveal>
+        </Container>
+      </Box>
     </Box>
   );
 }

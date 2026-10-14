@@ -4,162 +4,116 @@ import {
   Container,
   Heading,
   Text,
-  SimpleGrid,
+  Grid,
   Icon,
   Stack,
-  VStack,
   HStack,
-  Circle,
+  Flex,
   FormControl,
   FormLabel,
   Input,
   Select,
   Textarea,
-  Button,
   Alert,
   AlertIcon,
+  SimpleGrid,
   useToast,
 } from '@chakra-ui/react';
 import {
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaPhone,
-  FaCheckCircle,
-  FaArrowRight,
-  FaClock,
-  FaWhatsapp,
-} from 'react-icons/fa';
-import { Link as RouterLink, useSearchParams } from 'react-router-dom';
-import {
-  MotionBox,
-  Reveal,
-  StaggerGroup,
-  GradientText,
-  SectionBadge,
-  fadeUp,
-  fromLeft,
-  fromRight,
-} from '../components/ui';
+  PiWhatsappLogoFill,
+  PiPhoneLight,
+  PiEnvelopeSimpleLight,
+  PiArrowUpRight,
+  PiStarFill,
+  PiClockLight,
+  PiCheckCircleFill,
+  PiPaperPlaneTiltLight,
+} from 'react-icons/pi';
+import { useSearchParams } from 'react-router-dom';
+import PageHero from '../components/PageHero';
+import { Reveal, StaggerGroup, MotionBox, Accent, ArrowButton, Bezel, inputStyles, labelStyles, fadeUp } from '../components/ui';
+import { EASE } from '../theme';
+import { outlets, PHONE_DISPLAY, PHONE_TEL, WHATSAPP_URL, EMAIL } from '../data/business';
 
-// Whites & Brights outlets — used by the "find your nearest outlet" locator
-const outlets = [
-  {
-    id: 'danapur',
-    name: 'Sona Market, Danapur',
-    address: 'Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105',
-    mapUrl: 'https://maps.app.goo.gl/Q2hPJ1jRe2eEW4D66',
-  },
-  {
-    id: 'rkpuram',
-    name: 'R.K. Puram, Danapur',
-    address: 'Kalawati Complex, Ward-2, R.K. Puram, near Dream Jwal Apartment Mandir, Khagaul Road, Danapur - 801503',
-    mapUrl: 'https://maps.app.goo.gl/1zTQ136dYz3fJzeLA',
-  },
-  {
-    id: 'phulwari',
-    name: 'Anandmai Colony, Phulwari Sharif',
-    address: 'Anandmai Colony, beside Canara Bank, Phulwari Sharif, Patna',
-    mapUrl: 'https://maps.app.goo.gl/Bpq5nYxFDE7kg3Vy8',
-  },
+import usePageMeta from '../hooks/usePageMeta';
+const channels = [
+  { icon: PiWhatsappLogoFill, label: 'WhatsApp', value: 'Fastest way to book', href: WHATSAPP_URL, external: true, color: '#25D366' },
+  { icon: PiPhoneLight, label: 'Call us', value: PHONE_DISPLAY, href: `tel:${PHONE_TEL}` },
+  { icon: PiEnvelopeSimpleLight, label: 'Email', value: EMAIL, href: `mailto:${EMAIL}` },
 ];
 
-const OutletLocator = () => {
+const mapSrc = (address) => `https://www.google.com/maps?q=${encodeURIComponent(`Whites & Brights, ${address}`)}&output=embed`;
+
+const Outlets = () => {
   const [selectedId, setSelectedId] = useState(outlets[0].id);
-  const outlet = outlets.find((o) => o.id === selectedId) || outlets[0];
+  const selected = outlets.find((o) => o.id === selectedId) || outlets[0];
 
   return (
-    <Box
-      w="100%"
-      bg="white"
-      borderRadius="2xl"
-      boxShadow="card"
-      border="1px solid"
-      borderColor="gray.100"
-      p={{ base: 5, md: 6 }}
-      mt={2}
-    >
-      <HStack spacing={3} mb={4} align="center">
-        <Circle size={10} bg="brand.50" color="brand.500" flexShrink={0}>
-          <Icon as={FaMapMarkerAlt} boxSize={5} />
-        </Circle>
-        <Box>
-          <Heading size="sm" color="gray.900">Find your nearest outlet</Heading>
-          <Text fontSize="sm" color="gray.500">Choose a location to get directions</Text>
-        </Box>
-      </HStack>
-
-      <FormControl>
-        <FormLabel fontSize="sm" fontWeight={600} color="gray.700" mb={2}>
-          Select an outlet
-        </FormLabel>
-        <Select
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          size="lg"
-          borderRadius="xl"
-          bg="gray.50"
-          borderColor="gray.200"
-          focusBorderColor="brand.500"
-          aria-label="Select a Whites & Brights outlet"
-        >
-          {outlets.map((o) => (
-            <option key={o.id} value={o.id}>{o.name}</option>
-          ))}
-        </Select>
-      </FormControl>
-
-      <HStack mt={4} align="flex-start" spacing={3}>
-        <Icon as={FaMapMarkerAlt} color="brand.500" boxSize={4} mt={1} flexShrink={0} />
-        <Text fontSize="sm" color="gray.600" lineHeight="1.6">{outlet.address}</Text>
-      </HStack>
-
-      <Button
-        as="a"
-        href={outlet.mapUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        mt={5}
-        w="100%"
-        size="lg"
-        variant="gradient"
-        rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-        leftIcon={<Icon as={FaMapMarkerAlt} boxSize={4} />}
-        aria-label={`Get directions to the ${outlet.name} outlet on Google Maps`}
-      >
-        Get Directions
-      </Button>
-    </Box>
+    <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={4}>
+      <Stack spacing={3}>
+        {outlets.map((o) => {
+          const active = o.id === selectedId;
+          return (
+            <Box
+              key={o.id}
+              as="button"
+              type="button"
+              onClick={() => setSelectedId(o.id)}
+              aria-pressed={active}
+              textAlign="left"
+              p={{ base: 5, md: 6 }}
+              borderRadius="24px"
+              bg={active ? 'ink.900' : 'white'}
+              color={active ? 'white' : 'ink.900'}
+              border="1px solid"
+              borderColor={active ? 'ink.900' : 'gray.200'}
+              transition={`all 0.45s ${EASE}`}
+              _hover={{ borderColor: 'ink.900' }}
+            >
+              <Flex justify="space-between" align="flex-start" gap={4}>
+                <Heading fontSize={{ base: 'lg', md: 'xl' }} fontWeight={500}>{o.name}</Heading>
+                <HStack spacing={1} fontSize="sm" flexShrink={0}>
+                  <Icon as={PiStarFill} color="#F4B400" />
+                  <Text>{o.rating.toFixed(1)}</Text>
+                </HStack>
+              </Flex>
+              <Text mt={2} fontSize="sm" color={active ? 'whiteAlpha.800' : 'gray.600'}>{o.address}</Text>
+              <HStack mt={4} spacing={1.5} fontSize="sm" color={active ? 'whiteAlpha.800' : 'gray.600'}>
+                <Icon as={PiClockLight} />
+                <Text>Open till {o.closes}</Text>
+              </HStack>
+            </Box>
+          );
+        })}
+        <ArrowButton as="a" href={selected.mapUrl} target="_blank" rel="noopener noreferrer" variant="outline" justifyContent="space-between">
+          Directions to {selected.area}
+        </ArrowButton>
+      </Stack>
+      <Bezel radius={28} inner={{ minH: { base: '320px', lg: '100%' } }}>
+        <Box
+          as="iframe"
+          key={selected.id}
+          title={`Map of the ${selected.name} outlet`}
+          src={mapSrc(selected.address)}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          position="absolute"
+          inset={0}
+          w="100%"
+          h="100%"
+          border={0}
+          sx={{ filter: 'grayscale(0.35) contrast(1.05)' }}
+        />
+      </Bezel>
+    </Grid>
   );
 };
 
-const ContactInfo = ({ icon, title, children }) => (
-  <MotionBox variants={fadeUp}>
-    <HStack
-      align="flex-start"
-      spacing={4}
-      p={5}
-      bg="white"
-      borderRadius="2xl"
-      border="1px solid"
-      borderColor="gray.100"
-      boxShadow="soft"
-      transition="all 0.3s"
-      _hover={{ transform: 'translateY(-4px)', boxShadow: 'card', borderColor: 'brand.100' }}
-    >
-      <Circle size={12} bg="brand.50" color="brand.500" flexShrink={0}>
-        <Icon as={icon} boxSize={5} />
-      </Circle>
-      <Box>
-        <Heading size="sm" mb={1} color="gray.900">{title}</Heading>
-        <Text color="gray.600" fontSize="sm">{children}</Text>
-      </Box>
-    </HStack>
-  </MotionBox>
-);
-
 export default function Contact() {
+  usePageMeta('Contact', 'Book a pickup, ask a question or visit one of three Whites & Brights outlets in Patna.');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [enquiry, setEnquiry] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -172,9 +126,8 @@ export default function Contact() {
   useEffect(() => {
     const enquiryParam = searchParams.get('enquiry');
     const roleParam = searchParams.get('role');
-    if (enquiryParam) {
-      setEnquiry(enquiryParam);
-    }
+    // Default to a pickup booking — most visitors arrive from a "Book a pickup" button
+    setEnquiry(enquiryParam || 'pickup');
     if (roleParam) {
       setMessage(`I'd like to apply for the ${roleParam} role. `);
     }
@@ -194,7 +147,9 @@ export default function Contact() {
       formData.append('name', name);
       formData.append('email', email);
       formData.append('enquiry', enquiry);
-      formData.append('message', message);
+      formData.append('phone', phone);
+      // Phone is also prefixed to the message so it reaches the existing sheet columns
+      formData.append('message', phone ? `Phone: ${phone}\n${message}` : message);
       formData.append('timestamp', new Date().toISOString());
 
       // Send data to Google Sheets (no-cors: response is opaque, assume success if no throw)
@@ -207,22 +162,23 @@ export default function Contact() {
       setFormStatus({
         success: true,
         error: false,
-        message: 'Thank you for your message! We will get back to you soon.',
+        message: 'Thanks — we have your message and will get back to you shortly.',
       });
 
       toast({
-        title: 'Message sent!',
+        title: 'Message sent',
         description: 'We have received your message and will contact you soon.',
         status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'top',
-        icon: <Icon as={FaCheckCircle} />,
+        icon: <Icon as={PiCheckCircleFill} boxSize={5} />,
       });
 
       setName('');
       setEmail('');
-      setEnquiry('');
+      setPhone('');
+      setEnquiry('pickup');
       setMessage('');
     } catch (error) {
       console.error('Form submission error:', error);
@@ -246,98 +202,73 @@ export default function Contact() {
     }
   };
 
-  const inputStyles = {
-    bg: 'gray.50',
-    border: '1px solid',
-    borderColor: 'gray.200',
-    borderRadius: 'xl',
-    _hover: { borderColor: 'gray.300' },
-    _focus: { borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)', bg: 'white' },
-  };
-
   return (
-    <Box overflow="hidden">
-      {/* Hero */}
-      <Box position="relative" bgGradient="linear(130deg, brand.900 0%, brand.700 60%, brand.500 100%)" color="white" pt={{ base: 28, md: 36 }} pb={{ base: 16, md: 24 }} overflow="hidden">
-        <Box position="absolute" top="-20%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
-        <Box position="absolute" bottom="-30%" left="0%" w="360px" h="360px" borderRadius="full" bg="whiteAlpha.100" />
-        <Container maxW="1200px" position="relative">
-          <StaggerGroup>
-            <VStack spacing={5} textAlign="center">
+    <Box as="main">
+      <PageHero
+        eyebrow="Contact"
+        title={
+          <>
+            Let's get your <Accent>laundry sorted.</Accent>
+          </>
+        }
+        aside={
+          <Stack spacing={0} borderTop="1px solid" borderColor="gray.200">
+            {channels.map((c) => (
+              <Flex
+                key={c.label}
+                as="a"
+                href={c.href}
+                target={c.external ? '_blank' : undefined}
+                rel={c.external ? 'noopener noreferrer' : undefined}
+                role="group"
+                align="center"
+                gap={4}
+                py={5}
+                borderBottom="1px solid"
+                borderColor="gray.200"
+              >
+                <Flex w={12} h={12} borderRadius="16px" bg="white" border="1px solid" borderColor="gray.200" align="center" justify="center" flexShrink={0}>
+                  <Icon as={c.icon} boxSize={6} color={c.color || 'ink.900'} />
+                </Flex>
+                <Box flex={1}>
+                  <Text fontSize="sm" color="gray.500">{c.label}</Text>
+                  <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={500} color="ink.900">{c.value}</Text>
+                </Box>
+                <Icon as={PiArrowUpRight} boxSize={5} color="gray.400" transition={`all 0.4s ${EASE}`} _groupHover={{ color: 'ink.900', transform: 'translate(2px,-2px)' }} />
+              </Flex>
+            ))}
+          </Stack>
+        }
+      />
+
+      {/* Form */}
+      <Box as="section" bg="gray.50" pb={{ base: 20, md: 28 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '4fr 8fr' }} gap={{ base: 10, lg: 16 }} alignItems="start">
+            <StaggerGroup>
               <MotionBox variants={fadeUp}>
-                <SectionBadge bg="whiteAlpha.200" color="white" borderColor="whiteAlpha.400">
-                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" />
-                  We're Open · Get in Touch
-                </SectionBadge>
+                <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500">Send a message</Text>
               </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Heading fontSize={{ base: '40px', md: '60px' }} lineHeight="1.05" letterSpacing="-0.03em">
-                  Let's Talk <GradientText from="white" to="brand.200">Laundry</GradientText>
+              <MotionBox variants={fadeUp} mt={6}>
+                <Heading fontSize={{ base: '32px', md: '44px' }} fontWeight={500} color="ink.900">
+                  Book a pickup, ask a question, <Accent>or just say hi.</Accent>
                 </Heading>
               </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl">
-                  Questions, bookings or franchise enquiries — drop us a message or visit our outlet. We'd love to hear from you.
-                </Text>
+              <MotionBox variants={fadeUp} mt={5}>
+                <Text color="gray.600">We usually reply within a few hours during working hours.</Text>
               </MotionBox>
-            </VStack>
-          </StaggerGroup>
-        </Container>
-      </Box>
+            </StaggerGroup>
 
-      {/* Contact body */}
-      <Box py={{ base: 16, md: 24 }} bg="gray.50">
-        <Container maxW="1200px">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 10, lg: 14 }} alignItems="start">
-            {/* Left: info */}
-            <Reveal variant={fromLeft}>
-              <VStack align="flex-start" spacing={6}>
-                <Box>
-                  <SectionBadge>Visit Or Reach Us</SectionBadge>
-                  <Heading mt={4} fontSize={{ base: '2xl', md: '3xl' }} color="gray.900">
-                    We're now open!
-                  </Heading>
-                  <Text mt={3} color="gray.600" fontSize="lg">
-                    Visit us at our outlet or contact us for any queries about our premium laundry services.
-                  </Text>
-                </Box>
-
-                <StaggerGroup w="100%">
-                  <Stack spacing={4} w="100%">
-                    <ContactInfo icon={FaMapMarkerAlt} title="Our Location">
-                      Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105
-                    </ContactInfo>
-                    <ContactInfo icon={FaPhone} title="Phone">
-                      Customer Service & Business: +91 87093 19450
-                    </ContactInfo>
-                    <ContactInfo icon={FaEnvelope} title="Email">
-                      info@whitesandbrights.com
-                    </ContactInfo>
-                    <ContactInfo icon={FaClock} title="Working Hours">
-                      Monday – Saturday: 9:00 AM – 9:00 PM
-                    </ContactInfo>
-                  </Stack>
-                </StaggerGroup>
-
-                {/* Outlet locator — pick a branch and get directions */}
-                <OutletLocator />
-              </VStack>
-            </Reveal>
-
-            {/* Right: form */}
-            <Reveal variant={fromRight}>
-              <Box bg="white" borderRadius="3xl" boxShadow="card" border="1px solid" borderColor="gray.100" p={{ base: 6, md: 9 }}>
-                <Heading size="lg" mb={2} color="gray.900">Send us a message</Heading>
-                <Text color="gray.600" mb={6}>Fill out the form and we'll get back to you as soon as possible.</Text>
-
+            <Reveal>
+              <Bezel radius={32} inner={{ p: { base: 6, md: 10 } }}>
                 {formStatus.success && (
-                  <Alert status="success" borderRadius="xl" mb={5}>
+                  <Alert status="success" borderRadius="14px" mb={6}>
                     <AlertIcon />
                     {formStatus.message}
                   </Alert>
                 )}
                 {formStatus.error && (
-                  <Alert status="error" borderRadius="xl" mb={5}>
+                  <Alert status="error" borderRadius="14px" mb={6}>
                     <AlertIcon />
                     {formStatus.message}
                   </Alert>
@@ -346,93 +277,65 @@ export default function Contact() {
                 <form onSubmit={handleSubmit}>
                   <Stack spacing={5}>
                     <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Your Name</FormLabel>
-                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" size="lg" sx={inputStyles} />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Email Address</FormLabel>
-                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" size="lg" sx={inputStyles} />
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Enquiry Type</FormLabel>
-                      <Select value={enquiry} onChange={(e) => setEnquiry(e.target.value)} placeholder="Select an option" size="lg" sx={inputStyles}>
-                        <option value="career">Career / Jobs</option>
+                      <FormLabel {...labelStyles}>What can we help with?</FormLabel>
+                      <Select value={enquiry} onChange={(e) => setEnquiry(e.target.value)} size="lg" sx={inputStyles}>
+                        <option value="pickup">Book a pickup</option>
+                        <option value="services">Question about services</option>
+                        <option value="business">Business / bulk laundry</option>
                         <option value="franchise">Franchise</option>
-                        <option value="services">Services</option>
+                        <option value="career">Career / jobs</option>
                       </Select>
                     </FormControl>
 
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
+                      <FormControl isRequired>
+                        <FormLabel {...labelStyles}>Your name</FormLabel>
+                        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" size="lg" autoComplete="name" sx={inputStyles} />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel {...labelStyles}>Phone</FormLabel>
+                        <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" size="lg" autoComplete="tel" sx={inputStyles} />
+                      </FormControl>
+                    </SimpleGrid>
+
                     <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Message</FormLabel>
-                      <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="I'm interested in learning more about your services..." rows={5} sx={inputStyles} />
+                      <FormLabel {...labelStyles}>Email</FormLabel>
+                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" size="lg" autoComplete="email" sx={inputStyles} />
                     </FormControl>
 
-                    <Button
-                      type="submit"
-                      size="lg"
-                      h={14}
-                      variant="gradient"
-                      isLoading={isSubmitting}
-                      loadingText="Sending..."
-                      rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-                      w="full"
-                    >
-                      Send Message
-                    </Button>
+                    <FormControl isRequired>
+                      <FormLabel {...labelStyles}>Message</FormLabel>
+                      <Textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder={enquiry === 'pickup' ? 'Your area and a convenient pickup time…' : 'Tell us a little more…'}
+                        rows={5}
+                        sx={inputStyles}
+                      />
+                    </FormControl>
+
+                    <ArrowButton type="submit" isLoading={isSubmitting} loadingText="Sending…" w="full" justifyContent="space-between" mt={2} icon={PiPaperPlaneTiltLight}>
+                      Send message
+                    </ArrowButton>
                   </Stack>
                 </form>
-              </Box>
+              </Bezel>
             </Reveal>
-          </SimpleGrid>
+          </Grid>
         </Container>
       </Box>
 
-      {/* Visit banner */}
-      <Box py={{ base: 14, md: 20 }} bg="white">
-        <Container maxW="1200px">
+      {/* Outlets */}
+      <Box as="section" bg="white" py={{ base: 20, md: 32 }}>
+        <Container>
+          <Reveal mb={{ base: 10, md: 14 }}>
+            <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>Visit us</Text>
+            <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
+              Three outlets <Accent>across Patna.</Accent>
+            </Heading>
+          </Reveal>
           <Reveal>
-            <Box
-              position="relative"
-              overflow="hidden"
-              borderRadius="4xl"
-              bgGradient="linear(130deg, brand.900, brand.600)"
-              boxShadow="floating"
-              px={{ base: 8, md: 16 }}
-              py={{ base: 12, md: 16 }}
-              textAlign="center"
-            >
-              <Box position="absolute" top="-30%" left="-5%" w="380px" h="380px" borderRadius="full" bg="whiteAlpha.100" />
-              <VStack spacing={5} position="relative">
-                <Heading color="white" fontSize={{ base: '2xl', md: '4xl' }}>
-                  Visit Our Outlet Today!
-                </Heading>
-                <Text color="whiteAlpha.900" fontSize={{ base: 'md', md: 'lg' }} maxW="3xl">
-                  Whites & Brights is now open and ready to serve you at Sona Market, Cant Road, Infront of Danapur Club, Danapur, Patna - 801105. Experience premium laundry services with expert care.
-                </Text>
-                <HStack spacing={4} pt={2} flexWrap="wrap" justify="center">
-                  <Button
-                    as="a"
-                    href="https://wa.me/918102733336"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    size="lg"
-                    h={14}
-                    px={8}
-                    bg="white"
-                    color="brand.700"
-                    _hover={{ bg: 'gray.100', transform: 'translateY(-2px)' }}
-                    leftIcon={<Icon as={FaWhatsapp} boxSize={5} />}
-                  >
-                    Chat on WhatsApp
-                  </Button>
-                  <Button as={RouterLink} to="/services" size="lg" h={14} px={8} variant="glass">
-                    Explore Services
-                  </Button>
-                </HStack>
-              </VStack>
-            </Box>
+            <Outlets />
           </Reveal>
         </Container>
       </Box>

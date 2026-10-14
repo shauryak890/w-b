@@ -1,186 +1,161 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Box, Container, Heading, Text, Grid, SimpleGrid, Stack, HStack, Flex, Icon, Button, Link as ChakraLink } from '@chakra-ui/react';
 import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Circle,
-  Icon,
-  Button,
-  Link as ChakraLink,
-  OrderedList,
-  ListItem,
-} from '@chakra-ui/react';
-import { FaWhatsapp, FaEnvelope, FaMobileAlt, FaTrashAlt, FaArchive, FaQuestionCircle, FaUserSlash } from 'react-icons/fa';
-import { MotionBox, Reveal, SectionBadge, fadeUp, StaggerGroup } from '../components/ui';
+  PiDeviceMobileLight,
+  PiWhatsappLogoFill,
+  PiEnvelopeSimpleLight,
+  PiTrashLight,
+  PiArchiveLight,
+} from 'react-icons/pi';
+import PageHero from '../components/PageHero';
+import { MotionBox, Reveal, StaggerGroup, Accent, Bezel, fadeUp } from '../components/ui';
+import usePageMeta from '../hooks/usePageMeta';
+import { WHATSAPP_BASE, EMAIL, PHONE_DISPLAY } from '../data/business';
 
-// Number used for WhatsApp across the site (see WhatsappButton.js)
-const WHATSAPP_NUMBER = '918102733336';
-const SUPPORT_EMAIL = 'info@whitesandbrights.com';
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Please%20delete%20my%20Whites%20and%20Brights%20account`;
-const EMAIL_URL = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Delete my account')}`;
+const WHATSAPP_URL = `${WHATSAPP_BASE}?text=Please%20delete%20my%20Whites%20and%20Brights%20account`;
+const EMAIL_URL = `mailto:${EMAIL}?subject=${encodeURIComponent('Delete my account')}`;
 
 const META_TITLE = 'Delete Account | Whites and Brights';
 const META_DESCRIPTION = 'How to request deletion of your Whites and Brights app account and data.';
 
-// Swap the document title and meta description while this page is mounted
-const usePageMeta = (title, description) => {
-  useEffect(() => {
-    const prevTitle = document.title;
-    let meta = document.querySelector('meta[name="description"]');
-    const created = !meta;
-    if (created) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'description');
-      document.head.appendChild(meta);
-    }
-    const prevDescription = meta.getAttribute('content');
-
-    document.title = title;
-    meta.setAttribute('content', description);
-
-    return () => {
-      document.title = prevTitle;
-      if (created) meta.remove();
-      else meta.setAttribute('content', prevDescription);
-    };
-  }, [title, description]);
-};
-
-const Section = ({ icon, title, children }) => (
-  <Reveal w="100%">
-    <Box
-      bg="white"
-      borderRadius="2xl"
-      border="1px solid"
-      borderColor="gray.100"
-      boxShadow="soft"
-      p={{ base: 5, md: 8 }}
-    >
-      <HStack spacing={3} mb={4} align="center">
-        <Circle size={10} bg="brand.50" color="brand.500" flexShrink={0}>
-          <Icon as={icon} boxSize={4} />
-        </Circle>
-        <Heading as="h2" size="md" color="gray.900">{title}</Heading>
-      </HStack>
-      <Box color="gray.700" fontSize={{ base: 'md', md: 'lg' }} lineHeight="1.7">
-        {children}
-      </Box>
-    </Box>
-  </Reveal>
+const OptionLabel = ({ children }) => (
+  <Text fontSize="11px" letterSpacing="0.16em" textTransform="uppercase" color="brand.700" fontWeight={500}>
+    {children}
+  </Text>
 );
 
 export default function DeleteAccount() {
-  usePageMeta(META_TITLE, META_DESCRIPTION);
+  usePageMeta(META_TITLE, META_DESCRIPTION, { full: true });
 
   return (
-    <Box overflow="hidden">
-      {/* Hero */}
-      <Box
-        position="relative"
-        bgGradient="linear(130deg, brand.900 0%, brand.700 60%, brand.500 100%)"
-        color="white"
-        pt={{ base: 28, md: 36 }}
-        pb={{ base: 14, md: 20 }}
-        overflow="hidden"
-      >
-        <Box position="absolute" top="-20%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
-        <Container maxW="3xl" position="relative">
-          <StaggerGroup>
-            <VStack spacing={5} textAlign="center">
-              <MotionBox variants={fadeUp}>
-                <SectionBadge bg="whiteAlpha.200" color="white" borderColor="whiteAlpha.400" icon={<Icon as={FaUserSlash} boxSize={3.5} />}>
-                  Account & Data
-                </SectionBadge>
+    <Box as="main">
+      <PageHero
+        eyebrow="Account & data"
+        title={
+          <>
+            Delete your <Accent>Whites and Brights</Accent> account
+          </>
+        }
+        description="You can request deletion of your Whites and Brights account and its associated data at any time."
+      />
+
+      <Box as="section" bg="gray.50" pb={{ base: 20, md: 28 }}>
+        <Container>
+          <StaggerGroup stagger={0.1}>
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+              {/* Option 1 */}
+              <MotionBox variants={fadeUp} h="100%">
+                <Bezel h="100%" inner={{ p: { base: 7, md: 10 } }}>
+                  <Flex justify="space-between" align="flex-start">
+                    <OptionLabel>Option 1</OptionLabel>
+                    <Icon as={PiDeviceMobileLight} boxSize={8} color="ink.900" />
+                  </Flex>
+                  <Heading as="h2" mt={4} fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">
+                    Delete from the app
+                  </Heading>
+                  <Stack as="ol" spacing={0} mt={8} listStyleType="none">
+                    {[
+                      'Open the Whites and Brights app',
+                      <>Go to <Text as="strong" fontWeight={600}>Profile → Delete Account</Text></>,
+                      <>Type <Text as="strong" fontWeight={600}>DELETE</Text> and confirm</>,
+                    ].map((step, i) => (
+                      <HStack as="li" key={i} spacing={4} py={4} borderTop="1px solid" borderColor="gray.100" align="flex-start">
+                        <Flex w={7} h={7} borderRadius="full" bg="ink.900" color="white" fontSize="sm" align="center" justify="center" flexShrink={0}>
+                          {i + 1}
+                        </Flex>
+                        <Text color="gray.700" fontSize={{ base: 'md', md: 'lg' }}>{step}</Text>
+                      </HStack>
+                    ))}
+                  </Stack>
+                  <Text mt={4} color="gray.600">Your account is deleted immediately.</Text>
+                </Bezel>
               </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Heading as="h1" fontSize={{ base: '32px', md: '52px' }} lineHeight="1.1" letterSpacing="-0.03em">
-                  Delete your Whites and Brights account
-                </Heading>
+
+              {/* Option 2 */}
+              <MotionBox variants={fadeUp} h="100%">
+                <Bezel h="100%" inner={{ p: { base: 7, md: 10 } }}>
+                  <Flex justify="space-between" align="flex-start">
+                    <OptionLabel>Option 2</OptionLabel>
+                    <Icon as={PiWhatsappLogoFill} boxSize={8} color="#25D366" />
+                  </Flex>
+                  <Heading as="h2" mt={4} fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">
+                    Request deletion without the app
+                  </Heading>
+                  <Text mt={6} color="gray.700" fontSize={{ base: 'md', md: 'lg' }}>
+                    If you've uninstalled the app, message us from your registered phone number:
+                  </Text>
+                  <Button
+                    as="a"
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    mt={6}
+                    h={14}
+                    px={7}
+                    w={{ base: '100%', sm: 'auto' }}
+                    bg="#25D366"
+                    color="white"
+                    _hover={{ bg: '#1EBE5A' }}
+                    leftIcon={<Icon as={PiWhatsappLogoFill} boxSize={5} />}
+                  >
+                    Request via WhatsApp
+                  </Button>
+                  <HStack mt={6} spacing={3} align="flex-start" color="gray.700">
+                    <Icon as={PiEnvelopeSimpleLight} boxSize={5} mt={0.5} flexShrink={0} />
+                    <Text>
+                      Or email{' '}
+                      <ChakraLink href={EMAIL_URL} color="ink.900" fontWeight={600} borderBottom="1px solid" wordBreak="break-word">
+                        {EMAIL}
+                      </ChakraLink>{' '}
+                      with the subject "Delete my account"
+                    </Text>
+                  </HStack>
+                  <Text mt={4} color="gray.600">We'll verify your request and delete your account within 30 days.</Text>
+                </Bezel>
               </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900">
-                  You can request deletion of your Whites and Brights account and its associated data at any time.
-                </Text>
-              </MotionBox>
-            </VStack>
+            </SimpleGrid>
           </StaggerGroup>
-        </Container>
-      </Box>
 
-      {/* Content */}
-      <Box py={{ base: 12, md: 20 }} bg="gray.50">
-        <Container maxW="3xl">
-          <VStack spacing={{ base: 5, md: 6 }} align="stretch">
-            <Section icon={FaMobileAlt} title="Option 1 — Delete from the app">
-              <OrderedList spacing={2} pl={1}>
-                <ListItem>Open the Whites and Brights app</ListItem>
-                <ListItem>Go to <Text as="strong">Profile → Delete Account</Text></ListItem>
-                <ListItem>Type <Text as="strong">DELETE</Text> and confirm</ListItem>
-              </OrderedList>
-              <Text mt={4}>Your account is deleted immediately.</Text>
-            </Section>
-
-            <Section icon={FaWhatsapp} title="Option 2 — Request deletion without the app">
-              <Text>If you've uninstalled the app, message us from your registered phone number:</Text>
-              <Button
-                as="a"
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                mt={5}
-                size="lg"
-                h={14}
-                px={8}
-                w={{ base: '100%', sm: 'auto' }}
-                bg="#25D366"
-                color="white"
-                _hover={{ bg: '#1EBE5A', transform: 'translateY(-2px)' }}
-                _active={{ bg: '#19A84F' }}
-                leftIcon={<Icon as={FaWhatsapp} boxSize={5} />}
-              >
-                Request via WhatsApp
-              </Button>
-              <HStack mt={5} spacing={3} align="flex-start">
-                <Icon as={FaEnvelope} color="brand.500" mt={1.5} flexShrink={0} />
-                <Text>
-                  Or email{' '}
-                  <ChakraLink href={EMAIL_URL} color="brand.600" fontWeight={600} wordBreak="break-word">
-                    {SUPPORT_EMAIL}
-                  </ChakraLink>{' '}
-                  with the subject "Delete my account"
+          {/* Data */}
+          <Reveal mt={{ base: 16, md: 24 }}>
+            <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} borderTop="1px solid" borderColor="gray.200">
+              <Box py={{ base: 8, md: 10 }} pr={{ md: 10 }} borderBottom={{ base: '1px solid', md: 'none' }} borderColor="gray.200">
+                <HStack spacing={3}>
+                  <Icon as={PiTrashLight} boxSize={6} color="ink.900" />
+                  <Heading as="h2" fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">Data that is deleted</Heading>
+                </HStack>
+                <Text mt={4} color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
+                  Name, phone number, saved addresses, location data, and account profile.
                 </Text>
-              </HStack>
-              <Text mt={4}>We'll verify your request and delete your account within 30 days.</Text>
-            </Section>
+              </Box>
+              <Box py={{ base: 8, md: 10 }} pl={{ md: 10 }} borderLeft={{ md: '1px solid' }} borderColor="gray.200">
+                <HStack spacing={3}>
+                  <Icon as={PiArchiveLight} boxSize={6} color="ink.900" />
+                  <Heading as="h2" fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">Data that is kept</Heading>
+                </HStack>
+                <Text mt={4} color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
+                  Order and payment records (invoice number, amount, date) are kept for up to 6 years as required by Indian tax and GST laws, then permanently deleted. This data is not used for marketing.
+                </Text>
+              </Box>
+            </Grid>
+          </Reveal>
 
-            <Section icon={FaTrashAlt} title="Data that is deleted">
-              <Text>Name, phone number, saved addresses, location data, and account profile.</Text>
-            </Section>
-
-            <Section icon={FaArchive} title="Data that is kept">
-              <Text>
-                Order and payment records (invoice number, amount, date) are kept for up to 6 years as required by
-                Indian tax and GST laws, then permanently deleted. This data is not used for marketing.
-              </Text>
-            </Section>
-
-            <Section icon={FaQuestionCircle} title="Questions?">
-              <Text>
+          <Reveal mt={{ base: 10, md: 14 }}>
+            <Box p={{ base: 7, md: 10 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
+              <Heading as="h2" fontSize={{ base: '2xl', md: '28px' }} fontWeight={500} color="ink.900">Questions?</Heading>
+              <Text mt={3} color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
                 Contact us at{' '}
-                <ChakraLink href={`mailto:${SUPPORT_EMAIL}`} color="brand.600" fontWeight={600} wordBreak="break-word">
-                  {SUPPORT_EMAIL}
+                <ChakraLink href={`mailto:${EMAIL}`} color="ink.900" fontWeight={600} borderBottom="1px solid" wordBreak="break-word">
+                  {EMAIL}
                 </ChakraLink>{' '}
                 or on WhatsApp at{' '}
-                <ChakraLink href={`https://wa.me/${WHATSAPP_NUMBER}`} isExternal color="brand.600" fontWeight={600} whiteSpace="nowrap">
-                  +91 81027 33336
+                <ChakraLink href={WHATSAPP_BASE} isExternal color="ink.900" fontWeight={600} borderBottom="1px solid" whiteSpace="nowrap">
+                  {PHONE_DISPLAY}
                 </ChakraLink>
                 .
               </Text>
-            </Section>
-          </VStack>
+            </Box>
+          </Reveal>
         </Container>
       </Box>
     </Box>

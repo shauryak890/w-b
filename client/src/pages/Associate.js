@@ -4,39 +4,30 @@ import {
   Container,
   Heading,
   Text,
-  SimpleGrid,
+  Grid,
   Stack,
-  VStack,
   useToast,
-  List,
-  ListItem,
-  ListIcon,
   FormControl,
   FormLabel,
   Input,
   Textarea,
-  Button,
-  Icon,
+  SimpleGrid,
 } from '@chakra-ui/react';
-import { FaCheckCircle, FaArrowRight, FaHandshake } from 'react-icons/fa';
-import {
-  MotionBox,
-  Reveal,
-  StaggerGroup,
-  GradientText,
-  SectionBadge,
-  fadeUp,
-  fromLeft,
-  fromRight,
-} from '../components/ui';
+import { PiArrowUpRight } from 'react-icons/pi';
+import PageHero from '../components/PageHero';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, inputStyles, labelStyles, fadeUp } from '../components/ui';
 
+import usePageMeta from '../hooks/usePageMeta';
 const benefits = [
-  'Trusted brand with professional service standards',
-  'Training and operational guidance',
-  'Marketing support and lead generation',
+  { title: 'A trusted brand', text: 'Professional service standards and a name customers already rate 4.9 on Google.' },
+  { title: 'Training & guidance', text: 'Hands-on operational training so you can deliver the W&B standard from day one.' },
+  { title: 'Marketing & leads', text: 'Local marketing support and lead generation to help you grow in your area.' },
 ];
 
+const nextSteps = ['We review your details', 'A call to understand your area', 'Onboarding and training'];
+
 export default function Associate() {
+  usePageMeta('Become an Associate', 'Partner with WNB Cleantech Pvt Ltd as a Whites & Brights associate in your area.');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -101,99 +92,82 @@ export default function Associate() {
     }
   };
 
-  const inputStyles = {
-    bg: 'gray.50',
-    border: '1px solid',
-    borderColor: 'gray.200',
-    borderRadius: 'xl',
-    _hover: { borderColor: 'gray.300' },
-    _focus: { borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)', bg: 'white' },
-  };
-
   return (
-    <Box overflow="hidden">
-      {/* Hero */}
-      <Box position="relative" bgGradient="linear(130deg, brand.900 0%, brand.700 60%, brand.500 100%)" color="white" pt={{ base: 28, md: 36 }} pb={{ base: 16, md: 24 }} overflow="hidden">
-        <Box position="absolute" top="-20%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
-        <Box position="absolute" bottom="-30%" left="0%" w="360px" h="360px" borderRadius="full" bg="whiteAlpha.100" />
-        <Container maxW="1000px" position="relative">
-          <StaggerGroup>
-            <VStack spacing={5} textAlign="center">
-              <MotionBox variants={fadeUp}>
-                <SectionBadge bg="whiteAlpha.200" color="white" borderColor="whiteAlpha.400">
-                  <Icon as={FaHandshake} boxSize={3.5} />
-                  Partnership
-                </SectionBadge>
-              </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Heading fontSize={{ base: '36px', md: '56px' }} lineHeight="1.05" letterSpacing="-0.03em">
-                  Become an <GradientText from="white" to="brand.200">Associate</GradientText>
-                </Heading>
-              </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl">
-                  Partner with WNB Cleantech Pvt Ltd to bring premium laundry services to your area. Fill out the form and we'll reach out soon.
-                </Text>
-              </MotionBox>
-            </VStack>
-          </StaggerGroup>
-        </Container>
-      </Box>
+    <Box as="main">
+      <PageHero
+        eyebrow="Partnership"
+        title={
+          <>
+            Bring Whites & Brights <Accent>to your area.</Accent>
+          </>
+        }
+        description="Partner with WNB Cleantech Pvt Ltd as an associate and offer premium laundry in your neighbourhood. Fill in the form and we'll reach out soon."
+      />
 
-      {/* Form */}
-      <Box py={{ base: 16, md: 24 }} bg="gray.50">
-        <Container maxW="1200px">
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 10, lg: 14 }} alignItems="start">
-            <Reveal variant={fromLeft}>
-              <Stack spacing={6}>
-                <SectionBadge>Why Join Us</SectionBadge>
-                <Heading size="xl" color="gray.900">
-                  Grow with a brand that <GradientText>backs you</GradientText>
-                </Heading>
-                <Text fontSize="lg" color="gray.600">
-                  Join our growing network and benefit from strong brand support, streamlined operations and marketing assistance. We're committed to building long-term, successful partnerships.
-                </Text>
-                <List spacing={4} color="gray.700">
+      <Box as="section" bg="gray.50" pb={{ base: 24, md: 36 }}>
+        <Container>
+          <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={{ base: 12, lg: 20 }} alignItems="start">
+            <Box>
+              <StaggerGroup>
+                <Box borderTop="1px solid" borderColor="gray.200">
                   {benefits.map((b, i) => (
-                    <ListItem key={i} display="flex" alignItems="center" fontWeight={500}>
-                      <ListIcon as={FaCheckCircle} color="brand.500" boxSize={5} />
-                      {b}
-                    </ListItem>
+                    <MotionBox key={b.title} variants={fadeUp}>
+                      <Grid templateColumns="56px 1fr" gap={4} py={{ base: 6, md: 8 }} borderBottom="1px solid" borderColor="gray.200">
+                        <Text fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300" lineHeight="1">0{i + 1}</Text>
+                        <Box>
+                          <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{b.title}</Heading>
+                          <Text mt={2} color="gray.600">{b.text}</Text>
+                        </Box>
+                      </Grid>
+                    </MotionBox>
                   ))}
-                </List>
-              </Stack>
-            </Reveal>
+                </Box>
+              </StaggerGroup>
+              <Reveal mt={10}>
+                <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={4}>What happens next</Text>
+                <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={3}>
+                  {nextSteps.map((s, i) => (
+                    <Box key={s} p={4} borderRadius="18px" bg="white" border="1px solid" borderColor="gray.200">
+                      <Text fontSize="xs" color="brand.700" fontWeight={600}>Step {i + 1}</Text>
+                      <Text mt={1} fontSize="sm" color="ink.900">{s}</Text>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </Reveal>
+            </Box>
 
-            <Reveal variant={fromRight}>
-              <Box bg="white" borderRadius="3xl" boxShadow="card" border="1px solid" borderColor="gray.100" p={{ base: 6, md: 9 }}>
-                <Heading size="lg" mb={2} color="gray.900">Associate Application</Heading>
-                <Text color="gray.600" mb={6}>Please provide your details and we'll get in touch.</Text>
+            <Reveal position={{ lg: 'sticky' }} top={{ lg: '120px' }}>
+              <Bezel radius={32} inner={{ p: { base: 6, md: 10 } }}>
+                <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">Associate application</Heading>
+                <Text mt={2} color="gray.600" mb={8}>Your details stay private and are only used to contact you.</Text>
                 <form onSubmit={handleSubmit}>
                   <Stack spacing={5}>
                     <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Full Name</FormLabel>
-                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" size="lg" sx={inputStyles} />
+                      <FormLabel {...labelStyles}>Full name</FormLabel>
+                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" size="lg" autoComplete="name" sx={inputStyles} />
                     </FormControl>
                     <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Address</FormLabel>
-                      <Textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, City, State, PIN" rows={3} sx={inputStyles} />
+                      <FormLabel {...labelStyles}>Address</FormLabel>
+                      <Textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, city, state, PIN" rows={3} autoComplete="street-address" sx={inputStyles} />
                     </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Phone</FormLabel>
-                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" size="lg" sx={inputStyles} />
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel fontWeight={600} color="gray.700">Email</FormLabel>
-                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" size="lg" sx={inputStyles} />
-                    </FormControl>
-                    <Button type="submit" size="lg" h={14} variant="gradient" isLoading={isSubmitting} loadingText="Submitting..." rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />} w="full">
-                      Apply Now
-                    </Button>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
+                      <FormControl isRequired>
+                        <FormLabel {...labelStyles}>Phone</FormLabel>
+                        <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" size="lg" autoComplete="tel" sx={inputStyles} />
+                      </FormControl>
+                      <FormControl isRequired>
+                        <FormLabel {...labelStyles}>Email</FormLabel>
+                        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" size="lg" autoComplete="email" sx={inputStyles} />
+                      </FormControl>
+                    </SimpleGrid>
+                    <ArrowButton type="submit" isLoading={isSubmitting} loadingText="Submitting…" w="full" justifyContent="space-between" mt={2} icon={PiArrowUpRight}>
+                      Submit application
+                    </ArrowButton>
                   </Stack>
                 </form>
-              </Box>
+              </Bezel>
             </Reveal>
-          </SimpleGrid>
+          </Grid>
         </Container>
       </Box>
     </Box>

@@ -1,41 +1,15 @@
-import React from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Stack,
-  VStack,
-  HStack,
-  SimpleGrid,
-  Button,
-  Icon,
-  Circle,
-  List,
-  ListItem,
-  ListIcon,
-  Divider,
-} from '@chakra-ui/react';
-import {
-  FaArrowRight,
-  FaCheckCircle,
-  FaTshirt,
-  FaMotorcycle,
-  FaClipboardList,
-} from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Box, Container, Heading, Text, Stack, HStack, SimpleGrid, Grid, Button, Icon, Flex, Collapse } from '@chakra-ui/react';
+import { PiTShirtLight, PiMopedLight, PiCheckBold, PiPlusBold, PiArrowUpRight, PiMapPinLight } from 'react-icons/pi';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  MotionBox,
-  Reveal,
-  StaggerGroup,
-  GradientText,
-  SectionBadge,
-  fadeUp,
-} from '../components/ui';
+import PageHero from '../components/PageHero';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, fadeUp } from '../components/ui';
+import { EASE } from '../theme';
 
+import usePageMeta from '../hooks/usePageMeta';
 const roles = [
   {
-    icon: FaTshirt,
+    icon: PiTShirtLight,
     title: 'Laundry Operator',
     summary:
       'Run our in-facility laundry process — washing, drying, steam-pressing, ironing, folding, sorting, tagging and quality-checking orders using eco-friendly supplies and commercial machines.',
@@ -53,9 +27,10 @@ const roles = [
       'Prior laundry / textile experience a plus',
     ],
     role: 'Laundry Operator',
+    type: 'Full-time · Shifts',
   },
   {
-    icon: FaMotorcycle,
+    icon: PiMopedLight,
     title: 'Rider (Delivery Partner)',
     summary:
       "Pick up and deliver laundry orders through our new app and be the friendly face of the brand at the customer's doorstep.",
@@ -74,155 +49,128 @@ const roles = [
       'Comfortable using the rider app',
     ],
     role: 'Rider',
+    type: 'Full-time · Own two-wheeler',
   },
 ];
 
-function RoleColumn({ icon, title, items }) {
+const applyUrl = (role) => `/contact?enquiry=career${role ? `&role=${encodeURIComponent(role)}` : ''}`;
+
+function List({ title, items }) {
   return (
     <Box>
-      <HStack spacing={2.5} mb={3}>
-        <Icon as={icon} color="brand.500" boxSize={3.5} />
-        <Text fontWeight={700} color="gray.900" fontSize="sm" textTransform="uppercase" letterSpacing="0.04em">
-          {title}
-        </Text>
-      </HStack>
-      <List spacing={2.5}>
+      <Text fontSize="11px" letterSpacing="0.16em" textTransform="uppercase" color="gray.500" mb={4}>{title}</Text>
+      <Stack spacing={3}>
         {items.map((item) => (
-          <ListItem key={item} display="flex" alignItems="flex-start" color="gray.600" fontSize="sm">
-            <ListIcon as={FaCheckCircle} color="brand.500" mt={1} flexShrink={0} />
-            <Text as="span">{item}</Text>
-          </ListItem>
+          <HStack key={item} spacing={3} align="flex-start">
+            <Icon as={PiCheckBold} boxSize={3.5} color="brand.700" mt="5px" flexShrink={0} />
+            <Text color="gray.700">{item}</Text>
+          </HStack>
         ))}
-      </List>
+      </Stack>
     </Box>
   );
 }
 
-function RoleCard({ role }) {
+function RoleRow({ role, index, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <MotionBox variants={fadeUp} h="100%">
-      <VStack
-        align="stretch"
-        h="100%"
-        spacing={6}
-        bg="white"
-        borderRadius="2xl"
-        border="1px solid"
-        borderColor="gray.100"
-        boxShadow="card"
-        p={{ base: 7, md: 9 }}
-        transition="all 0.35s cubic-bezier(0.22,1,0.36,1)"
-        _hover={{ transform: 'translateY(-6px)', boxShadow: 'cardHover', borderColor: 'brand.100' }}
+    <MotionBox variants={fadeUp} borderBottom="1px solid" borderColor="gray.200">
+      <Grid
+        onClick={() => setOpen((v) => !v)}
+        cursor="pointer"
+        w="full"
+        textAlign="left"
+        templateColumns={{ base: '1fr auto', md: '72px 1fr auto auto' }}
+        gap={{ base: 4, md: 8 }}
+        alignItems="center"
+        py={{ base: 7, md: 10 }}
+        role="group"
       >
-        <HStack spacing={4} align="center">
-          <Circle size={14} bgGradient="linear(135deg, brand.500, accent.500)" color="white" flexShrink={0} boxShadow="glow">
-            <Icon as={role.icon} boxSize={6} />
-          </Circle>
-          <Heading size="lg" color="gray.900">{role.title}</Heading>
-        </HStack>
-
-        <Text color="gray.600">{role.summary}</Text>
-
-        <Divider borderColor="gray.100" />
-
-        <RoleColumn icon={FaClipboardList} title="Responsibilities" items={role.responsibilities} />
-        <RoleColumn icon={FaCheckCircle} title="Requirements" items={role.requirements} />
-
-        <Box flex="1" />
-
+        <Text display={{ base: 'none', md: 'block' }} fontFamily="serif" fontStyle="italic" fontSize="4xl" color="gray.300" lineHeight="1">0{index + 1}</Text>
+        <Box>
+          <HStack spacing={3}>
+            <Icon as={role.icon} boxSize={7} color="ink.900" />
+            <Heading fontSize={{ base: '2xl', md: '40px' }} fontWeight={500} color="ink.900" transition={`color 0.4s ${EASE}`} _groupHover={{ color: 'brand.700' }}>
+              {role.title}
+            </Heading>
+          </HStack>
+          <HStack spacing={4} mt={3} fontSize="sm" color="gray.600" flexWrap="wrap">
+            <Text>{role.type}</Text>
+            <HStack spacing={1.5}><Icon as={PiMapPinLight} /><Text>Patna</Text></HStack>
+          </HStack>
+        </Box>
         <Button
           as={RouterLink}
-          to={`/contact?enquiry=career&role=${encodeURIComponent(role.role)}`}
-          size="lg"
-          h={14}
+          to={applyUrl(role.role)}
+          onClick={(e) => e.stopPropagation()}
+          display={{ base: 'none', md: 'inline-flex' }}
           variant="gradient"
-          rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-          aria-label={`Apply now for the ${role.title} role`}
+          h={12}
+          px={6}
+          rightIcon={<Icon as={PiArrowUpRight} />}
+          aria-label={`Apply for the ${role.title} role`}
         >
-          Apply Now
+          Apply
         </Button>
-      </VStack>
+        <Flex as="button" type="button" aria-expanded={open} aria-label={`${open ? 'Hide' : 'Show'} details for ${role.title}`} w="44px" h="44px" borderRadius="full" border="1px solid" borderColor="gray.300" align="center" justify="center" bg={open ? 'ink.900' : 'white'} color={open ? 'white' : 'ink.900'} transition={`all 0.4s ${EASE}`}>
+          <Icon as={PiPlusBold} boxSize={4} transform={open ? 'rotate(45deg)' : 'none'} transition={`transform 0.4s ${EASE}`} />
+        </Flex>
+      </Grid>
+      <Collapse in={open} animateOpacity>
+        <Box pl={{ md: '104px' }} pb={{ base: 10, md: 14 }}>
+          <Text fontSize={{ base: 'md', md: 'xl' }} color="gray.700" maxW="720px" lineHeight="1.6">{role.summary}</Text>
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 8, md: 12 }} mt={10} maxW="900px">
+            <List title="What you'll do" items={role.responsibilities} />
+            <List title="What we're looking for" items={role.requirements} />
+          </SimpleGrid>
+          <ArrowButton as={RouterLink} to={applyUrl(role.role)} mt={10} display={{ base: 'inline-flex', md: 'none' }}>
+            Apply for this role
+          </ArrowButton>
+        </Box>
+      </Collapse>
     </MotionBox>
   );
 }
 
 export default function Careers() {
+  usePageMeta('Careers', 'Open roles at Whites & Brights: laundry operators and delivery riders in Patna.');
   return (
-    <Box overflow="hidden">
-      {/* Hero */}
-      <Box
-        as="section"
-        position="relative"
-        bgGradient="linear(130deg, brand.900 0%, brand.700 60%, brand.500 100%)"
-        color="white"
-        pt={{ base: 28, md: 36 }}
-        pb={{ base: 16, md: 24 }}
-        overflow="hidden"
-      >
-        <Box position="absolute" top="-20%" right="-5%" w="420px" h="420px" borderRadius="full" bg="whiteAlpha.100" />
-        <Box position="absolute" bottom="-30%" left="0%" w="360px" h="360px" borderRadius="full" bg="whiteAlpha.100" />
-        <Container maxW="1200px" position="relative">
-          <StaggerGroup>
-            <VStack spacing={5} textAlign="center">
-              <MotionBox variants={fadeUp}>
-                <SectionBadge bg="whiteAlpha.200" color="white" borderColor="whiteAlpha.400">
-                  <Box as="span" w={2} h={2} borderRadius="full" bg="brand.300" />
-                  We're Hiring
-                </SectionBadge>
-              </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Heading as="h1" fontSize={{ base: '40px', md: '60px' }} lineHeight="1.05" letterSpacing="-0.03em">
-                  Join the <GradientText from="white" to="brand.200">Whites &amp; Brights</GradientText> Team
-                </Heading>
-              </MotionBox>
-              <MotionBox variants={fadeUp}>
-                <Text fontSize={{ base: 'md', md: 'xl' }} color="whiteAlpha.900" maxW="2xl">
-                  We're growing fast and just launched our new app — and we're looking for reliable,
-                  friendly people to grow with us. Come build a career in premium laundry care.
-                </Text>
-              </MotionBox>
-            </VStack>
-          </StaggerGroup>
-        </Container>
-      </Box>
+    <Box as="main">
+      <PageHero
+        eyebrow={`We're hiring · ${roles.length} open roles`}
+        title={
+          <>
+            Good work, <Accent>with good people.</Accent>
+          </>
+        }
+        description="We're growing fast and just launched our app. We're looking for reliable, friendly people to grow with us and build a career in garment care."
+        actions={
+          <ArrowButton as="a" href="#roles" alignSelf="flex-start">
+            See open roles
+          </ArrowButton>
+        }
+      />
 
-      {/* Open roles */}
-      <Box as="section" py={{ base: 16, md: 24 }} bg="gray.50">
-        <Container maxW="1200px">
-          <VStack spacing={4} textAlign="center" mb={{ base: 12, md: 16 }}>
-            <SectionBadge>Open Roles</SectionBadge>
-            <Heading fontSize={{ base: '3xl', md: '40px' }} color="gray.900">
-              Roles we're <GradientText>hiring for</GradientText>
-            </Heading>
-            <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} maxW="2xl">
-              Apply in a tap — tell us a little about yourself and our team will get right back to you.
-            </Text>
-          </VStack>
-
+      <Box id="roles" as="section" bg="gray.50" pb={{ base: 24, md: 36 }} scrollMarginTop="100px">
+        <Container>
           <StaggerGroup>
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 8, lg: 10 }} alignItems="stretch">
-              {roles.map((role) => (
-                <RoleCard key={role.title} role={role} />
+            <Box borderTop="1px solid" borderColor="gray.200">
+              {roles.map((role, i) => (
+                <RoleRow key={role.title} role={role} index={i} defaultOpen={i === 0} />
               ))}
-            </SimpleGrid>
+            </Box>
           </StaggerGroup>
 
-          <Reveal variant={fadeUp} textAlign="center" mt={{ base: 12, md: 16 }}>
-            <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} justify="center" align="center">
-              <Text color="gray.600">Don't see the right fit?</Text>
-              <Button
-                as={RouterLink}
-                to="/contact?enquiry=career"
-                variant="outline"
-                colorScheme="brand"
-                size="lg"
-                h={14}
-                px={8}
-                rightIcon={<Icon as={FaArrowRight} boxSize={3.5} />}
-              >
+          <Reveal mt={{ base: 12, md: 16 }}>
+            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={6} p={{ base: 7, md: 10 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
+              <Box>
+                <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">Don't see the right fit?</Heading>
+                <Text mt={2} color="gray.600">Tell us what you're good at — we're always happy to hear from good people.</Text>
+              </Box>
+              <Button as={RouterLink} to={applyUrl()} variant="outline" h={12} px={6} rightIcon={<Icon as={PiArrowUpRight} />} flexShrink={0}>
                 Get in touch
               </Button>
-            </Stack>
+            </Flex>
           </Reveal>
         </Container>
       </Box>
