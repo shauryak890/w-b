@@ -66,7 +66,7 @@ function Footer() {
               <Heading color="white" fontSize={{ base: '40px', md: '64px' }} fontWeight={500} letterSpacing="-0.05em" lineHeight="1">
                 Fresh clothes,
                 <br />
-                <Accent from="brand.200">zero effort.</Accent>
+                <Accent dark>zero effort.</Accent>
               </Heading>
               <ArrowButton as={RouterLink} to="/contact" variant="light" flexShrink={0}>
                 Book a free pickup

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 /**
  * Scrolls the window to the top on every route change so each page
- * starts from the hero. Anchor links (e.g. #franchise-application) are
+ * starts from the hero. Anchor links (e.g. /franchise#models) are
  * preserved — we only reset when there is no hash.
  */
 export default function ScrollToTop() {

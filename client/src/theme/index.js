@@ -46,31 +46,6 @@ const theme = extendTheme({
       800: '#0A2A31',
       900: '#061D23',
     },
-    // Kept for backwards compatibility with existing pages; prefer brand/ink
-    accent: {
-      50: '#EEF4F4',
-      100: '#D5E3E4',
-      200: '#A9C4C7',
-      300: '#79A1A6',
-      400: '#4D7C83',
-      500: '#00838F',
-      600: '#036A74',
-      700: '#133940',
-      800: '#0A2A31',
-      900: '#061D23',
-    },
-    highlight: {
-      50: '#FFF4EC',
-      100: '#FFE3CF',
-      200: '#FFC9A3',
-      300: '#FFAA72',
-      400: '#F98B47',
-      500: '#E8742C', // Warm offer accent — used sparingly
-      600: '#C95E1C',
-      700: '#A04914',
-      800: '#7A370F',
-      900: '#55260A',
-    },
     // Teal-tinted neutrals — one grey family across the whole site
     gray: {
       50: '#F4F6F5',
@@ -111,12 +86,8 @@ const theme = extendTheme({
   shadows: {
     soft: '0 1px 2px rgba(6, 29, 35, 0.04), 0 8px 24px -12px rgba(6, 29, 35, 0.10)',
     card: '0 2px 4px rgba(6, 29, 35, 0.03), 0 24px 48px -24px rgba(6, 29, 35, 0.16)',
-    cardHover: '0 2px 4px rgba(6, 29, 35, 0.04), 0 36px 64px -28px rgba(6, 29, 35, 0.28)',
     floating: '0 40px 80px -32px rgba(6, 29, 35, 0.36)',
-    glass: '0 8px 32px -8px rgba(6, 29, 35, 0.18)',
     glow: '0 16px 40px -16px rgba(0, 131, 143, 0.45)',
-    glowAccent: '0 16px 40px -16px rgba(0, 131, 143, 0.45)',
-    insetTop: 'inset 0 1px 0 rgba(255,255,255,0.6)',
     bezel: 'inset 0 1px 1px rgba(255,255,255,0.7)',
   },
 
@@ -197,8 +168,8 @@ const theme = extendTheme({
         colorScheme: 'brand',
       },
       variants: {
-        // Primary CTA. Historically a cyan→blue gradient; now solid deep ink so it
-        // reads as the single strongest action on the page.
+        // Primary CTA — solid deep ink, the single strongest action on a page.
+        // (Named "gradient" for historical reasons.)
         gradient: {
           bg: 'ink.900',
           color: 'white',
@@ -252,15 +223,6 @@ const theme = extendTheme({
           }
           return { borderWidth: '1px' };
         },
-      },
-    },
-
-    Badge: {
-      baseStyle: {
-        borderRadius: 'full',
-        textTransform: 'none',
-        fontWeight: 500,
-        letterSpacing: '0.01em',
       },
     },
 

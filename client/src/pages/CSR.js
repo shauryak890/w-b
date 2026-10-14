@@ -3,10 +3,10 @@ import { Box, Container, Heading, Text, SimpleGrid, Grid, Flex, Icon, Stack, But
 import { Link as RouterLink } from 'react-router-dom';
 import { PiBowlFoodLight, PiHandHeartLight, PiUsersThreeLight, PiArrowUpRight } from 'react-icons/pi';
 import PageHero, { SectionIntro } from '../components/PageHero';
-import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, fadeUp } from '../components/ui';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, fadeUp, Label, NumberedRows } from '../components/ui';
 import { EASE } from '../theme';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const IMAGE = 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1800&q=80';
 
 const pillars = [
@@ -50,7 +50,7 @@ export default function CSR() {
         eyebrow="CSR · Do Roti"
         title={
           <>
-            Two rotis can <Accent from="brand.200">change a day.</Accent>
+            Two rotis can <Accent dark>change a day.</Accent>
           </>
         }
         description="Do Roti is our initiative to provide fresh, nutritious meals to homeless and hungry people — because a better community starts with dignity and a warm meal."
@@ -85,7 +85,7 @@ export default function CSR() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
             <Reveal>
-              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>The initiative</Text>
+              <Label mb={6}>The initiative</Label>
               <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
                 Serving with <Accent>care, every week.</Accent>
               </Heading>
@@ -93,21 +93,7 @@ export default function CSR() {
                 Do Roti is run by our team, associates and community partners — the same people who care for your clothes.
               </Text>
             </Reveal>
-            <StaggerGroup>
-              <Box borderTop="1px solid" borderColor="gray.200">
-                {pillars.map((p, i) => (
-                  <MotionBox key={p.title} variants={fadeUp}>
-                    <Grid templateColumns="64px 1fr" gap={4} py={{ base: 7, md: 9 }} borderBottom="1px solid" borderColor="gray.200">
-                      <Text fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300" lineHeight="1">0{i + 1}</Text>
-                      <Box>
-                        <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{p.title}</Heading>
-                        <Text mt={2} color="gray.600" maxW="480px">{p.text}</Text>
-                      </Box>
-                    </Grid>
-                  </MotionBox>
-                ))}
-              </Box>
-            </StaggerGroup>
+            <NumberedRows items={pillars} />
           </Grid>
         </Container>
       </Box>

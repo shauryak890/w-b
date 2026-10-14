@@ -31,11 +31,11 @@ import {
 } from 'react-icons/pi';
 import { useSearchParams } from 'react-router-dom';
 import PageHero from '../components/PageHero';
-import { Reveal, StaggerGroup, MotionBox, Accent, ArrowButton, Bezel, inputStyles, labelStyles, fadeUp } from '../components/ui';
+import { Reveal, StaggerGroup, MotionBox, Accent, ArrowButton, Bezel, inputStyles, labelStyles, fadeUp, Label } from '../components/ui';
 import { EASE } from '../theme';
 import { outlets, PHONE_DISPLAY, PHONE_TEL, WHATSAPP_URL, EMAIL } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const channels = [
   { icon: PiWhatsappLogoFill, label: 'WhatsApp', value: 'Fastest way to book', href: WHATSAPP_URL, external: true, color: '#25D366' },
   { icon: PiPhoneLight, label: 'Call us', value: PHONE_DISPLAY, href: `tel:${PHONE_TEL}` },
@@ -247,7 +247,7 @@ export default function Contact() {
           <Grid templateColumns={{ base: '1fr', lg: '4fr 8fr' }} gap={{ base: 10, lg: 16 }} alignItems="start">
             <StaggerGroup>
               <MotionBox variants={fadeUp}>
-                <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500">Send a message</Text>
+                <Label>Send a message</Label>
               </MotionBox>
               <MotionBox variants={fadeUp} mt={6}>
                 <Heading fontSize={{ base: '32px', md: '44px' }} fontWeight={500} color="ink.900">
@@ -329,7 +329,7 @@ export default function Contact() {
       <Box as="section" bg="white" py={{ base: 20, md: 32 }}>
         <Container>
           <Reveal mb={{ base: 10, md: 14 }}>
-            <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>Visit us</Text>
+            <Label mb={6}>Visit us</Label>
             <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
               Three outlets <Accent>across Patna.</Accent>
             </Heading>

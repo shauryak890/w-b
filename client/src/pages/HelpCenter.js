@@ -16,12 +16,12 @@ import {
 import { Link as RouterLink } from 'react-router-dom';
 import PageHero, { SectionIntro } from '../components/PageHero';
 import FaqList from '../components/FaqList';
-import { MotionBox, Reveal, StaggerGroup, Accent, Bezel, fadeUp } from '../components/ui';
+import { MotionBox, Reveal, StaggerGroup, Accent, Bezel, fadeUp, Label } from '../components/ui';
 import { EASE } from '../theme';
 import { faqCategories } from '../data/faq';
 import { PLAY_STORE_URL, WHATSAPP_URL, PHONE_DISPLAY, PHONE_TEL } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const quickActions = [
   { icon: PiCalendarCheckLight, label: 'Book a pickup', sub: 'Takes a minute', to: '/contact' },
   { icon: PiDeviceMobileLight, label: 'Track an order', sub: 'In the W&B app', href: PLAY_STORE_URL },
@@ -186,7 +186,7 @@ export default function HelpCenter() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
             <Reveal>
-              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>Popular questions</Text>
+              <Label mb={6}>Popular questions</Label>
               <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
                 What people <Accent>ask most.</Accent>
               </Heading>

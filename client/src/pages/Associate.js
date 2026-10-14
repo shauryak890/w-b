@@ -15,9 +15,9 @@ import {
 } from '@chakra-ui/react';
 import { PiArrowUpRight } from 'react-icons/pi';
 import PageHero from '../components/PageHero';
-import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, inputStyles, labelStyles, fadeUp } from '../components/ui';
-
+import { Reveal, Accent, ArrowButton, Bezel, inputStyles, labelStyles, Label, NumberedRows } from '../components/ui';
 import usePageMeta from '../hooks/usePageMeta';
+
 const benefits = [
   { title: 'A trusted brand', text: 'Professional service standards and a name customers already rate 4.9 on Google.' },
   { title: 'Training & guidance', text: 'Hands-on operational training so you can deliver the W&B standard from day one.' },
@@ -108,23 +108,9 @@ export default function Associate() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={{ base: 12, lg: 20 }} alignItems="start">
             <Box>
-              <StaggerGroup>
-                <Box borderTop="1px solid" borderColor="gray.200">
-                  {benefits.map((b, i) => (
-                    <MotionBox key={b.title} variants={fadeUp}>
-                      <Grid templateColumns="56px 1fr" gap={4} py={{ base: 6, md: 8 }} borderBottom="1px solid" borderColor="gray.200">
-                        <Text fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300" lineHeight="1">0{i + 1}</Text>
-                        <Box>
-                          <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{b.title}</Heading>
-                          <Text mt={2} color="gray.600">{b.text}</Text>
-                        </Box>
-                      </Grid>
-                    </MotionBox>
-                  ))}
-                </Box>
-              </StaggerGroup>
+              <NumberedRows items={benefits} />
               <Reveal mt={10}>
-                <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={4}>What happens next</Text>
+                <Label mb={4}>What happens next</Label>
                 <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={3}>
                   {nextSteps.map((s, i) => (
                     <Box key={s} p={4} borderRadius="18px" bg="white" border="1px solid" borderColor="gray.200">

@@ -53,8 +53,8 @@ import {
   PHONE_DISPLAY,
   GOOGLE_REVIEWS_URL,
 } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 // Signature 3D soap-bubble hero — lazy so three.js stays out of the main bundle
 const HeroScene = lazy(() => import('../components/three/HeroScene'));
 
@@ -243,7 +243,7 @@ export default function Home() {
                 >
                   Fresh clothes,
                   <br />
-                  <Accent from="brand.200" letterSpacing="-0.03em">without</Accent> the chores.
+                  <Accent dark letterSpacing="-0.03em">without</Accent> the chores.
                 </Heading>
               </MotionBox>
 
@@ -640,7 +640,7 @@ export default function Home() {
                   <Box>
                     <Eyebrow dark>Welcome offer</Eyebrow>
                     <Heading mt={8} color="white" fontSize={{ base: '44px', md: '72px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
-                      25% off your <Accent from="brand.200">first order.</Accent>
+                      25% off your <Accent dark>first order.</Accent>
                     </Heading>
                     <Text mt={6} color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} maxW="440px">
                       Book a pickup today. We'll collect, clean and deliver — and take a quarter off the bill.

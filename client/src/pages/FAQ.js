@@ -1,15 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { Box, Container, Grid, Heading, Text, Stack, Icon, Input, InputGroup, InputLeftElement, Flex, Button } from '@chakra-ui/react';
-import { PiMagnifyingGlassLight, PiWhatsappLogoFill, PiArrowUpRight } from 'react-icons/pi';
-import { Link as RouterLink } from 'react-router-dom';
+import { PiMagnifyingGlassLight, PiWhatsappLogoFill } from 'react-icons/pi';
 import PageHero from '../components/PageHero';
 import FaqList from '../components/FaqList';
-import { Reveal, Accent, inputStyles } from '../components/ui';
+import { Reveal, Accent, inputStyles, CalloutBar } from '../components/ui';
 import { EASE } from '../theme';
 import { faqCategories } from '../data/faq';
 import { WHATSAPP_URL } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 export default function FAQ() {
   usePageMeta('FAQ', 'Answers about pickups, pricing, garment care and policies at Whites & Brights.');
   const [query, setQuery] = useState('');
@@ -119,17 +118,14 @@ export default function FAQ() {
             </Stack>
           </Grid>
 
-          <Reveal mt={{ base: 16, md: 24 }}>
-            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={6} p={{ base: 7, md: 10 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
-              <Box>
-                <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">Still have a question?</Heading>
-                <Text mt={2} color="gray.600">Our team is happy to help with anything specific.</Text>
-              </Box>
-              <Button as={RouterLink} to="/contact?enquiry=services" variant="outline" h={12} px={6} rightIcon={<Icon as={PiArrowUpRight} />} flexShrink={0}>
-                Contact support
-              </Button>
-            </Flex>
-          </Reveal>
+          <CalloutBar
+            mt={{ base: 16, md: 24 }}
+            title="Still have a question?"
+            text="Our team is happy to help with anything specific."
+            action="} flexShrink={0}>
+                Contact support"
+            to="/contact?enquiry=services"
+          />
         </Container>
       </Box>
     </Box>

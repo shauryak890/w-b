@@ -9,10 +9,10 @@ import {
   PiStarFill,
 } from 'react-icons/pi';
 import PageHero, { SectionIntro } from '../components/PageHero';
-import { MotionBox, Reveal, StaggerGroup, Accent, Bezel, fadeUp } from '../components/ui';
+import { MotionBox, Reveal, StaggerGroup, Accent, Bezel, fadeUp, Label } from '../components/ui';
 import { outlets, AVG_RATING, TOTAL_REVIEWS } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&fit=crop&w=1800&q=80';
 
 const values = [
@@ -81,7 +81,7 @@ export default function About() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '4fr 8fr' }} gap={{ base: 8, lg: 20 }}>
             <Reveal>
-              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500">How it started</Text>
+              <Label>How it started</Label>
             </Reveal>
             <StaggerGroup>
               <MotionBox variants={fadeUp}>

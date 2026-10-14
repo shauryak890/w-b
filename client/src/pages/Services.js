@@ -7,8 +7,8 @@ import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, fadeUp } f
 import { EASE } from '../theme';
 import { categories, express, subscriptions, navItems } from '../data/services';
 import { WHATSAPP_URL } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 // Keeps section headings clear of the floating navbar + sticky category bar
 const SCROLL_OFFSET = 150;
 
@@ -239,7 +239,7 @@ export default function Services() {
                     <Icon as={express.icon} boxSize={6} color="brand.300" />
                   </Flex>
                   <Heading mt={5} fontSize={{ base: '40px', md: '64px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
-                    Need it tonight? <Accent from="brand.200">Go express.</Accent>
+                    Need it tonight? <Accent dark>Go express.</Accent>
                   </Heading>
                   <Text mt={5} color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} maxW="440px">
                     Same-day turnaround with priority processing and rush pickup. Express is charged at a 20% premium on regular prices.

@@ -3,10 +3,10 @@ import { Box, Container, Heading, Text, Stack, HStack, SimpleGrid, Grid, Button,
 import { PiTShirtLight, PiMopedLight, PiCheckBold, PiPlusBold, PiArrowUpRight, PiMapPinLight } from 'react-icons/pi';
 import { Link as RouterLink } from 'react-router-dom';
 import PageHero from '../components/PageHero';
-import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, fadeUp } from '../components/ui';
+import { MotionBox, StaggerGroup, Accent, ArrowButton, fadeUp, CalloutBar } from '../components/ui';
 import { EASE } from '../theme';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const roles = [
   {
     icon: PiTShirtLight,
@@ -161,17 +161,14 @@ export default function Careers() {
             </Box>
           </StaggerGroup>
 
-          <Reveal mt={{ base: 12, md: 16 }}>
-            <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'flex-start', md: 'center' }} gap={6} p={{ base: 7, md: 10 }} borderRadius="28px" bg="white" border="1px solid" borderColor="gray.200">
-              <Box>
-                <Heading fontSize={{ base: '2xl', md: '32px' }} fontWeight={500} color="ink.900">Don't see the right fit?</Heading>
-                <Text mt={2} color="gray.600">Tell us what you're good at — we're always happy to hear from good people.</Text>
-              </Box>
-              <Button as={RouterLink} to={applyUrl()} variant="outline" h={12} px={6} rightIcon={<Icon as={PiArrowUpRight} />} flexShrink={0}>
-                Get in touch
-              </Button>
-            </Flex>
-          </Reveal>
+          <CalloutBar
+            mt={{ base: 12, md: 16 }}
+            title="Don't see the right fit?"
+            text="Tell us what you're good at — we're always happy to hear from good people."
+            action="} flexShrink={0}>
+                Get in touch"
+            to={applyUrl()}
+          />
         </Container>
       </Box>
     </Box>

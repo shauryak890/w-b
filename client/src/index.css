@@ -1,16 +1,6 @@
-body {
-  margin: 0;
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #F4F6F5;
-  color: #1A2B30;
-  overflow-x: hidden;
-}
+/* Base styles not covered by the Chakra theme (src/theme/index.js) */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Geist', sans-serif;
-  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -18,17 +8,7 @@ p {
   text-wrap: pretty;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-/* Smooth scrolling for in-page anchor navigation */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Remove default focus outlines and add a branded focus-visible ring */
+/* Branded focus ring for keyboard users only */
 *:focus {
   outline: none;
 }
@@ -38,7 +18,7 @@ html {
   outline-offset: 2px;
 }
 
-/* Respect reduced-motion preferences for accessibility */
+/* Respect reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -49,4 +29,3 @@ html {
     scroll-behavior: auto !important;
   }
 }
-

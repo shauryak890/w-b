@@ -23,11 +23,11 @@ import {
 import { Link as RouterLink } from 'react-router-dom';
 import { SectionIntro } from '../components/PageHero';
 import FaqList from '../components/FaqList';
-import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, Counter, fadeUp } from '../components/ui';
+import { MotionBox, Reveal, StaggerGroup, Accent, ArrowButton, Bezel, Counter, fadeUp, Label, NumberedRows } from '../components/ui';
 import { EASE } from '../theme';
 import { PHONE_DISPLAY, PHONE_TEL } from '../data/business';
-
 import usePageMeta from '../hooks/usePageMeta';
+
 const APPLY_URL = '/contact?enquiry=franchise';
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=1800&q=80';
 
@@ -250,7 +250,7 @@ export default function Franchise() {
             </MotionBox>
             <MotionBox variants={fadeUp} mt={8}>
               <Heading as="h1" fontSize={{ base: '46px', sm: '60px', md: '84px', xl: '96px' }} fontWeight={500} lineHeight="0.95" letterSpacing="-0.05em" maxW="980px">
-                Own a laundry brand <Accent from="brand.200">people already trust.</Accent>
+                Own a laundry brand <Accent dark>people already trust.</Accent>
               </Heading>
             </MotionBox>
             <MotionBox variants={fadeUp} mt={8}>
@@ -292,7 +292,7 @@ export default function Franchise() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
             <Reveal>
-              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>Why laundry</Text>
+              <Label mb={6}>Why laundry</Label>
               <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
                 A business people use <Accent>every single week.</Accent>
               </Heading>
@@ -300,21 +300,7 @@ export default function Franchise() {
                 Rising incomes, busier lives and urbanisation are turning laundry from a chore into a service — and the organised market is still young.
               </Text>
             </Reveal>
-            <StaggerGroup>
-              <Box borderTop="1px solid" borderColor="gray.200">
-                {reasons.map((r, i) => (
-                  <MotionBox key={r.title} variants={fadeUp}>
-                    <Grid templateColumns="64px 1fr" gap={4} py={{ base: 7, md: 9 }} borderBottom="1px solid" borderColor="gray.200">
-                      <Text fontFamily="serif" fontStyle="italic" fontSize="3xl" color="gray.300" lineHeight="1">0{i + 1}</Text>
-                      <Box>
-                        <Heading fontSize={{ base: 'xl', md: '2xl' }} fontWeight={500} color="ink.900">{r.title}</Heading>
-                        <Text mt={2} color="gray.600" maxW="480px">{r.text}</Text>
-                      </Box>
-                    </Grid>
-                  </MotionBox>
-                ))}
-              </Box>
-            </StaggerGroup>
+            <NumberedRows items={reasons} />
           </Grid>
         </Container>
       </Box>
@@ -429,7 +415,7 @@ export default function Franchise() {
         <Container>
           <Grid templateColumns={{ base: '1fr', lg: '5fr 7fr' }} gap={{ base: 10, lg: 20 }}>
             <Reveal>
-              <Text fontSize="11px" letterSpacing="0.18em" textTransform="uppercase" color="gray.500" mb={6}>FAQ</Text>
+              <Label mb={6}>FAQ</Label>
               <Heading fontSize={{ base: '36px', md: '56px' }} fontWeight={500} color="ink.900">
                 Questions <Accent>franchisees ask.</Accent>
               </Heading>
@@ -452,7 +438,7 @@ export default function Franchise() {
             <Bezel radius={40} pad={8} inner={{ bg: 'ink.900', color: 'white', p: { base: 8, md: 16 } }}>
               <Grid templateColumns={{ base: '1fr', lg: '1.4fr 1fr' }} gap={10} alignItems="end">
                 <Heading fontSize={{ base: '40px', md: '68px' }} fontWeight={500} lineHeight="0.98" letterSpacing="-0.05em">
-                  Ready to build your future <Accent from="brand.200">with us?</Accent>
+                  Ready to build your future <Accent dark>with us?</Accent>
                 </Heading>
                 <Stack spacing={3} align={{ base: 'stretch', lg: 'flex-end' }}>
                   <ArrowButton as={RouterLink} to={APPLY_URL} variant="light" justifyContent="space-between">

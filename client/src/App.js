@@ -1,6 +1,5 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Box, Flex } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
 import theme from './theme';
 
 // Components
@@ -30,27 +29,29 @@ function App() {
     <ChakraProvider theme={theme}>
       <Router>
         <ScrollToTop />
-        <div className="App">
+        <Flex direction="column" minH="100dvh">
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/csr" element={<CSR />} />
-            <Route path="/franchise" element={<Franchise />} />
-            <Route path="/associate" element={<Associate />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/help-center" element={<HelpCenter />} />
-            <Route path="/policies/terms-of-service" element={<TermsOfService />} />
-            <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/delete-account" element={<DeleteAccount />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Box flex="1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/csr" element={<CSR />} />
+              <Route path="/franchise" element={<Franchise />} />
+              <Route path="/associate" element={<Associate />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/help-center" element={<HelpCenter />} />
+              <Route path="/policies/terms-of-service" element={<TermsOfService />} />
+              <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/delete-account" element={<DeleteAccount />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Box>
           <Footer />
           <WhatsappButton />
-        </div>
+        </Flex>
       </Router>
     </ChakraProvider>
   );
