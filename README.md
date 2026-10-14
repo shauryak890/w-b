@@ -1,115 +1,61 @@
-# Whites & Brights - Premium Laundry Service Website
+# Whites & Brights — website
 
-A visually stunning, professional MERN stack website for Whites & Brights, a new retail laundry business preparing to launch. The website features a modern 3D aesthetic with elegant design elements that convey cleanliness and premium service.
+Marketing site for **Whites & Brights** (WNB Cleantech Pvt Ltd), a laundry, dry cleaning and shoe care business with three outlets in Patna.
 
-## Features
+Live pages: Home, Services & prices, Franchise, About, CSR (Do Roti), Associate, Careers, Contact, FAQ, Help Centre, Delete Account, Privacy Policy and Terms of Service.
 
-- Modern 3D visuals using Three.js and React Three Fiber
-- Responsive design that works across all device sizes
-- Elegant animations using Framer Motion
-- Clean, premium aesthetic with soft whites and bright blues
-- Comprehensive sections for services, about us, and contact information
-- "Opening Soon" announcement with contact form for updates
-- Backend API for handling contact form submissions
+## Stack
 
-## Tech Stack
+- React 18 (Create React App) + React Router 7
+- Chakra UI 2 for components and theming, Framer Motion for animation
+- React Three Fiber / three.js for the 3D bubble hero (lazy-loaded)
+- Phosphor icons via `react-icons/pi`
+- Forms post to Google Apps Script (Google Sheets) — there is no backend
 
-- **Frontend:**
-  - React.js
-  - Three.js / React Three Fiber for 3D elements
-  - Chakra UI for responsive components
-  - Framer Motion for animations
-  - React Router for navigation
+## Getting started
 
-- **Backend:**
-  - Node.js
-  - Express.js
-  - MongoDB (prepared for connection)
-  - Nodemailer for email functionality
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-- MongoDB (optional - for database functionality)
-
-### Installation
-
-1. Clone the repository
-   ```
-   git clone <repository-url>
-   cd wb-laundry
-   ```
-
-2. Install dependencies for the root project, client, and server
-   ```
-   npm install
-   cd client && npm install
-   cd ../server && npm install
-   ```
-
-3. Environment setup
-   - Create a `.env` file in the server directory (a template is provided)
-   - Configure your MongoDB connection string (when ready)
-
-4. Start the development environment
-   ```
-   npm run dev
-   ```
-   This will concurrently run both the client and server.
-
-## Development
-
-- **Client only:** `npm run client`
-- **Server only:** `npm run server`
-- **Both:** `npm run dev`
-
-## Production
-
-For production deployment:
-
-1. Build the client
-   ```
-   cd client && npm run build
-   ```
-
-2. Configure environment variables for production
-   
-3. Deploy using your preferred hosting service (Netlify, Heroku, etc.)
-
-## Project Structure
-
-```
-wb-laundry/
-├── client/               # React frontend
-│   ├── public/           # Static files
-│   └── src/              # React source code
-│       ├── components/   # Reusable components
-│       ├── pages/        # Page components
-│       ├── models/       # 3D models and related files
-│       └── assets/       # Images, styles, etc.
-└── server/               # Express backend
-    ├── index.js          # Server entry point
-    └── .env              # Environment variables
+```bash
+cd client
+npm install
+npm start
 ```
 
-## 3D Features
+The site runs at http://localhost:3000. From the repo root, `npm start` and `npm run build` forward to the client.
 
-The website incorporates modern 3D elements using Three.js and React Three Fiber to create an immersive experience that conveys the premium nature of the Whites & Brights laundry service.
+### Environment
 
-## Contact Form
+| Variable | Used by | Purpose |
+| --- | --- | --- |
+| `REACT_APP_ASSOCIATE_SHEETS_URL` | Associate form | Google Apps Script URL that receives associate applications |
 
-The contact form allows potential customers to sign up for updates about the upcoming launch. Form submissions are handled by the Express backend and can be configured to:
+Put it in `client/.env` (not committed). The Contact form's script URL is set in `client/src/pages/Contact.js`.
 
-1. Store submissions in MongoDB
-2. Send email notifications using Nodemailer
+## Project structure
 
-## License
+```
+client/
+  public/            index.html, favicon, manifest, Netlify _redirects
+  src/
+    theme/           Chakra theme — colours, fonts, shadows, button variants
+    components/      Navbar, Footer, PageHero, LegalLayout, FaqList, AppPromo,
+                     ui.js (shared primitives: Accent, Eyebrow, ArrowButton, Bezel, …)
+    data/            business.js (outlets, phone, reviews), services.js (price lists), faq.js
+    hooks/           usePageMeta (per-page title + meta description)
+    pages/           one file per route; policies/ for legal pages
+```
 
-[Your License]
+Business facts — phone number, outlets, Google ratings, prices and FAQ answers — live in `client/src/data/`. Update them there rather than in page files.
 
----
+## Design system
 
-Designed and developed for Whites & Brights Laundry Service
+"Fresh linen": off-white base, deep teal-ink (`ink.900`) for dark sections and primary buttons, and the logo cyan (`#00B4C5`) as the only accent. Headings use Geist with Instrument Serif italic for emphasis (`<Accent>`). Build new sections from the shared pieces in `components/ui.js` and `components/PageHero.js` so pages stay consistent.
+
+## Deployment
+
+Netlify builds `client/` with `npm run build` and publishes `client/build`. `public/_redirects` handles SPA routing and sends old APK download links to Google Play.
+
+Netlify runs the build with `CI=true`, which turns ESLint warnings (such as an unused import) into build failures. Check locally before pushing:
+
+```bash
+cd client && CI=true npx react-scripts build
+```

@@ -4,7 +4,6 @@
 /node_modules
 */node_modules
 client/node_modules
-server/node_modules
 /.pnp
 .pnp.js
 
@@ -14,8 +13,6 @@ server/node_modules
 # production
 /build
 client/build
-server/build
-server/dist
 
 # misc
 .DS_Store
@@ -29,11 +26,6 @@ client/.env.local
 client/.env.development.local
 client/.env.test.local
 client/.env.production.local
-server/.env
-server/.env.local
-server/.env.development.local
-server/.env.test.local
-server/.env.production.local
 
 npm-debug.log*
 yarn-debug.log*
@@ -45,13 +37,13 @@ yarn-error.log*
 # editors
 .vscode/
 .idea/
+.claude/
 
 # OS files
 Thumbs.db
 
 # coverage (monorepo)
 client/coverage
-server/coverage
 
 # misc
 *.local
