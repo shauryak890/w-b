@@ -12,6 +12,7 @@ import {
   HStack,
   Icon,
   Collapse,
+  Link,
 } from '@chakra-ui/react';
 import {
   PiArrowUpRight,
@@ -332,7 +333,11 @@ export default function Franchise() {
             eyebrow="Support"
             title={<>You run the store. <Accent>We've got the rest.</Accent></>}
             description="End-to-end support from the day you sign, and for as long as you're open."
-          />
+          >
+            <Link as={RouterLink} to="/academy" mt={5} display="inline-flex" alignItems="center" gap={2} fontWeight={500} color="ink.900" borderBottom="1px solid" borderColor="ink.900" pb={0.5}>
+              See the Academy training programs <Icon as={PiArrowUpRight} />
+            </Link>
+          </SectionIntro>
           <StaggerGroup stagger={0.08}>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 10, md: 8 }}>
               {support.map((s, i) => (

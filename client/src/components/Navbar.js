@@ -21,6 +21,8 @@ import {
   PiCoatHangerLight,
   PiTShirtLight,
   PiHouseLineLight,
+  PiSneakerLight,
+  PiBuildingsLight,
   PiLightningLight,
   PiCalendarCheckLight,
   PiCaretDownBold,
@@ -40,14 +42,17 @@ const SPRING = [0.32, 0.72, 0, 1];
 const services = [
   { icon: PiWashingMachineLight, title: 'Laundry by KG', description: 'Wash & fold, wash & iron', to: '/services?tab=1' },
   { icon: PiCoatHangerLight, title: 'Dry Cleaning', description: 'Suits, sarees, delicates', to: '/services?tab=2' },
-  { icon: PiTShirtLight, title: 'Steam Ironing', description: 'Crisp pressing, per piece', to: '/services?tab=3' },
-  { icon: PiHouseLineLight, title: 'Household Items', description: 'Curtains to comforters', to: '/services?tab=4' },
-  { icon: PiLightningLight, title: 'Express Delivery', description: 'Same-day when it matters', to: '/services?tab=5' },
+  { icon: PiTShirtLight, title: 'Steam Press & Polish', description: 'Pressing, starching, polish', to: '/services?tab=3' },
+  { icon: PiHouseLineLight, title: 'Home & Linen', description: 'Blankets, curtains, carpets', to: '/services?tab=4' },
+  { icon: PiSneakerLight, title: 'Shoes & Bags', description: 'Sneakers, leather, handbags', to: '/services?tab=7' },
+  { icon: PiLightningLight, title: 'Express', description: 'Same-day when it matters', to: '/services?tab=5' },
   { icon: PiCalendarCheckLight, title: 'Subscription Plans', description: 'Monthly packs, lower rates', to: '/services?tab=6' },
+  { icon: PiBuildingsLight, title: 'Business Laundry', description: 'Spas, salons, hotels', to: '/services?tab=8' },
 ];
 
 const company = [
   { title: 'About us', to: '/about' },
+  { title: 'Academy — training', to: '/academy' },
   { title: 'CSR — Do Roti', to: '/csr' },
   { title: 'Become an associate', to: '/associate' },
   { title: 'Careers', to: '/careers' },

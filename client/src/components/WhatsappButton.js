@@ -13,12 +13,13 @@ const WhatsappButton = () => (
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
       position="fixed"
-      bottom={{ base: 4, md: 6 }}
-      right={{ base: 4, md: 6 }}
+      bottom={6}
+      right={6}
       zIndex={998}
-      w={{ base: 14, md: 14 }}
-      h={{ base: 14, md: 14 }}
-      display="flex"
+      w={14}
+      h={14}
+      // Phones get the bottom action bar instead (MobileActionBar)
+      display={{ base: 'none', md: 'flex' }}
       alignItems="center"
       justifyContent="center"
       borderRadius="full"

@@ -81,6 +81,7 @@ const topics = [
     links: [
       { label: 'Business / bulk laundry', to: '/contact?enquiry=business' },
       { label: 'Franchise opportunities', to: '/franchise' },
+      { label: 'Academy training programs', to: '/academy' },
       { label: 'Careers', to: '/careers' },
     ],
   },

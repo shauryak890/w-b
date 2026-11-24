@@ -143,13 +143,13 @@ const theme = extendTheme({
         fontWeight: 600,
         letterSpacing: '-0.035em',
         lineHeight: 1.08,
-        textWrap: 'balance',
+        textWrapStyle: 'balance',
       },
     },
 
     Text: {
       baseStyle: {
-        textWrap: 'pretty',
+        textWrapStyle: 'pretty',
       },
     },
 

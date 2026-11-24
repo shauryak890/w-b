@@ -2,7 +2,7 @@
 
 Marketing site for **Whites & Brights** (WNB Cleantech Pvt Ltd), a laundry, dry cleaning and shoe care business with three outlets in Patna.
 
-Live pages: Home, Services & prices, Franchise, About, CSR (Do Roti), Associate, Careers, Contact, FAQ, Help Centre, Delete Account, Privacy Policy and Terms of Service.
+Live pages: Home, Services & prices, Franchise, Academy (training programs), About, CSR (Do Roti), Associate, Careers, Contact, FAQ, Help Centre, Delete Account, Privacy Policy and Terms of Service.
 
 ## Stack
 
@@ -39,12 +39,15 @@ client/
     theme/           Chakra theme — colours, fonts, shadows, button variants
     components/      Navbar, Footer, PageHero, LegalLayout, FaqList, AppPromo,
                      ui.js (shared primitives: Accent, Eyebrow, ArrowButton, Bezel, …)
-    data/            business.js (outlets, phone, reviews), services.js (price lists), faq.js
+    data/            business.js (outlets, phone, reviews), services.js (price list),
+                     academy.js (training programs), faq.js
     hooks/           usePageMeta (per-page title + meta description)
     pages/           one file per route; policies/ for legal pages
 ```
 
 Business facts — phone number, outlets, Google ratings, prices and FAQ answers — live in `client/src/data/`. Update them there rather than in page files.
+
+**Updating prices:** edit the rows in `client/src/data/services.js` (one line per item: name, price, unit). The "from ₹…" figures on Home, Services and the FAQ are calculated from those rows, so nothing else needs changing. Bookings and Academy enquiries open WhatsApp with the message pre-written; order tracking lives in the mobile app.
 
 ## Design system
 

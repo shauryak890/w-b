@@ -1,11 +1,11 @@
 /* Base styles not covered by the Chakra theme (src/theme/index.js) */
 
 h1, h2, h3, h4, h5, h6 {
-  text-wrap: balance;
+  text-wrap-style: balance;
 }
 
 p {
-  text-wrap: pretty;
+  text-wrap-style: pretty;
 }
 
 /* Branded focus ring for keyboard users only */

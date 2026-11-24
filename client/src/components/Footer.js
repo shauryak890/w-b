@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Container, Grid, Text, Link as ChakraLink, IconButton, HStack, Flex, Icon, Heading, Stack, Button } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { PiFacebookLogo, PiInstagramLogo, PiArrowUpBold, PiArrowUpRight, PiPhoneLight, PiEnvelopeSimpleLight } from 'react-icons/pi';
+import { PiFacebookLogo, PiInstagramLogo, PiArrowUpBold, PiArrowUpRight, PiPhoneLight, PiEnvelopeSimpleLight, PiDeviceMobileLight } from 'react-icons/pi';
 import { ArrowButton, Accent, Reveal } from './ui';
 import { EASE } from '../theme';
-import { outlets, PHONE_DISPLAY, PHONE_TEL } from '../data/business';
+import { outlets, PHONE_DISPLAY, PHONE_TEL, EMAIL, PLAY_STORE_URL } from '../data/business';
 
 const FooterLink = ({ to, children }) => (
   <ChakraLink
@@ -28,6 +28,7 @@ const ColumnTitle = ({ children }) => (
 const companyLinks = [
   { label: 'About us', to: '/about' },
   { label: 'Franchise', to: '/franchise' },
+  { label: 'Academy — training', to: '/academy' },
   { label: 'CSR — Do Roti', to: '/csr' },
   { label: 'Become an associate', to: '/associate' },
   { label: 'Careers', to: '/careers' },
@@ -37,9 +38,10 @@ const companyLinks = [
 const serviceLinks = [
   { label: 'Laundry by KG', to: '/services?tab=1' },
   { label: 'Dry cleaning', to: '/services?tab=2' },
-  { label: 'Steam ironing', to: '/services?tab=3' },
-  { label: 'Household items', to: '/services?tab=4' },
-  { label: 'Express delivery', to: '/services?tab=5' },
+  { label: 'Steam press & polish', to: '/services?tab=3' },
+  { label: 'Home & linen', to: '/services?tab=4' },
+  { label: 'Shoes & bags', to: '/services?tab=7' },
+  { label: 'Express', to: '/services?tab=5' },
   { label: 'Subscription plans', to: '/services?tab=6' },
 ];
 
@@ -59,7 +61,7 @@ function Footer() {
   return (
     <Box as="footer" position="relative" bg="ink.900" color="whiteAlpha.800" overflow="hidden">
       {/* CTA band — Home already ends on its own booking CTA */}
-      {!['/', '/franchise'].includes(pathname) && (
+      {!['/', '/franchise', '/academy'].includes(pathname) && (
         <Container pt={{ base: 20, md: 28 }} pb={{ base: 16, md: 20 }} borderBottom="1px solid" borderColor="whiteAlpha.100">
           <Reveal>
             <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'flex-start', md: 'flex-end' }} justify="space-between" gap={8}>
@@ -76,7 +78,7 @@ function Footer() {
         </Container>
       )}
 
-      <Container pt={{ base: 16, md: 20 }} pb={8} position="relative">
+      <Container pt={{ base: 16, md: 20 }} pb={{ base: 24, md: 8 }} position="relative">
         <Grid templateColumns={{ base: '1fr', sm: '1fr 1fr', lg: '1.4fr 1fr 1fr 1.4fr' }} gap={{ base: 12, lg: 10 }}>
           {/* Brand */}
           <Stack spacing={6} gridColumn={{ sm: 'span 2', lg: 'auto' }}>
@@ -87,8 +89,11 @@ function Footer() {
               <ChakraLink href={`tel:${PHONE_TEL}`} display="inline-flex" alignItems="center" gap={2.5} color="white" _hover={{ color: 'brand.200' }}>
                 <Icon as={PiPhoneLight} boxSize="18px" /> {PHONE_DISPLAY}
               </ChakraLink>
-              <ChakraLink href="mailto:info@whitesandbrights.com" display="inline-flex" alignItems="center" gap={2.5} color="white" _hover={{ color: 'brand.200' }}>
-                <Icon as={PiEnvelopeSimpleLight} boxSize="18px" /> info@whitesandbrights.com
+              <ChakraLink href={`mailto:${EMAIL}`} display="inline-flex" alignItems="center" gap={2.5} color="white" _hover={{ color: 'brand.200' }}>
+                <Icon as={PiEnvelopeSimpleLight} boxSize="18px" /> {EMAIL}
+              </ChakraLink>
+              <ChakraLink href={PLAY_STORE_URL} isExternal display="inline-flex" alignItems="center" gap={2.5} color="white" _hover={{ color: 'brand.200' }}>
+                <Icon as={PiDeviceMobileLight} boxSize="18px" /> Track your order in the app
               </ChakraLink>
             </Stack>
             <HStack spacing={2}>

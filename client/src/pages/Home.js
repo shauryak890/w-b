@@ -16,7 +16,6 @@ import {
 import {
   PiStarFill,
   PiGoogleLogoFill,
-  PiWhatsappLogoFill,
   PiArrowUpRight,
   PiWashingMachineLight,
   PiCoatHangerLight,
@@ -48,11 +47,13 @@ import {
   reviews,
   AVG_RATING,
   TOTAL_REVIEWS,
-  WHATSAPP_URL,
+  PLAY_STORE_URL,
   PHONE_TEL,
   PHONE_DISPLAY,
   GOOGLE_REVIEWS_URL,
 } from '../data/business';
+import QuickBook from '../components/QuickBook';
+import { startingPrice } from '../data/services';
 import usePageMeta from '../hooks/usePageMeta';
 
 // Signature 3D soap-bubble hero — lazy so three.js stays out of the main bundle
@@ -254,23 +255,15 @@ export default function Home() {
               </MotionBox>
 
               <MotionBox variants={fadeUp} mt={{ base: 8, md: 10 }}>
-                <Stack direction={{ base: 'column', sm: 'row' }} spacing={3} align={{ base: 'stretch', sm: 'center' }}>
-                  <ArrowButton as={RouterLink} to="/contact" variant="light" justifyContent="space-between">
-                    Book a free pickup
-                  </ArrowButton>
-                  <Button
-                    as="a"
-                    href={WHATSAPP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="glass"
-                    h={{ base: 12, md: 14 }}
-                    px={6}
-                    leftIcon={<Icon as={PiWhatsappLogoFill} boxSize={5} color="#25D366" />}
-                  >
-                    WhatsApp us
-                  </Button>
-                </Stack>
+                <QuickBook />
+                <HStack spacing={5} mt={4} fontSize="sm" color="whiteAlpha.700" flexWrap="wrap">
+                  <Link as={RouterLink} to="/contact" borderBottom="1px solid" borderColor="whiteAlpha.400" _hover={{ color: 'white', borderColor: 'white' }}>
+                    Prefer a form? Book here
+                  </Link>
+                  <Link href={PLAY_STORE_URL} isExternal borderBottom="1px solid" borderColor="whiteAlpha.400" _hover={{ color: 'white', borderColor: 'white' }}>
+                    Track an order in the app
+                  </Link>
+                </HStack>
               </MotionBox>
 
               {/* Proof strip */}
@@ -355,8 +348,7 @@ export default function Home() {
                 icon={PiWashingMachineLight}
                 title="Laundry by the kilo"
                 text="Wash & fold or wash & iron for everyday clothes. Sorted by colour and fabric, premium detergents."
-                price="₹70"
-                unit="/ kg"
+                {...startingPrice('laundry-by-kg')}
                 image={IMAGES.folded}
                 minH={{ md: '560px' }}
               />
@@ -366,26 +358,23 @@ export default function Home() {
                 icon={PiCoatHangerLight}
                 title="Dry cleaning"
                 text="Suits, sarees, lehengas and delicates — hand-finished and hung."
-                price="₹49"
-                unit="/ piece"
+                {...startingPrice('dry-cleaning')}
               />
               <ServiceTile
                 colSpan={{ md: 5 }}
-                to="/services?tab=2"
+                to="/services?tab=7"
                 icon={PiSneakerLight}
-                title="Shoe care"
-                text="Deep cleaning for sports, canvas, leather and suede shoes."
-                price="₹199"
-                unit="/ pair"
+                title="Shoes & bags"
+                text="Deep cleaning for sneakers, leather and suede shoes, handbags and backpacks."
+                {...startingPrice('shoes-bags')}
               />
               <ServiceTile
                 colSpan={{ md: 5 }}
                 to="/services?tab=4"
                 icon={PiHouseLineLight}
-                title="Home linen"
-                text="Curtains, comforters, blankets and table linen."
-                price="₹199"
-                unit="/ panel"
+                title="Home & linen"
+                text="Blankets, razais, bedsheets, curtains and carpets."
+                {...startingPrice('home-linen')}
                 image={IMAGES.home}
               />
               <ServiceTile

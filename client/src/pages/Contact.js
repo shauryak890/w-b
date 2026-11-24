@@ -121,15 +121,18 @@ export default function Contact() {
 
   const [searchParams] = useSearchParams();
 
-  // Prefill the form when arriving from another page (e.g. Careers "Apply Now"
-  // links to /contact?enquiry=career&role=Rider).
+  // Prefill the form when arriving from another page (e.g. Careers "Apply" links to
+  // /contact?enquiry=career&role=Rider, Academy to ?enquiry=training&program=F1…).
   useEffect(() => {
     const enquiryParam = searchParams.get('enquiry');
     const roleParam = searchParams.get('role');
+    const programParam = searchParams.get('program');
     // Default to a pickup booking — most visitors arrive from a "Book a pickup" button
     setEnquiry(enquiryParam || 'pickup');
     if (roleParam) {
       setMessage(`I'd like to apply for the ${roleParam} role. `);
+    } else if (programParam) {
+      setMessage(`I'd like to know more about the ${programParam} training program. `);
     }
   }, [searchParams]);
 
@@ -283,6 +286,7 @@ export default function Contact() {
                         <option value="services">Question about services</option>
                         <option value="business">Business / bulk laundry</option>
                         <option value="franchise">Franchise</option>
+                        <option value="training">Academy / training</option>
                         <option value="career">Career / jobs</option>
                       </Select>
                     </FormControl>

@@ -1,4 +1,5 @@
 import { PiClockLight, PiTShirtLight, PiCurrencyInrLight, PiShieldCheckLight } from 'react-icons/pi';
+import { startingPrice } from './services';
 
 export const faqCategories = [
   {
@@ -12,7 +13,7 @@ export const faqCategories = [
       },
       {
         q: 'How long does the service take?',
-        a: 'Standard turnaround is 48 hours (up to 72–96 hours for some delicate items, jackets and bags). Same-day express is available at a 20% premium.',
+        a: 'Standard turnaround is 48 hours (72–96 hours for woollens and leather jackets). Same-day ironing is available for 20% extra on the bill.',
       },
       {
         q: 'Do you offer pickup and delivery?',
@@ -46,7 +47,7 @@ export const faqCategories = [
     questions: [
       {
         q: 'How is pricing calculated?',
-        a: 'Everyday laundry is charged by the kilo (from ₹70/kg). Dry cleaning, ironing, shoes and household items are priced per piece. The full price list is on our Services page.',
+        a: `Everyday laundry is charged by the kilo (from ${startingPrice('laundry-by-kg').price}/kg). Dry cleaning, steam press, shoes and household items are priced per piece. The full price list is on our Services page.`,
       },
       {
         q: 'What payment methods do you accept?',
@@ -54,7 +55,7 @@ export const faqCategories = [
       },
       {
         q: 'Do you offer any discounts?',
-        a: 'New customers get 25% off their first order, and monthly subscription plans save up to 20% on regular prices.',
+        a: 'New customers get 25% off their first order. You also get 15% off around your birthday and 10% off around your anniversary (once a year each), and monthly subscription plans cost less than regular prices.',
       },
     ],
   },
