@@ -3,6 +3,7 @@ import { Box, Container, Grid, Text, Link as ChakraLink, IconButton, HStack, Fle
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { PiFacebookLogo, PiInstagramLogo, PiArrowUpBold, PiArrowUpRight, PiPhoneLight, PiEnvelopeSimpleLight, PiDeviceMobileLight } from 'react-icons/pi';
 import { ArrowButton, Accent, Reveal } from './ui';
+import BrandMark from './BrandMark';
 import { EASE } from '../theme';
 import { outlets, PHONE_DISPLAY, PHONE_TEL, EMAIL, PLAY_STORE_URL } from '../data/business';
 
@@ -82,6 +83,17 @@ function Footer() {
         <Grid templateColumns={{ base: '1fr', sm: '1fr 1fr', lg: '1.4fr 1fr 1fr 1.4fr' }} gap={{ base: 12, lg: 10 }}>
           {/* Brand */}
           <Stack spacing={6} gridColumn={{ sm: 'span 2', lg: 'auto' }}>
+            <HStack spacing={3}>
+              <BrandMark size={44} light />
+              <Box lineHeight="1.15">
+                <Text fontWeight={700} color="white" fontSize="lg" letterSpacing="-0.02em">
+                  Whites{' '}
+                  <Text as="span" fontSize="11px" fontWeight={600} letterSpacing="0.06em" textTransform="uppercase" verticalAlign="1px">and</Text>{' '}
+                  Brights
+                </Text>
+                <Text fontSize="10px" color="whiteAlpha.600" letterSpacing="0.12em" textTransform="uppercase">Laundry · Dry clean · Express care</Text>
+              </Box>
+            </HStack>
             <Text fontSize="sm" color="whiteAlpha.700" maxW="xs" lineHeight="1.7">
               Laundry, dry cleaning and shoe care for Patna — with free doorstep pickup and a 48-hour turnaround.
             </Text>

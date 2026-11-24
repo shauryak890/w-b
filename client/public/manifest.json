@@ -8,13 +8,13 @@
       "sizes": "any"
     },
     {
-      "src": "Laundry Service Logo.jpg",
+      "src": "logo.jpg",
       "type": "image/jpeg",
-      "sizes": "500x500"
+      "sizes": "1024x1024"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#061D23",
+  "theme_color": "#0E3A50",
   "background_color": "#F4F6F5"
 }

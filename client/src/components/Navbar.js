@@ -33,6 +33,7 @@ import {
 } from 'react-icons/pi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowButton } from './ui';
+import BrandMark from './BrandMark';
 import { EASE } from '../theme';
 import { PLAY_STORE_URL, WHATSAPP_URL } from '../data/business';
 
@@ -91,28 +92,26 @@ const Logo = () => (
     <Flex
       align="center"
       justify="center"
-      bg="ink.900"
-      color="white"
-      fontWeight={700}
-      fontSize="13px"
-      h={10}
-      w={10}
+      bg="white"
+      h="44px"
+      w="44px"
       borderRadius="14px"
+      border="1px solid"
+      borderColor="gray.100"
       mr={2.5}
-      letterSpacing="-0.04em"
       transition={`transform 0.5s ${EASE}`}
-      _groupHover={{ transform: 'rotate(-8deg)' }}
-      position="relative"
+      _groupHover={{ transform: 'rotate(-6deg)' }}
     >
-      W
-      <Box as="span" color="brand.400">&amp;</Box>B
+      <BrandMark size={34} />
     </Flex>
     <Box lineHeight="1.1" whiteSpace="nowrap">
-      <Text fontSize="15px" fontWeight={600} color="ink.900" letterSpacing="-0.03em">
-        Whites &amp; Brights
+      <Text fontSize="16px" fontWeight={700} color="#0E3A50" letterSpacing="-0.02em">
+        Whites{' '}
+        <Text as="span" fontSize="10px" fontWeight={600} letterSpacing="0.06em" textTransform="uppercase" verticalAlign="1px">and</Text>{' '}
+        Brights
       </Text>
-      <Text fontSize="11px" color="gray.500" letterSpacing="0.02em">
-        Laundry · Patna
+      <Text fontSize="9.5px" fontWeight={500} color="gray.500" letterSpacing="0.12em" textTransform="uppercase" mt={0.5}>
+        Laundry · Dry clean · Express care
       </Text>
     </Box>
   </Flex>
